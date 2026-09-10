@@ -12,10 +12,3 @@ data/evidence/*
 .env
 *.log
 .DS_Store
-
-# docs lomba, lokal saja
-AGENTS.md
-BUSINESS_RULES.md
-DATABASE.md
-IMPLEMENTATION_PLAN.md
-PRD.md
