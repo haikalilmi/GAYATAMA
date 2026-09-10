@@ -1,0 +1,10 @@
+export const REJECTION_REASONS = [
+  "INSUFFICIENT_EVIDENCE",
+  "DUPLICATE_EVIDENCE",
+  "MISSION_REQUIREMENTS_NOT_MET",
+  "INVALID_PROOF_CODE",
+  "ACTIVITY_CANNOT_BE_VERIFIED",
+  "OTHER",
+] as const;
+
+export type RejectionReason = (typeof REJECTION_REASONS)[number];

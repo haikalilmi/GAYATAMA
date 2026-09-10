@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+/* Base minimal, bukan dekorasi berat. Debug mudah: semua style global di sini. */
+:root {
+  color-scheme: light;
+}
+
+body {
+  background: #f8fafc;
+  color: #0f172a;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
