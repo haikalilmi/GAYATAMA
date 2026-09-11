@@ -9,7 +9,7 @@ export default async function RewardHistoryPage({
 }) {
   const user = await requireUser("/rewards/history");
   const { code } = await searchParams;
-  const rows = listRedemptions(user.id);
+  const rows = await listRedemptions(user.id);
 
   return (
     <div className="mx-auto max-w-lg space-y-6">

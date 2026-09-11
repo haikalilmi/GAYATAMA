@@ -1,7 +1,7 @@
 import { getCommunityImpact } from "@/lib/impact";
 
 export default async function CommunityPage() {
-  const c = getCommunityImpact();
+  const c = await getCommunityImpact();
 
   return (
     <div className="space-y-6">

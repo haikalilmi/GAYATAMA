@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { AuthForm } from "../(auth)/auth-form";
 import { registerAction } from "../(auth)/actions";
+import { GoogleLoginButton } from "../(auth)/google-login-button";
 
 export default async function RegisterPage() {
   const user = await getCurrentUser();
@@ -15,6 +16,12 @@ export default async function RegisterPage() {
         <p className="text-sm text-slate-500">
           Buat akun untuk mulai ikut misi sosial.
         </p>
+      </div>
+      <GoogleLoginButton label="Daftar dengan Google" />
+      <div className="flex items-center gap-3">
+        <div className="h-px flex-1 bg-slate-200" />
+        <span className="text-xs text-slate-400">atau</span>
+        <div className="h-px flex-1 bg-slate-200" />
       </div>
       <AuthForm action={registerAction} submitLabel="Daftar" showName />
       <p className="text-sm text-slate-600">

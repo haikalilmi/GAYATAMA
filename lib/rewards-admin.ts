@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getDb } from "./db";
+import { sql } from "./db";
 
 export class RewardAdminError extends Error {}
 
@@ -22,16 +22,17 @@ export interface RewardRow {
   status: string;
 }
 
-export function listAllRewards(): RewardRow[] {
-  return getDb()
-    .prepare("SELECT id, title, point_cost, stock, status FROM rewards ORDER BY point_cost")
-    .all() as unknown as RewardRow[];
+export async function listAllRewards(): Promise<RewardRow[]> {
+  return sql<RewardRow>(
+    "SELECT id, title, point_cost, stock, status FROM rewards ORDER BY point_cost"
+  ).all();
 }
 
-export function getRewardForAdmin(id: string): (RewardForm & { id: string }) | null {
-  const row = getDb().prepare("SELECT * FROM rewards WHERE id = ?").get(id) as
-    | Record<string, string | number | null>
-    | undefined;
+export async function getRewardForAdmin(id: string): Promise<(RewardForm & { id: string }) | null> {
+  const row = await sql<Record<string, string | number | null>>(
+    "SELECT * FROM rewards WHERE id = ?",
+    id
+  ).get();
   if (!row) return null;
   return {
     id: row["id"] as string,
@@ -44,25 +45,23 @@ export function getRewardForAdmin(id: string): (RewardForm & { id: string }) | n
   };
 }
 
-export function createReward(data: RewardForm): string {
-  const db = getDb();
+export async function createReward(data: RewardForm): Promise<string> {
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
-  db.prepare(
+  await sql(
     `INSERT INTO rewards (id, title, description, point_cost, demo_value, stock, status, is_demo, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`
-  ).run(id, data.title, data.description || null, data.point_cost, data.demo_value ?? null, data.stock, data.status, now, now);
+     VALUES (?, ?, ?, ?, ?, ?, ?, true, ?, ?)`,
+    id, data.title, data.description || null, data.point_cost, data.demo_value ?? null, data.stock, data.status, now, now
+  ).run();
   return id;
 }
 
-export function updateReward(id: string, data: RewardForm): void {
-  const db = getDb();
-  const exists = db.prepare("SELECT 1 FROM rewards WHERE id = ?").get(id);
+export async function updateReward(id: string, data: RewardForm): Promise<void> {
+  const exists = await sql("SELECT 1 FROM rewards WHERE id = ?", id).get();
   if (!exists) throw new RewardAdminError("Reward tidak ditemukan.");
-  db.prepare(
-    "UPDATE rewards SET title = ?, description = ?, point_cost = ?, demo_value = ?, stock = ?, status = ?, updated_at = ? WHERE id = ?"
-  ).run(
+  await sql(
+    "UPDATE rewards SET title = ?, description = ?, point_cost = ?, demo_value = ?, stock = ?, status = ?, updated_at = ? WHERE id = ?",
     data.title, data.description || null, data.point_cost, data.demo_value ?? null,
     data.stock, data.status, new Date().toISOString(), id
-  );
+  ).run();
 }

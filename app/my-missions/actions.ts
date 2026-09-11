@@ -15,7 +15,7 @@ export async function cancelParticipationAction(_prev: CancelState | null, form:
   const id = form.get("participation_id");
   if (typeof id !== "string") return { error: "Data tidak lengkap." };
   try {
-    cancelParticipation(user.id, id);
+    await cancelParticipation(user.id, id);
   } catch (e) {
     if (e instanceof JoinError) return { error: e.message };
     throw e;

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import "./globals.css";
 import { getCurrentUser } from "@/lib/auth";
 import { logoutAction } from "./(auth)/actions";
+import { Sidebar } from "@/components/sidebar";
 
 export const metadata: Metadata = {
   title: "ImpactQuest",
@@ -19,47 +19,15 @@ export default async function RootLayout({
 
   return (
     <html lang="id">
-      <body className="min-h-screen antialiased">
-        <header className="border-b bg-white">
-          <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-            <Link href="/" className="font-semibold">
-              ImpactQuest
-            </Link>
-            <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 text-sm">
-              <Link href="/missions">Misi</Link>
-              <Link href="/community">Komunitas</Link>
-              <Link href="/leaderboard">Board</Link>
-              <Link href="/rewards">Reward</Link>
-              {user ? (
-                <>
-                  <Link href="/my-missions">Misi Saya</Link>
-                  <Link href="/portfolio">Portfolio</Link>
-                  <Link href="/notifications">Notif</Link>
-                </>
-              ) : null}
-              <Link href="/dashboard">Dashboard</Link>
-              <Link href="/admin">Admin</Link>
-              {user ? (
-                <>
-                  <span className="text-slate-500">
-                    {user.full_name} · {user.role}
-                  </span>
-                  <form action={logoutAction}>
-                    <button type="submit" className="underline">
-                      Logout
-                    </button>
-                  </form>
-                </>
-              ) : (
-                <>
-                  <Link href="/login">Login</Link>
-                  <Link href="/register">Daftar</Link>
-                </>
-              )}
-            </div>
-          </nav>
-        </header>
-        <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
+      <body className="min-h-screen bg-slate-50 antialiased text-slate-900">
+        <div className="flex min-h-screen flex-col md:flex-row">
+          <Sidebar user={user} logoutAction={logoutAction} />
+          <div className="flex-1 min-w-0 md:pl-72">
+            <main className="mx-auto w-full max-w-6xl px-4 py-6 md:px-8 md:py-8">
+              {children}
+            </main>
+          </div>
+        </div>
       </body>
     </html>
   );

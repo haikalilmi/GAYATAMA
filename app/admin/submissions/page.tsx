@@ -17,8 +17,8 @@ export default async function SubmissionQueuePage({
 }) {
   const sp = await searchParams;
   const filter = parseQueueFilter(sp);
-  const rows = listSubmissions(filter);
-  const missions = listMissionsForFilter();
+  const rows = await listSubmissions(filter);
+  const missions = await listMissionsForFilter();
   const tab = filter.tab ?? "pending";
 
   return (

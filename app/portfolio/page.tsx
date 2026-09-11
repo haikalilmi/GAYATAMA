@@ -4,7 +4,7 @@ import { calculateLevel } from "@/lib/level";
 
 export default async function PortfolioPage() {
   const user = await requireUser("/portfolio");
-  const p = getUserPortfolio(user.id);
+  const p = await getUserPortfolio(user.id);
   if (!p) return <p>Profil tidak ketemu.</p>;
   const { title } = calculateLevel(p.total_xp);
 

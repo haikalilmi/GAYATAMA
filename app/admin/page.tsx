@@ -11,7 +11,7 @@ function Stat({ label, value, href }: { label: string; value: number; href: stri
 }
 
 export default async function AdminPage() {
-  const stats = getAdminStats();
+  const stats = await getAdminStats();
 
   return (
     <div className="space-y-6">

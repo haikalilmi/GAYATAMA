@@ -1,7 +1,7 @@
+import { join } from "node:path";
 import { createHash } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
-import { getDbPath } from "./db";
+import { getProjectRoot } from "./db";
 
 export class EvidenceError extends Error {}
 
@@ -51,12 +51,12 @@ export async function storeEvidenceFile(
   const fileHash = createHash("sha256").update(buf).digest("hex");
   // data/evidence/{user_id}/{submission_id}/{uuid}.ext, relatif dari root proyek
   const rel = join("data", "evidence", userId, submissionId, `${crypto.randomUUID()}.${ext}`);
-  const abs = join(getDbPath(), "..", "..", rel);
+  const abs = join(getProjectRoot(), rel);
   mkdirSync(join(abs, ".."), { recursive: true });
   writeFileSync(abs, buf);
   return { storage_path: rel, file_hash: fileHash, mime_type: file.type, file_size: buf.length };
 }
 
 export function evidenceAbsPath(storagePath: string): string {
-  return join(getDbPath(), "..", "..", storagePath);
+  return join(getProjectRoot(), storagePath);
 }

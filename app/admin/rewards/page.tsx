@@ -2,7 +2,7 @@ import Link from "next/link";
 import { listAllRewards } from "@/lib/rewards-admin";
 
 export default async function AdminRewardsPage() {
-  const rows = listAllRewards();
+  const rows = await listAllRewards();
 
   return (
     <div className="space-y-6">

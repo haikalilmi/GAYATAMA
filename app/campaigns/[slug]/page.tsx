@@ -4,7 +4,7 @@ import { getCampaignBySlug } from "@/lib/campaigns";
 
 export default async function CampaignPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const c = getCampaignBySlug(slug);
+  const c = await getCampaignBySlug(slug);
   if (!c) notFound();
   const pct = c.target_value ? Math.min(100, Math.round((c.current / c.target_value) * 100)) : 0;
 

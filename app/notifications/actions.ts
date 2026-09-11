@@ -8,6 +8,6 @@ import { markAllRead } from "@/lib/impact";
 export async function markReadAction(): Promise<void> {
   const user = await getCurrentUser();
   if (!user) redirect("/login?next=%2Fnotifications");
-  markAllRead(user.id);
+  await markAllRead(user.id);
   revalidatePath("/notifications");
 }

@@ -4,7 +4,7 @@ import { RewardForm } from "../form";
 
 export default async function EditRewardPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const reward = getRewardForAdmin(id);
+  const reward = await getRewardForAdmin(id);
   if (!reward) {
     return (
       <div className="space-y-3">

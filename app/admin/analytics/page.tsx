@@ -2,7 +2,7 @@ import { getAnalytics } from "@/lib/analytics";
 import { CategoryChart } from "./chart";
 
 export default async function AnalyticsPage() {
-  const a = getAnalytics();
+  const a = await getAnalytics();
 
   return (
     <div className="space-y-6">

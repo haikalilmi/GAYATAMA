@@ -10,7 +10,7 @@ export default async function LeaderboardPage({
   const user = await getCurrentUser();
   const { period } = await searchParams;
   const p = period === "month" ? "month" : "all";
-  const rows = getLeaderboard(user?.id ?? null, p);
+  const rows = await getLeaderboard(user?.id ?? null, p);
 
   return (
     <div className="mx-auto max-w-lg space-y-6">

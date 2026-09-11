@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getDb } from "./db";
+import { sql, getSupabase } from "./db";
 
 export interface AdminStats {
   pending: number;
@@ -24,30 +24,27 @@ export interface QueueRow {
 
 const REVIEWABLE = ["PENDING", "UNDER_REVIEW"];
 
-export function getAdminStats(): AdminStats {
-  const db = getDb();
-  const one = (sql: string) => (db.prepare(sql).get() as { c: number }).c;
-  const recentActivity = db
-    .prepare(
-      `SELECT vl.id, vl.action, vl.created_at, m.title AS mission_title, u.full_name AS user_name
-       FROM verification_logs vl
-       JOIN submissions s ON s.id = vl.submission_id
-       JOIN missions m ON m.id = s.mission_id
-       JOIN users u ON u.id = s.user_id
-       ORDER BY vl.created_at DESC LIMIT 5`
-    )
-    .all() as unknown as AdminStats["recentActivity"];
+export async function getAdminStats(): Promise<AdminStats> {
+  const one = async (q: string) => Number((await sql<{ c: number }>(q).get())!.c);
+  const recentActivity = await sql<AdminStats["recentActivity"][0]>(
+    `SELECT vl.id, vl.action, vl.created_at, m.title AS mission_title, u.full_name AS user_name
+     FROM verification_logs vl
+     JOIN submissions s ON s.id = vl.submission_id
+     JOIN missions m ON m.id = s.mission_id
+     JOIN users u ON u.id = s.user_id
+     ORDER BY vl.created_at DESC LIMIT 5`
+  ).all();
   return {
-    pending: one(`SELECT COUNT(*) AS c FROM submissions WHERE status IN ('PENDING','UNDER_REVIEW')`),
-    highRisk: one(
+    pending: await one(`SELECT COUNT(*) AS c FROM submissions WHERE status IN ('PENDING','UNDER_REVIEW')`),
+    highRisk: await one(
       `SELECT COUNT(*) AS c FROM submissions WHERE risk_level = 'HIGH' AND status IN ('PENDING','UNDER_REVIEW')`
     ),
-    activeMissions: one(`SELECT COUNT(*) AS c FROM missions WHERE status = 'ACTIVE'`),
-    verifiedToday: one(
-      `SELECT COUNT(*) AS c FROM submissions WHERE status = 'APPROVED' AND reviewed_at > strftime('%Y-%m-%dT00:00:00Z','now')`
+    activeMissions: await one(`SELECT COUNT(*) AS c FROM missions WHERE status = 'ACTIVE'`),
+    verifiedToday: await one(
+      `SELECT COUNT(*) AS c FROM submissions WHERE status = 'APPROVED' AND reviewed_at > date_trunc('day', NOW())`
     ),
     recentActivity,
-    queuePreview: listSubmissions({ tab: "pending" }).slice(0, 8),
+    queuePreview: (await listSubmissions({ tab: "pending" })).slice(0, 8),
   };
 }
 
@@ -69,33 +66,38 @@ export function parseQueueFilter(input: Record<string, string | string[] | undef
   return parsed.success ? parsed.data : {};
 }
 
-export function listSubmissions(filter: QueueFilter): QueueRow[] {
+export async function listSubmissions(filter: QueueFilter): Promise<QueueRow[]> {
   const tab = filter.tab ?? "pending";
   const where: string[] = [];
-  const params: string[] = [];
+  const params: (string | number | boolean | null)[] = [];
+  let idx = 0;
   if (tab === "pending") {
-    where.push(`s.status IN (${REVIEWABLE.map(() => "?").join(",")})`);
+    where.push(`s.status IN (${REVIEWABLE.map(() => { idx++; return `$${idx}`; }).join(",")})`);
     params.push(...REVIEWABLE);
   } else if (tab === "flagged") {
     where.push("s.risk_level = 'HIGH'");
-    where.push(`s.status IN (${REVIEWABLE.map(() => "?").join(",")})`);
+    where.push(`s.status IN (${REVIEWABLE.map(() => { idx++; return `$${idx}`; }).join(",")})`);
     params.push(...REVIEWABLE);
   } else if (tab === "revision") where.push("s.status = 'REVISION_REQUESTED'");
   else if (tab === "approved") where.push("s.status = 'APPROVED'");
   else if (tab === "rejected") where.push("s.status = 'REJECTED'");
   if (filter.risk) {
-    where.push("s.risk_level = ?");
+    idx++;
+    where.push(`s.risk_level = $${idx}`);
     params.push(filter.risk);
   }
   if (filter.mission) {
-    where.push("s.mission_id = ?");
+    idx++;
+    where.push(`s.mission_id = $${idx}`);
     params.push(filter.mission);
   }
   if (filter.q) {
-    where.push("(u.full_name LIKE ? OR u.email LIKE ? OR m.title LIKE ?)");
+    idx++;
+    where.push(`(u.full_name LIKE $${idx} OR u.email LIKE $${idx + 1} OR m.title LIKE $${idx + 2})`);
     params.push(`%${filter.q}%`, `%${filter.q}%`, `%${filter.q}%`);
+    idx += 2;
   }
-  const sql =
+  const pgQuery =
     `SELECT s.id, s.status, s.risk_level, s.risk_score, s.submitted_at,
             u.full_name AS user_name, u.email AS user_email,
             m.title AS mission_title, m.slug AS mission_slug
@@ -104,12 +106,16 @@ export function listSubmissions(filter: QueueFilter): QueueRow[] {
      JOIN missions m ON m.id = s.mission_id` +
     (where.length > 0 ? ` WHERE ${where.join(" AND ")}` : "") +
     " ORDER BY s.risk_score DESC, s.submitted_at ASC";
-  return getDb().prepare(sql).all(...params) as unknown as QueueRow[];
+  const { data, error } = await getSupabase().rpc("exec_sql", {
+    query_text: pgQuery,
+    params: params as unknown as Record<string, unknown>,
+  });
+  if (error) throw new Error(`SQL Error: ${error.message}`);
+  return (data ?? []) as QueueRow[];
 }
 
-export function listMissionsForFilter(): { id: string; title: string }[] {
-  return getDb().prepare("SELECT id, title FROM missions ORDER BY title").all() as unknown as {
-    id: string;
-    title: string;
-  }[];
+export async function listMissionsForFilter(): Promise<{ id: string; title: string }[]> {
+  return sql<{ id: string; title: string }>(
+    "SELECT id, title FROM missions ORDER BY title"
+  ).all();
 }

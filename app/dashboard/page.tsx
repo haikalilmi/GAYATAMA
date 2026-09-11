@@ -9,12 +9,12 @@ const thresholds = [0, 500, 1200, 2000, 3500];
 
 export default async function DashboardPage() {
   const user = await requireUser("/dashboard");
-  const portfolio = getUserPortfolio(user.id);
+  const portfolio = await getUserPortfolio(user.id);
   const { title } = calculateLevel(user.total_xp);
-  const parts = listUserParticipations(user.id);
+  const parts = await listUserParticipations(user.id);
   const active = parts.filter((p) => p.status === "JOINED");
   const joinedIds = new Set(parts.filter((p) => p.status !== "CANCELLED" && p.status !== "EXPIRED").map((p) => p.mission_id));
-  const suggested = listMissions({}).filter((m) => !joinedIds.has(m.id)).slice(0, 3);
+  const suggested = (await listMissions({})).filter((m) => !joinedIds.has(m.id)).slice(0, 3);
 
   const idx = thresholds.findIndex((t) => user.total_xp < t);
   const nextAt = idx === -1 ? null : thresholds[idx];

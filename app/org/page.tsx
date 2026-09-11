@@ -15,7 +15,7 @@ export default async function OrgDashboardPage() {
       </div>
     );
   }
-  const campaigns = getCampaigns();
+  const campaigns = await getCampaigns();
 
   return (
     <div className="space-y-6">

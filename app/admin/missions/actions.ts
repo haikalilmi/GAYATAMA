@@ -38,7 +38,7 @@ function readForm(form: FormData): MissionForm {
 export async function createMissionAction(_prev: MissionState | null, form: FormData): Promise<MissionState> {
   try {
     await mustAdmin();
-    const id = createMission(readForm(form));
+    const id = await createMission(readForm(form));
     revalidatePath("/admin/missions");
     redirect(`/admin/missions/${id}`);
   } catch (e) {
@@ -52,7 +52,7 @@ export async function updateMissionAction(_prev: MissionState | null, form: Form
   if (typeof id !== "string") return { error: "Data tidak lengkap." };
   try {
     await mustAdmin();
-    updateMission(id, readForm(form));
+    await updateMission(id, readForm(form));
     revalidatePath("/admin/missions");
     revalidatePath(`/admin/missions/${id}`);
     return { error: "" };
@@ -68,7 +68,7 @@ export async function missionStatusAction(_prev: MissionState | null, form: Form
   if (typeof id !== "string" || typeof next !== "string") return { error: "Data tidak lengkap." };
   try {
     await mustAdmin();
-    setMissionStatus(id, next);
+    await setMissionStatus(id, next);
     revalidatePath("/admin/missions");
     return { error: "" };
   } catch (e) {

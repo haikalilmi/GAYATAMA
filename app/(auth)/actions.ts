@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { getDb } from "@/lib/db";
+import { sql } from "@/lib/db";
 import {
   createSession,
   destroySession,
@@ -35,9 +35,10 @@ export async function loginAction(
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Input tidak valid." };
   const email = parsed.data.email.toLowerCase();
   if (!email.includes("@")) return { error: "Email tidak valid." };
-  const row = getDb()
-    .prepare("SELECT id, password_hash FROM users WHERE email = ?")
-    .get(email) as { id: string; password_hash: string } | undefined;
+  const row = await sql<{ id: string; password_hash: string }>(
+    "SELECT id, password_hash FROM users WHERE email = ?",
+    email
+  ).get();
   if (!row || !verifyPassword(parsed.data.password, row.password_hash)) {
     return { error: "Email atau password salah." };
   }
@@ -61,14 +62,14 @@ export async function registerAction(
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Input tidak valid." };
   const email = parsed.data.email.toLowerCase();
   if (!email.includes("@")) return { error: "Email tidak valid." };
-  const db = getDb();
-  const exists = db.prepare("SELECT 1 FROM users WHERE email = ?").get(email);
+  const exists = await sql("SELECT 1 FROM users WHERE email = ?", email).get();
   if (exists) return { error: "Email sudah terdaftar. Silakan login." };
   const id = crypto.randomUUID();
   // Role selalu USER. Client tidak boleh tentukan role.
-  db.prepare(
-    "INSERT INTO users (id, email, full_name, password_hash, role) VALUES (?, ?, ?, ?, 'USER')"
-  ).run(id, email, parsed.data.full_name, hashPassword(parsed.data.password));
+  await sql(
+    "INSERT INTO users (id, email, full_name, password_hash, role) VALUES (?, ?, ?, ?, 'USER')",
+    id, email, parsed.data.full_name, hashPassword(parsed.data.password)
+  ).run();
   await createSession(id);
   redirect("/dashboard");
 }

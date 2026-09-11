@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getDb } from "./db";
+import { sql } from "./db";
 import { categories, difficulties, missionTypes } from "./mission-constants";
 
 export { categories, difficulties, missionTypes };
@@ -33,31 +33,40 @@ export interface MissionCard {
   point_reward: number;
 }
 
-export function listMissions(filter: MissionFilter): MissionCard[] {
+export async function listMissions(filter: MissionFilter): Promise<MissionCard[]> {
   const where = ["status = 'ACTIVE'"];
-  const params: string[] = [];
+  const params: (string | number | boolean | null)[] = [];
+  let idx = 0;
   if (filter.category) {
-    where.push("category = ?");
+    idx++;
+    where.push(`category = $${idx}`);
     params.push(filter.category);
   }
   if (filter.difficulty) {
-    where.push("difficulty = ?");
+    idx++;
+    where.push(`difficulty = $${idx}`);
     params.push(filter.difficulty);
   }
   if (filter.mission_type) {
-    where.push("mission_type = ?");
+    idx++;
+    where.push(`mission_type = $${idx}`);
     params.push(filter.mission_type);
   }
   if (filter.q) {
-    where.push("(title LIKE ? OR short_description LIKE ?)");
+    idx++;
+    where.push(`(title LIKE $${idx} OR short_description LIKE $${idx + 1})`);
     params.push(`%${filter.q}%`, `%${filter.q}%`);
+    idx++;
   }
-  return getDb()
-    .prepare(
-      `SELECT id, title, slug, short_description, category, difficulty, mission_type, xp_reward, point_reward
-       FROM missions WHERE ${where.join(" AND ")} ORDER BY title`
-    )
-    .all(...params) as unknown as MissionCard[];
+  // Use $N directly since we built them manually
+  const pgQuery = `SELECT id, title, slug, short_description, category, difficulty, mission_type, xp_reward, point_reward
+     FROM missions WHERE ${where.join(" AND ")} ORDER BY title`;
+  const { data, error } = await (await import("./db")).getSupabase().rpc("exec_sql", {
+    query_text: pgQuery,
+    params: params as unknown as Record<string, unknown>,
+  });
+  if (error) throw new Error(`SQL Error: ${error.message}`);
+  return (data ?? []) as MissionCard[];
 }
 
 export interface MissionMetric {
@@ -70,31 +79,29 @@ export interface MissionDetail extends MissionCard {
   description: string;
   repeat_type: string;
   participation_expiry_hours: number;
-  requires_before_photo: number;
-  requires_after_photo: number;
-  requires_description: number;
-  requires_proof_code: number;
-  requires_partner_code: number;
+  requires_before_photo: boolean;
+  requires_after_photo: boolean;
+  requires_description: boolean;
+  requires_proof_code: boolean;
+  requires_partner_code: boolean;
   sdg_codes: string;
   metrics: MissionMetric[];
 }
 
-export function getMissionBySlug(slug: string): MissionDetail | null {
-  const row = getDb()
-    .prepare(
-      `SELECT id, title, slug, short_description, description, category, difficulty, mission_type,
-              xp_reward, point_reward, repeat_type, participation_expiry_hours,
-              requires_before_photo, requires_after_photo, requires_description,
-              requires_proof_code, requires_partner_code, sdg_codes
-       FROM missions WHERE slug = ? AND status = 'ACTIVE'`
-    )
-    .get(slug) as Omit<MissionDetail, "metrics"> | undefined;
+export async function getMissionBySlug(slug: string): Promise<MissionDetail | null> {
+  const row = await sql<Omit<MissionDetail, "metrics">>(
+    `SELECT id, title, slug, short_description, description, category, difficulty, mission_type,
+            xp_reward, point_reward, repeat_type, participation_expiry_hours,
+            requires_before_photo, requires_after_photo, requires_description,
+            requires_proof_code, requires_partner_code, sdg_codes
+     FROM missions WHERE slug = ? AND status = 'ACTIVE'`,
+    slug
+  ).get();
   if (!row) return null;
-  const metrics = getDb()
-    .prepare(
-      "SELECT name, metric_key, unit FROM mission_metrics WHERE mission_id = ? ORDER BY display_order"
-    )
-    .all(row.id) as unknown as MissionMetric[];
+  const metrics = await sql<MissionMetric>(
+    "SELECT name, metric_key, unit FROM mission_metrics WHERE mission_id = ? ORDER BY display_order",
+    row.id
+  ).all();
   return { ...row, metrics };
 }
 
@@ -132,23 +139,22 @@ function slugify(title: string): string {
   return title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80) || "misi";
 }
 
-export function listAllMissions(): (MissionCard & { status: string })[] {
-  return getDb()
-    .prepare(
-      "SELECT id, title, slug, short_description, category, difficulty, mission_type, xp_reward, point_reward, status FROM missions ORDER BY created_at DESC"
-    )
-    .all() as unknown as (MissionCard & { status: string })[];
+export async function listAllMissions(): Promise<(MissionCard & { status: string })[]> {
+  return sql<MissionCard & { status: string }>(
+    "SELECT id, title, slug, short_description, category, difficulty, mission_type, xp_reward, point_reward, status FROM missions ORDER BY created_at DESC"
+  ).all();
 }
 
-export function getMissionForAdmin(id: string): (MissionForm & { id: string; slug: string; status: string }) | null {
-  const db = getDb();
-  const row = db.prepare("SELECT * FROM missions WHERE id = ?").get(id) as
-    | Record<string, string | number | null>
-    | undefined;
+export async function getMissionForAdmin(id: string): Promise<(MissionForm & { id: string; slug: string; status: string }) | null> {
+  const row = await sql<Record<string, string | number | boolean | null>>(
+    "SELECT * FROM missions WHERE id = ?",
+    id
+  ).get();
   if (!row) return null;
-  const metrics = db
-    .prepare("SELECT name, metric_key, unit FROM mission_metrics WHERE mission_id = ? ORDER BY display_order LIMIT 2")
-    .all(id) as unknown as { name: string; metric_key: string; unit: string }[];
+  const metrics = await sql<{ name: string; metric_key: string; unit: string }>(
+    "SELECT name, metric_key, unit FROM mission_metrics WHERE mission_id = ? ORDER BY display_order LIMIT 2",
+    id
+  ).all();
   return {
     id: row["id"] as string,
     slug: row["slug"] as string,
@@ -163,11 +169,11 @@ export function getMissionForAdmin(id: string): (MissionForm & { id: string; slu
     point_reward: row["point_reward"] as number,
     repeat_type: row["repeat_type"] as MissionForm["repeat_type"],
     participation_expiry_hours: row["participation_expiry_hours"] as number,
-    requires_before_photo: row["requires_before_photo"] as number,
-    requires_after_photo: row["requires_after_photo"] as number,
-    requires_description: row["requires_description"] as number,
-    requires_proof_code: row["requires_proof_code"] as number,
-    requires_partner_code: row["requires_partner_code"] as number,
+    requires_before_photo: row["requires_before_photo"] ? 1 : 0,
+    requires_after_photo: row["requires_after_photo"] ? 1 : 0,
+    requires_description: row["requires_description"] ? 1 : 0,
+    requires_proof_code: row["requires_proof_code"] ? 1 : 0,
+    requires_partner_code: row["requires_partner_code"] ? 1 : 0,
     metric1_name: metrics[0]?.name,
     metric1_key: metrics[0]?.metric_key,
     metric1_unit: metrics[0]?.unit,
@@ -194,78 +200,56 @@ function collectMetrics(data: MissionForm): { name: string; key: string; unit: s
   return out;
 }
 
-export function createMission(data: MissionForm): string {
-  const db = getDb();
+export async function createMission(data: MissionForm): Promise<string> {
   let slug = slugify(data.title);
-  if (db.prepare("SELECT 1 FROM missions WHERE slug = ?").get(slug))
-    slug = `${slug}-${Date.now().toString(36)}`;
+  const existing = await sql("SELECT 1 FROM missions WHERE slug = ?", slug).get();
+  if (existing) slug = `${slug}-${Date.now().toString(36)}`;
   const metrics = collectMetrics(data);
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
-  db.exec("BEGIN");
-  try {
-    db.prepare(
-      `INSERT INTO missions (id, title, slug, short_description, description, category, difficulty, mission_type,
-        xp_reward, point_reward, repeat_type, participation_expiry_hours,
-        requires_before_photo, requires_after_photo, requires_description, requires_proof_code, requires_partner_code,
-        sdg_codes, status, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '[]', 'DRAFT', ?, ?)`
-    ).run(
-      id, data.title, slug, data.short_description, data.description, data.category, data.difficulty,
-      data.mission_type, data.xp_reward, data.point_reward, data.repeat_type, data.participation_expiry_hours,
-      data.requires_before_photo, data.requires_after_photo, data.requires_description,
-      data.requires_proof_code, data.requires_partner_code, now, now
-    );
-    metrics.forEach((m, i) => {
-      db.prepare(
-        "INSERT INTO mission_metrics (id, mission_id, name, metric_key, unit, display_order) VALUES (?, ?, ?, ?, ?, ?)"
-      ).run(crypto.randomUUID(), id, m.name, m.key, m.unit, i);
-    });
-    db.exec("COMMIT");
-    return id;
-  } catch (e) {
-    try {
-      db.exec("ROLLBACK");
-    } catch {
-      // abaikan
-    }
-    throw e;
+  await sql(
+    `INSERT INTO missions (id, title, slug, short_description, description, category, difficulty, mission_type,
+      xp_reward, point_reward, repeat_type, participation_expiry_hours,
+      requires_before_photo, requires_after_photo, requires_description, requires_proof_code, requires_partner_code,
+      sdg_codes, status, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '[]', 'DRAFT', ?, ?)`,
+    id, data.title, slug, data.short_description, data.description, data.category, data.difficulty,
+    data.mission_type, data.xp_reward, data.point_reward, data.repeat_type, data.participation_expiry_hours,
+    !!data.requires_before_photo, !!data.requires_after_photo, !!data.requires_description,
+    !!data.requires_proof_code, !!data.requires_partner_code, now, now
+  ).run();
+  for (let i = 0; i < metrics.length; i++) {
+    const m = metrics[i];
+    await sql(
+      "INSERT INTO mission_metrics (id, mission_id, name, metric_key, unit, display_order) VALUES (?, ?, ?, ?, ?, ?)",
+      crypto.randomUUID(), id, m.name, m.key, m.unit, i
+    ).run();
   }
+  return id;
 }
 
-export function updateMission(id: string, data: MissionForm): void {
-  const db = getDb();
-  const exists = db.prepare("SELECT 1 FROM missions WHERE id = ?").get(id);
+export async function updateMission(id: string, data: MissionForm): Promise<void> {
+  const exists = await sql("SELECT 1 FROM missions WHERE id = ?", id).get();
   if (!exists) throw new MissionAdminError("Misi tidak ditemukan.");
   const metrics = collectMetrics(data);
   const now = new Date().toISOString();
-  db.exec("BEGIN");
-  try {
-    db.prepare(
-      `UPDATE missions SET title = ?, short_description = ?, description = ?, category = ?, difficulty = ?,
-        mission_type = ?, xp_reward = ?, point_reward = ?, repeat_type = ?, participation_expiry_hours = ?,
-        requires_before_photo = ?, requires_after_photo = ?, requires_description = ?,
-        requires_proof_code = ?, requires_partner_code = ?, updated_at = ? WHERE id = ?`
-    ).run(
-      data.title, data.short_description, data.description, data.category, data.difficulty,
-      data.mission_type, data.xp_reward, data.point_reward, data.repeat_type, data.participation_expiry_hours,
-      data.requires_before_photo, data.requires_after_photo, data.requires_description,
-      data.requires_proof_code, data.requires_partner_code, now, id
-    );
-    db.prepare("DELETE FROM mission_metrics WHERE mission_id = ?").run(id);
-    metrics.forEach((m, i) => {
-      db.prepare(
-        "INSERT INTO mission_metrics (id, mission_id, name, metric_key, unit, display_order) VALUES (?, ?, ?, ?, ?, ?)"
-      ).run(crypto.randomUUID(), id, m.name, m.key, m.unit, i);
-    });
-    db.exec("COMMIT");
-  } catch (e) {
-    try {
-      db.exec("ROLLBACK");
-    } catch {
-      // abaikan
-    }
-    throw e;
+  await sql(
+    `UPDATE missions SET title = ?, short_description = ?, description = ?, category = ?, difficulty = ?,
+      mission_type = ?, xp_reward = ?, point_reward = ?, repeat_type = ?, participation_expiry_hours = ?,
+      requires_before_photo = ?, requires_after_photo = ?, requires_description = ?,
+      requires_proof_code = ?, requires_partner_code = ?, updated_at = ? WHERE id = ?`,
+    data.title, data.short_description, data.description, data.category, data.difficulty,
+    data.mission_type, data.xp_reward, data.point_reward, data.repeat_type, data.participation_expiry_hours,
+    !!data.requires_before_photo, !!data.requires_after_photo, !!data.requires_description,
+    !!data.requires_proof_code, !!data.requires_partner_code, now, id
+  ).run();
+  await sql("DELETE FROM mission_metrics WHERE mission_id = ?", id).run();
+  for (let i = 0; i < metrics.length; i++) {
+    const m = metrics[i];
+    await sql(
+      "INSERT INTO mission_metrics (id, mission_id, name, metric_key, unit, display_order) VALUES (?, ?, ?, ?, ?, ?)",
+      crypto.randomUUID(), id, m.name, m.key, m.unit, i
+    ).run();
   }
 }
 
@@ -276,13 +260,12 @@ const STATUS_FLOW: Record<string, string[]> = {
   ENDED: [],
 };
 
-export function setMissionStatus(id: string, next: string): void {
-  const db = getDb();
-  const row = db.prepare("SELECT status FROM missions WHERE id = ?").get(id) as { status: string } | undefined;
+export async function setMissionStatus(id: string, next: string): Promise<void> {
+  const row = await sql<{ status: string }>("SELECT status FROM missions WHERE id = ?", id).get();
   if (!row) throw new MissionAdminError("Misi tidak ditemukan.");
   if (!(STATUS_FLOW[row.status] ?? []).includes(next))
     throw new MissionAdminError(`Transisi ${row.status} ke ${next} tidak boleh.`);
-  db.prepare("UPDATE missions SET status = ?, updated_at = ? WHERE id = ?").run(next, new Date().toISOString(), id);
+  await sql("UPDATE missions SET status = ?, updated_at = ? WHERE id = ?", next, new Date().toISOString(), id).run();
 }
 
 export function statusActions(status: string): string[] {

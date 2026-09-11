@@ -3,7 +3,7 @@ import { listAllMissions, statusActions } from "@/lib/missions";
 import { StatusButtons } from "./form";
 
 export default async function AdminMissionsPage() {
-  const rows = listAllMissions();
+  const rows = await listAllMissions();
 
   return (
     <div className="space-y-6">

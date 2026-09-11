@@ -35,7 +35,7 @@ function readForm(form: FormData): RewardForm {
 export async function createRewardAction(_prev: RewardState | null, form: FormData): Promise<RewardState> {
   try {
     await mustAdmin();
-    const id = createReward(readForm(form));
+    const id = await createReward(readForm(form));
     revalidatePath("/admin/rewards");
     redirect(`/admin/rewards/${id}`);
   } catch (e) {
@@ -49,7 +49,7 @@ export async function updateRewardAction(_prev: RewardState | null, form: FormDa
   if (typeof id !== "string") return { error: "Data tidak lengkap." };
   try {
     await mustAdmin();
-    updateReward(id, readForm(form));
+    await updateReward(id, readForm(form));
     revalidatePath("/admin/rewards");
     return { error: "" };
   } catch (e) {

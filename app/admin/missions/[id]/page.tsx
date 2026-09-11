@@ -4,7 +4,7 @@ import { MissionForm } from "../form";
 
 export default async function EditMissionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const mission = getMissionForAdmin(id);
+  const mission = await getMissionForAdmin(id);
   if (!mission) {
     return (
       <div className="space-y-3">

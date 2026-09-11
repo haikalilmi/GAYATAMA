@@ -1,4 +1,4 @@
-import type { DatabaseSync } from "node:sqlite";
+import { sql } from "./db";
 
 export type RiskLevel = "LOW" | "MEDIUM" | "HIGH";
 
@@ -27,16 +27,16 @@ export interface RiskInput {
   fileHashes: string[];
 }
 
-export function calculateSubmissionRisk(db: DatabaseSync, input: RiskInput): RiskResult {
+export async function calculateSubmissionRisk(input: RiskInput): Promise<RiskResult> {
   const flags: RiskFlag[] = [];
   let score = 0;
 
   if (input.fileHashes.length > 0) {
-    const dup = db
-      .prepare(
-        `SELECT 1 FROM submission_evidence WHERE file_hash IN (${input.fileHashes.map(() => "?").join(",")}) LIMIT 1`
-      )
-      .get(...input.fileHashes);
+    const ph = input.fileHashes.map((_, i) => `$${i + 1}`).join(",");
+    const dup = await sql(
+      `SELECT 1 FROM submission_evidence WHERE file_hash IN (${ph}) LIMIT 1`,
+      ...input.fileHashes
+    ).get();
     if (dup) {
       score += 50;
       flags.push({
@@ -56,13 +56,12 @@ export function calculateSubmissionRisk(db: DatabaseSync, input: RiskInput): Ris
     });
   }
 
-  const day = db
-    .prepare(
-      `SELECT COUNT(*) AS c FROM submissions WHERE user_id = ?
-       AND submitted_at > strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 day')`
-    )
-    .get(input.userId) as { c: number };
-  if (day.c >= 5) {
+  const day = await sql<{ c: number }>(
+    `SELECT COUNT(*) AS c FROM submissions WHERE user_id = ?
+     AND submitted_at > (NOW() - INTERVAL '1 day')`,
+    input.userId
+  ).get();
+  if (day && day.c >= 5) {
     score += 20;
     flags.push({
       type: "MANY_SUBMISSIONS",
@@ -71,9 +70,10 @@ export function calculateSubmissionRisk(db: DatabaseSync, input: RiskInput): Ris
     });
   }
 
-  const user = db
-    .prepare("SELECT created_at FROM users WHERE id = ?")
-    .get(input.userId) as { created_at: string } | undefined;
+  const user = await sql<{ created_at: string }>(
+    "SELECT created_at FROM users WHERE id = ?",
+    input.userId
+  ).get();
   if (user) {
     const ageMs = Date.now() - new Date(user.created_at).getTime();
     if (ageMs < 24 * 3600000) {

@@ -1,19 +1,18 @@
 import { readFile } from "node:fs/promises";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
-import { getDb } from "@/lib/db";
+import { sql } from "@/lib/db";
 import { evidenceAbsPath } from "@/lib/evidence";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
   const { id } = await params;
-  const row = getDb()
-    .prepare(
-      `SELECT se.storage_path, se.mime_type, s.user_id FROM submission_evidence se
-       JOIN submissions s ON s.id = se.submission_id WHERE se.id = ?`
-    )
-    .get(id) as { storage_path: string; mime_type: string; user_id: string } | undefined;
+  const row = await sql<{ storage_path: string; mime_type: string; user_id: string }>(
+    `SELECT se.storage_path, se.mime_type, s.user_id FROM submission_evidence se
+     JOIN submissions s ON s.id = se.submission_id WHERE se.id = ?`,
+    id
+  ).get();
   if (!row) return new Response("Tidak ketemu.", { status: 404 });
   if (user.role !== "ADMIN" && row.user_id !== user.id)
     return new Response("Akses ditolak.", { status: 403 });

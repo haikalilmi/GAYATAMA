@@ -1,5 +1,5 @@
 import { randomInt } from "node:crypto";
-import { getDb } from "./db";
+import { sql } from "./db";
 
 export class JoinError extends Error {}
 
@@ -30,12 +30,12 @@ interface MissionRow {
   participation_expiry_hours: number;
 }
 
-export function joinMission(userId: string, userRole: string, missionId: string): Participation {
+export async function joinMission(userId: string, userRole: string, missionId: string): Promise<Participation> {
   if (userRole !== "USER") throw new JoinError("Hanya akun USER yang bisa ikut misi.");
-  const db = getDb();
-  const mission = db
-    .prepare("SELECT id, status, start_at, end_at, repeat_type, participation_expiry_hours FROM missions WHERE id = ?")
-    .get(missionId) as MissionRow | undefined;
+  const mission = await sql<MissionRow>(
+    "SELECT id, status, start_at, end_at, repeat_type, participation_expiry_hours FROM missions WHERE id = ?",
+    missionId
+  ).get();
   if (!mission) throw new JoinError("Misi tidak ditemukan.");
   if (mission.status !== "ACTIVE") throw new JoinError("Misi tidak aktif dan tidak bisa diikuti.");
 
@@ -43,27 +43,28 @@ export function joinMission(userId: string, userRole: string, missionId: string)
   if (mission.start_at && now < new Date(mission.start_at)) throw new JoinError("Misi belum dimulai.");
   if (mission.end_at && now > new Date(mission.end_at)) throw new JoinError("Masa misi sudah berakhir.");
 
-  const dup = db
-    .prepare(
-      `SELECT 1 FROM participations WHERE user_id = ? AND mission_id = ?
-       AND status IN (${ACTIVE_STATUSES.map(() => "?").join(",")})`
-    )
-    .get(userId, missionId, ...ACTIVE_STATUSES);
+  // Build IN clause with $N
+  const ph = ACTIVE_STATUSES.map((_, i) => `$${i + 3}`).join(",");
+  const dup = await sql(
+    `SELECT 1 FROM participations WHERE user_id = $1 AND mission_id = $2
+     AND status IN (${ph})`,
+    userId, missionId, ...ACTIVE_STATUSES
+  ).get();
   if (dup) throw new JoinError("Kamu sudah ikut misi ini. Selesaikan atau batalkan dulu.");
 
   if (mission.repeat_type === "ONCE") {
-    const done = db
-      .prepare("SELECT 1 FROM participations WHERE user_id = ? AND mission_id = ? AND status = 'APPROVED'")
-      .get(userId, missionId);
+    const done = await sql(
+      "SELECT 1 FROM participations WHERE user_id = ? AND mission_id = ? AND status = 'APPROVED'",
+      userId, missionId
+    ).get();
     if (done) throw new JoinError("Misi ini hanya bisa diselesaikan sekali.");
   }
   if (mission.repeat_type === "WEEKLY") {
-    const last = db
-      .prepare(
-        `SELECT completed_at FROM participations WHERE user_id = ? AND mission_id = ?
-         AND status = 'APPROVED' AND rewarded = 1 ORDER BY completed_at DESC LIMIT 1`
-      )
-      .get(userId, missionId) as { completed_at: string } | undefined;
+    const last = await sql<{ completed_at: string }>(
+      `SELECT completed_at FROM participations WHERE user_id = ? AND mission_id = ?
+       AND status = 'APPROVED' AND rewarded = true ORDER BY completed_at DESC LIMIT 1`,
+      userId, missionId
+    ).get();
     if (last) {
       const next = new Date(last.completed_at).getTime() + 7 * 86400000;
       if (Date.now() < next) {
@@ -79,9 +80,10 @@ export function joinMission(userId: string, userRole: string, missionId: string)
     const id = crypto.randomUUID();
     const proofCode = genProofCode();
     try {
-      db.prepare(
-        "INSERT INTO participations (id, user_id, mission_id, proof_code, status, joined_at, expires_at) VALUES (?, ?, ?, ?, 'JOINED', ?, ?)"
-      ).run(id, userId, missionId, proofCode, joinedAt, expiresAt);
+      await sql(
+        "INSERT INTO participations (id, user_id, mission_id, proof_code, status, joined_at, expires_at) VALUES (?, ?, ?, ?, 'JOINED', ?, ?)",
+        id, userId, missionId, proofCode, joinedAt, expiresAt
+      ).run();
       return { id, mission_id: missionId, proof_code: proofCode, status: "JOINED", joined_at: joinedAt, expires_at: expiresAt };
     } catch {
       // kemungkinan tabrakan kode, coba lagi
@@ -90,13 +92,12 @@ export function joinMission(userId: string, userRole: string, missionId: string)
   throw new JoinError("Gagal membuat partisipasi. Coba lagi.");
 }
 
-export function getUserParticipation(userId: string, missionId: string): Participation | null {
-  const row = getDb()
-    .prepare(
-      `SELECT id, mission_id, proof_code, status, joined_at, expires_at FROM participations
-       WHERE user_id = ? AND mission_id = ? ORDER BY created_at DESC LIMIT 1`
-    )
-    .get(userId, missionId) as Participation | undefined;
+export async function getUserParticipation(userId: string, missionId: string): Promise<Participation | null> {
+  const row = await sql<Participation>(
+    `SELECT id, mission_id, proof_code, status, joined_at, expires_at FROM participations
+     WHERE user_id = ? AND mission_id = ? ORDER BY created_at DESC LIMIT 1`,
+    userId, missionId
+  ).get();
   return row ?? null;
 }
 
@@ -106,37 +107,36 @@ export interface ParticipationRow extends Participation {
   submission_id: string | null;
 }
 
-export function markExpiredParticipations(userId: string): void {
-  getDb()
-    .prepare(
-      `UPDATE participations SET status = 'EXPIRED', updated_at = strftime('%Y-%m-%dT%H:%M:%fZ','now')
-       WHERE user_id = ? AND status = 'JOINED' AND expires_at < strftime('%Y-%m-%dT%H:%M:%fZ','now')`
-    )
-    .run(userId);
+export async function markExpiredParticipations(userId: string): Promise<void> {
+  await sql(
+    `UPDATE participations SET status = 'EXPIRED', updated_at = NOW()
+     WHERE user_id = ? AND status = 'JOINED' AND expires_at < NOW()`,
+    userId
+  ).run();
 }
 
-export function listUserParticipations(userId: string): ParticipationRow[] {
-  markExpiredParticipations(userId);
-  return getDb()
-    .prepare(
-      `SELECT p.id, p.mission_id, p.proof_code, p.status, p.joined_at, p.expires_at,
-              m.title AS mission_title, m.slug AS mission_slug, s.id AS submission_id
-       FROM participations p JOIN missions m ON m.id = p.mission_id
-       LEFT JOIN submissions s ON s.participation_id = p.id
-       WHERE p.user_id = ? ORDER BY p.created_at DESC`
-    )
-    .all(userId) as unknown as ParticipationRow[];
+export async function listUserParticipations(userId: string): Promise<ParticipationRow[]> {
+  await markExpiredParticipations(userId);
+  return sql<ParticipationRow>(
+    `SELECT p.id, p.mission_id, p.proof_code, p.status, p.joined_at, p.expires_at,
+            m.title AS mission_title, m.slug AS mission_slug, s.id AS submission_id
+     FROM participations p JOIN missions m ON m.id = p.mission_id
+     LEFT JOIN submissions s ON s.participation_id = p.id
+     WHERE p.user_id = ? ORDER BY p.created_at DESC`,
+    userId
+  ).all();
 }
 
-export function cancelParticipation(userId: string, participationId: string): void {
-  const db = getDb();
-  const row = db
-    .prepare("SELECT user_id, status FROM participations WHERE id = ?")
-    .get(participationId) as { user_id: string; status: string } | undefined;
+export async function cancelParticipation(userId: string, participationId: string): Promise<void> {
+  const row = await sql<{ user_id: string; status: string }>(
+    "SELECT user_id, status FROM participations WHERE id = ?",
+    participationId
+  ).get();
   if (!row || row.user_id !== userId) throw new JoinError("Partisipasi tidak ditemukan.");
   if (row.status !== "JOINED") throw new JoinError("Hanya partisipasi JOINED yang bisa dibatalkan.");
-  db.prepare(
-    `UPDATE participations SET status = 'CANCELLED', cancelled_at = strftime('%Y-%m-%dT%H:%M:%fZ','now'),
-     updated_at = strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id = ?`
-  ).run(participationId);
+  await sql(
+    `UPDATE participations SET status = 'CANCELLED', cancelled_at = NOW(),
+     updated_at = NOW() WHERE id = ?`,
+    participationId
+  ).run();
 }

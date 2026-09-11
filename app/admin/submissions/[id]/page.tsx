@@ -11,7 +11,7 @@ export default async function AdminReviewPage({
 }) {
   const { id } = await params;
   const { msg } = await searchParams;
-  const data = getReviewData(id);
+  const data = await getReviewData(id);
   if (!data) {
     return (
       <div className="space-y-3">

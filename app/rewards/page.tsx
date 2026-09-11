@@ -5,7 +5,7 @@ import { RedeemButton } from "./redeem-button";
 
 export default async function RewardsPage() {
   const user = await getCurrentUser();
-  const rewards = listRewards();
+  const rewards = await listRewards();
 
   return (
     <div className="space-y-6">

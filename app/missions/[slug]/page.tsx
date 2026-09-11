@@ -11,7 +11,7 @@ export default async function MissionDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const mission = getMissionBySlug(slug);
+  const mission = await getMissionBySlug(slug);
   if (!mission) notFound();
   const user = await getCurrentUser();
 
@@ -79,8 +79,8 @@ export default async function MissionDetailPage({
       </div>
 
       {user ? (
-        (() => {
-          const part = getUserParticipation(user.id, mission.id);
+        await (async () => {
+          const part = await getUserParticipation(user.id, mission.id);
           if (part) {
             const expired = new Date(part.expires_at) < new Date();
             return (

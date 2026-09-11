@@ -1,4 +1,4 @@
-import type { DatabaseSync } from "node:sqlite";
+import { sql } from "./db";
 
 export type NotificationType =
   | "MISSION_VERIFIED"
@@ -8,17 +8,17 @@ export type NotificationType =
   | "LEVEL_UP"
   | "REWARD_REDEEMED";
 
-export function notify(
-  db: DatabaseSync,
+export async function notify(
   userId: string,
   type: NotificationType,
   title: string,
   message: string,
   referenceType?: string,
   referenceId?: string
-): void {
-  db.prepare(
+): Promise<void> {
+  await sql(
     `INSERT INTO notifications (id, user_id, type, title, message, reference_type, reference_id)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`
-  ).run(crypto.randomUUID(), userId, type, title, message, referenceType ?? null, referenceId ?? null);
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    crypto.randomUUID(), userId, type, title, message, referenceType ?? null, referenceId ?? null
+  ).run();
 }

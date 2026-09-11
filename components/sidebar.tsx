@@ -1,0 +1,325 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { motion, useScroll, useTransform } from "motion/react";
+import {
+  Compass,
+  Target,
+  Users,
+  Trophy,
+  Gift,
+  CheckCircle2,
+  Award,
+  Bell,
+  LayoutDashboard,
+  ShieldCheck,
+  LogOut,
+  LogIn,
+  UserPlus,
+  Menu,
+  X,
+  Plane,
+  Sparkles,
+} from "lucide-react";
+import type { SessionUser } from "@/lib/auth";
+
+interface SidebarProps {
+  user: SessionUser | null;
+  logoutAction: () => Promise<void>;
+}
+
+interface NavItem {
+  label: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
+}
+
+const SHRINK_DISTANCE = 400;
+const SIDEBAR_W = 288;
+
+export function Sidebar({ user, logoutAction }: SidebarProps) {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMd, setIsMd] = useState(true);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    setIsMd(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMd(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  const { scrollY } = useScroll();
+  const sidebarX = useTransform(scrollY, [0, SHRINK_DISTANCE], [-SIDEBAR_W, 0], {
+    clamp: true,
+  });
+  const sidebarPointerEvents = useTransform(scrollY, (y) =>
+    y < 15 ? "none" : "auto",
+  );
+
+  const mainNav: NavItem[] = [
+    { label: "Beranda", href: "/", icon: Compass },
+    { label: "Jelajahi Misi", href: "/missions", icon: Target },
+    { label: "Komunitas", href: "/community", icon: Users },
+    { label: "Papan Peringkat", href: "/leaderboard", icon: Trophy },
+    { label: "Katalog Reward", href: "/rewards", icon: Gift },
+  ];
+
+  const userNav: NavItem[] = [
+    { label: "Misi Saya", href: "/my-missions", icon: CheckCircle2 },
+    { label: "Portofolio Dampak", href: "/portfolio", icon: Award },
+    { label: "Notifikasi", href: "/notifications", icon: Bell },
+  ];
+
+  const manageNav: NavItem[] = [
+    { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    {
+      label: "Portal Admin",
+      href: "/admin",
+      icon: ShieldCheck,
+      badge: user?.role === "ADMIN" ? "Admin" : undefined,
+    },
+  ];
+
+  const isLinkActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
+
+  return (
+    <>
+      {/* Mobile Top Bar */}
+      <div className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-4 backdrop-blur-sm md:hidden">
+        <Link href="/" className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-600 text-white shadow-xs">
+            <Plane className="h-5 w-5 -rotate-45" />
+          </div>
+          <div>
+            <span className="text-base font-bold tracking-tight text-slate-900">ImpactQuest</span>
+            <span className="block text-[10px] font-medium tracking-wider text-sky-600 uppercase">Flight Hub</span>
+          </div>
+        </Link>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label="Buka navigasi"
+          className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+        >
+          {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {/* Backdrop for Mobile */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Sidebar Container */}
+      <motion.aside
+        className={`fixed top-0 bottom-0 left-0 z-50 flex w-72 flex-col border-r border-slate-200 bg-white ${
+          !isHome || !isMd
+            ? `transition-transform duration-200 ease-out ${
+                isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+              }`
+            : ""
+        }`}
+        style={
+          isHome && isMd
+            ? { x: sidebarX, pointerEvents: sidebarPointerEvents }
+            : undefined
+        }
+      >
+        {/* Sidebar Header / Brand */}
+        <div className="flex h-20 items-center justify-between border-b border-slate-100 px-6">
+          <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-3 group">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-tr from-sky-600 to-blue-700 text-white shadow-md shadow-sky-500/20 group-hover:scale-105 transition-transform">
+              <Plane className="h-5 w-5 -rotate-45" />
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="font-bold tracking-tight text-slate-900 text-lg">ImpactQuest</span>
+                <span className="inline-flex items-center rounded-full bg-sky-50 px-1.5 py-0.5 text-[9px] font-semibold text-sky-700 ring-1 ring-inset ring-sky-600/20">
+                  LIVE
+                </span>
+              </div>
+              <p className="text-[11px] font-medium text-slate-500 tracking-tight">Social Action & Flight Hub</p>
+            </div>
+          </Link>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="md:hidden rounded-lg p-1 text-slate-500 hover:bg-slate-100"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Navigation Sections */}
+        <div className="flex-1 overflow-y-auto px-4 py-5 space-y-6 scrollbar-thin">
+          {/* Main Section */}
+          <div className="space-y-1">
+            <p className="px-3 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
+              Eksplorasi
+            </p>
+            {mainNav.map((item) => {
+              const active = isLinkActive(item.href);
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
+                    active
+                      ? "bg-sky-50 text-sky-700 font-semibold shadow-2xs"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className={`h-4 w-4 ${active ? "text-sky-600" : "text-slate-400"}`} />
+                    <span>{item.label}</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* User Specific Section */}
+          {user && (
+            <div className="space-y-1 pt-2 border-t border-slate-100">
+              <p className="px-3 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
+                Aktivitas Saya
+              </p>
+              {userNav.map((item) => {
+                const active = isLinkActive(item.href);
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className={`flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
+                      active
+                        ? "bg-sky-50 text-sky-700 font-semibold shadow-2xs"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Icon className={`h-4 w-4 ${active ? "text-sky-600" : "text-slate-400"}`} />
+                      <span>{item.label}</span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Management & Admin Section */}
+          <div className="space-y-1 pt-2 border-t border-slate-100">
+            <p className="px-3 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
+              Kelola & Analitik
+            </p>
+            {manageNav.map((item) => {
+              const active = isLinkActive(item.href);
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
+                    active
+                      ? "bg-sky-50 text-sky-700 font-semibold shadow-2xs"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className={`h-4 w-4 ${active ? "text-sky-600" : "text-slate-400"}`} />
+                    <span>{item.label}</span>
+                  </div>
+                  {item.badge && (
+                    <span className="rounded bg-slate-900 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Flight Altitude Live Telemetry Mini-Card */}
+          <div className="rounded-xl border border-sky-100 bg-linear-to-b from-sky-50/70 to-white p-3.5 shadow-2xs">
+            <div className="flex items-center gap-2 text-sky-700 font-semibold text-xs mb-1">
+              <Sparkles className="h-3.5 w-3.5 text-sky-600" />
+              <span>Altitude Dampak</span>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Misi aktif dimonitor secara real-time dari ketinggian untuk verifikasi transparan.
+            </p>
+          </div>
+        </div>
+
+        {/* Sidebar Footer / User Profile or Auth */}
+        <div className="border-t border-slate-200 bg-slate-50/70 p-4">
+          {user ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 font-bold text-white shadow-xs text-sm">
+                  {user.full_name ? user.full_name.charAt(0).toUpperCase() : "U"}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="truncate text-sm font-semibold text-slate-900">{user.full_name}</p>
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center rounded-sm bg-slate-200 px-1.5 py-0.5 text-[10px] font-medium text-slate-800">
+                      {user.role}
+                    </span>
+                    <span className="text-[11px] text-slate-500 font-medium">
+                      {user.total_xp} XP
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <form action={logoutAction} className="pt-1">
+                <button
+                  type="submit"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                >
+                  <LogOut className="h-3.5 w-3.5 text-slate-500" />
+                  <span>Keluar Akun</span>
+                </button>
+              </form>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-slate-600">Mulai aksi sosial terverifikasi</p>
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  href="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-2xs hover:bg-slate-50 transition-colors"
+                >
+                  <LogIn className="h-3.5 w-3.5" />
+                  <span>Masuk</span>
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-center gap-1.5 rounded-lg bg-sky-600 px-3 py-2 text-xs font-semibold text-white shadow-xs hover:bg-sky-500 transition-colors"
+                >
+                  <UserPlus className="h-3.5 w-3.5" />
+                  <span>Daftar</span>
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+      </motion.aside>
+    </>
+  );
+}

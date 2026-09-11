@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
-import { getDb } from "@/lib/db";
+import { sql } from "@/lib/db";
 import { SubmitForm } from "@/app/my-missions/[id]/submit/form";
 import { resubmitEvidenceAction } from "./actions";
 
@@ -9,24 +9,20 @@ export default async function ResubmitPage({ params }: { params: Promise<{ id: s
   const user = await getCurrentUser();
   if (!user) redirect("/login");
   const { id } = await params;
-  const db = getDb();
-  const sub = db
-    .prepare(
-      `SELECT s.id, s.user_id, s.status, s.revision_count, s.description, s.proof_code_input, s.partner_code_input,
-              m.id AS mission_id, m.title,
-              m.requires_before_photo, m.requires_after_photo, m.requires_description,
-              m.requires_proof_code, m.requires_partner_code
-       FROM submissions s JOIN missions m ON m.id = s.mission_id WHERE s.id = ?`
-    )
-    .get(id) as
-    | {
-        id: string; user_id: string; status: string; revision_count: number;
-        description: string | null; proof_code_input: string | null; partner_code_input: string | null;
-        mission_id: string; title: string;
-        requires_before_photo: number; requires_after_photo: number; requires_description: number;
-        requires_proof_code: number; requires_partner_code: number;
-      }
-    | undefined;
+  const sub = await sql<{
+    id: string; user_id: string; status: string; revision_count: number;
+    description: string | null; proof_code_input: string | null; partner_code_input: string | null;
+    mission_id: string; title: string;
+    requires_before_photo: boolean; requires_after_photo: boolean; requires_description: boolean;
+    requires_proof_code: boolean; requires_partner_code: boolean;
+  }>(
+    `SELECT s.id, s.user_id, s.status, s.revision_count, s.description, s.proof_code_input, s.partner_code_input,
+            m.id AS mission_id, m.title,
+            m.requires_before_photo, m.requires_after_photo, m.requires_description,
+            m.requires_proof_code, m.requires_partner_code
+     FROM submissions s JOIN missions m ON m.id = s.mission_id WHERE s.id = ?`,
+    id
+  ).get();
 
   if (!sub || sub.user_id !== user.id || sub.status !== "REVISION_REQUESTED") {
     return (
@@ -39,17 +35,16 @@ export default async function ResubmitPage({ params }: { params: Promise<{ id: s
   }
 
   const metrics = (
-    db.prepare("SELECT id, name, unit FROM mission_metrics WHERE mission_id = ? ORDER BY display_order").all(sub.mission_id) as unknown as {
-      id: string;
-      name: string;
-      unit: string;
-    }[]
+    await sql<{ id: string; name: string; unit: string }>(
+      "SELECT id, name, unit FROM mission_metrics WHERE mission_id = ? ORDER BY display_order",
+      sub.mission_id
+    ).all()
   ).map((m) => ({ id: m.id, name: m.name, unit: m.unit }));
   const reported = (
-    db.prepare("SELECT mission_metric_id, reported_value FROM submission_impacts WHERE submission_id = ?").all(sub.id) as unknown as {
-      mission_metric_id: string;
-      reported_value: number;
-    }[]
+    await sql<{ mission_metric_id: string; reported_value: number }>(
+      "SELECT mission_metric_id, reported_value FROM submission_impacts WHERE submission_id = ?",
+      sub.id
+    ).all()
   ).reduce<Record<string, number>>((acc, r) => ({ ...acc, [r.mission_metric_id]: r.reported_value }), {});
 
   return (
@@ -67,11 +62,11 @@ export default async function ResubmitPage({ params }: { params: Promise<{ id: s
         submitLabel="Kirim revisi"
         pendingLabel="Mengunggah..."
         requires={{
-          before: sub.requires_before_photo === 1,
-          after: sub.requires_after_photo === 1,
-          description: sub.requires_description === 1,
-          proofCode: sub.requires_proof_code === 1,
-          partnerCode: sub.requires_partner_code === 1,
+          before: !!sub.requires_before_photo,
+          after: !!sub.requires_after_photo,
+          description: !!sub.requires_description,
+          proofCode: !!sub.requires_proof_code,
+          partnerCode: !!sub.requires_partner_code,
         }}
         metrics={metrics}
         defaults={{

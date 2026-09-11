@@ -14,7 +14,7 @@ export async function redeemAction(_prev: RedeemState | null, form: FormData): P
   const id = form.get("reward_id");
   if (typeof id !== "string") return { error: "Data tidak lengkap." };
   try {
-    const { demoCode } = redeemReward(user.id, id);
+    const { demoCode } = await redeemReward(user.id, id);
     redirect(`/rewards/history?code=${encodeURIComponent(demoCode)}`);
   } catch (e) {
     if (e instanceof RedeemError) return { error: e.message };

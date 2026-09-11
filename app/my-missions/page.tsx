@@ -27,7 +27,7 @@ export default async function MyMissionsPage({
   const user = await requireUser("/my-missions");
   const { tab } = await searchParams;
   const active = tabs.find((t) => t.key === tab) ?? tabs[0];
-  const rows = listUserParticipations(user.id).filter((r) =>
+  const rows = (await listUserParticipations(user.id)).filter((r) =>
     (active.match as readonly string[]).includes(r.status)
   );
 

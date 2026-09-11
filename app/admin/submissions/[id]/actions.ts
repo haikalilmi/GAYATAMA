@@ -23,7 +23,7 @@ export async function startReviewAction(_prev: ReviewState | null, form: FormDat
   const id = form.get("submission_id");
   if (typeof id !== "string") return { error: "Data tidak lengkap.", ok: "" };
   try {
-    startReview(admin.id, id);
+    await startReview(admin.id, id);
     revalidatePath(`/admin/submissions/${id}`);
     return { error: "", ok: "Review dimulai." };
   } catch (e) {
@@ -46,7 +46,7 @@ export async function approveAction(_prev: ReviewState | null, form: FormData): 
     }
   }
   try {
-    const r = approveSubmission(admin.id, id, values);
+    const r = await approveSubmission(admin.id, id, values);
     revalidatePath(`/admin/submissions/${id}`);
     if (r.already) redirect(`/admin/submissions/${id}?msg=${encodeURIComponent("Sudah disetujui sebelumnya, tidak ada reward ganda.")}`);
     const bits = [`Disetujui! +${r.xp} XP, +${r.points} poin.`];
@@ -70,7 +70,7 @@ export async function rejectAction(_prev: ReviewState | null, form: FormData): P
   if (!(REJECTION_REASONS as readonly string[]).includes(reason))
     return { error: "Alasan tidak valid.", ok: "" };
   try {
-    rejectSubmission(admin.id, id, reason, typeof note === "string" && note ? note : undefined);
+    await rejectSubmission(admin.id, id, reason, typeof note === "string" && note ? note : undefined);
     revalidatePath(`/admin/submissions/${id}`);
     redirect(`/admin/submissions/${id}?msg=${encodeURIComponent("Submission ditolak.")}`);
   } catch (e) {
@@ -87,7 +87,7 @@ export async function revisionAction(_prev: ReviewState | null, form: FormData):
   if (typeof id !== "string" || typeof note !== "string" || !note.trim())
     return { error: "Catatan revisi wajib diisi.", ok: "" };
   try {
-    requestRevision(admin.id, id, note);
+    await requestRevision(admin.id, id, note);
     revalidatePath(`/admin/submissions/${id}`);
     redirect(`/admin/submissions/${id}?msg=${encodeURIComponent("Revisi diminta.")}`);
   } catch (e) {

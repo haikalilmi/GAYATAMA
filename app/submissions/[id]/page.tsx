@@ -7,7 +7,7 @@ export default async function SubmissionPage({ params }: { params: Promise<{ id:
   const user = await getCurrentUser();
   if (!user) redirect("/login");
   const { id } = await params;
-  const sub = getSubmissionForUser(id, user.id, user.role === "ADMIN");
+  const sub = await getSubmissionForUser(id, user.id, user.role === "ADMIN");
   if (!sub) {
     return (
       <div className="space-y-3">

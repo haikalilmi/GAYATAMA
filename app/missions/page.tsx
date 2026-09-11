@@ -60,7 +60,7 @@ export default async function MissionsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const filter = parseMissionFilter(await searchParams);
-  const missions = listMissions(filter);
+  const missions = await listMissions(filter);
 
   return (
     <div className="space-y-6">
