@@ -40,6 +40,7 @@ export async function createMissionAction(_prev: MissionState | null, form: Form
     await mustAdmin();
     const id = await createMission(readForm(form));
     revalidatePath("/admin/missions");
+    revalidatePath("/missions");
     redirect(`/admin/missions/${id}`);
   } catch (e) {
     if (e instanceof MissionAdminError) return { error: e.message };
@@ -54,6 +55,7 @@ export async function updateMissionAction(_prev: MissionState | null, form: Form
     await mustAdmin();
     await updateMission(id, readForm(form));
     revalidatePath("/admin/missions");
+    revalidatePath("/missions");
     revalidatePath(`/admin/missions/${id}`);
     return { error: "" };
   } catch (e) {
@@ -70,6 +72,7 @@ export async function missionStatusAction(_prev: MissionState | null, form: Form
     await mustAdmin();
     await setMissionStatus(id, next);
     revalidatePath("/admin/missions");
+    revalidatePath("/missions");
     return { error: "" };
   } catch (e) {
     if (e instanceof MissionAdminError) return { error: e.message };

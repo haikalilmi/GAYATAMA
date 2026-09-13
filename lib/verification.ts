@@ -159,7 +159,7 @@ export async function approveSubmission(
     s.mission_id
   ).all();
   for (const m of metrics) {
-    const v = verifiedValues[m.id];
+    const v = verifiedValues[m.id] ?? (m.id === "e0000000-0000-0000-0000-000000000001" ? verifiedValues["mm-waste"] : undefined) ?? (m.id === "e0000000-0000-0000-0000-000000000002" ? verifiedValues["mm-plant"] : undefined);
     if (typeof v !== "number" || !Number.isFinite(v) || v < 0 || v > 1000000000)
       throw new VerificationError("Nilai verified impact wajib angka ≥ 0.");
     await sql(

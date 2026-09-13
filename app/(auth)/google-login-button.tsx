@@ -10,7 +10,9 @@ interface Props {
 export function GoogleLoginButton({ next, label }: Props) {
   async function handleGoogleLogin() {
     const supabase = createSupabaseBrowser();
-    const redirectTo = `${window.location.origin}/api/auth/callback${next ? `?next=${encodeURIComponent(next)}` : ""}`;
+    const redirectTo = `${window.location.origin}/api/auth/callback${
+      next ? `?next=${encodeURIComponent(next)}` : ""
+    }`;
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -27,10 +29,10 @@ export function GoogleLoginButton({ next, label }: Props) {
     <button
       type="button"
       onClick={handleGoogleLogin}
-      className="flex w-full items-center justify-center gap-2 rounded border bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+      className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-slate-200/90 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 hover:border-slate-300 transition-all duration-150 active:scale-[0.98] cursor-pointer"
     >
       <svg
-        className="h-4 w-4"
+        className="h-4 w-4 shrink-0"
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -51,7 +53,7 @@ export function GoogleLoginButton({ next, label }: Props) {
           fill="#EA4335"
         />
       </svg>
-      {label ?? "Login dengan Google"}
+      <span>{label ?? "Lanjutkan dengan Google"}</span>
     </button>
   );
 }

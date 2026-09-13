@@ -1,12 +1,17 @@
 // E2E tambahan: revisi loop, CRUD misi/reward, analitik isi, mobile.
-import { writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { chromium } from "playwright-core";
 import assert from "node:assert";
 
 const BASE = process.env.E2E_BASE ?? "http://localhost:3185";
-const BRAVE = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
+const BRAVE = [
+  process.env.BROWSER_PATH,
+  "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
+  "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+].find((p) => p && existsSync(p)) ?? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const PNG = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
   "base64"
@@ -57,7 +62,12 @@ await step("join+submit plant", async () => {
   await u.click('button:has-text("Ikut misi ini")');
   await u.waitForURL(/joined=1/);
   await u.goto(`${BASE}/my-missions`);
-  await u.click('a:has-text("Submit bukti")');
+  const plantCard = u.locator('[data-mission-slug="plant-for-tomorrow"]');
+  if (await plantCard.count() > 0) {
+    await plantCard.first().locator('a:has-text("Submit bukti")').click();
+  } else {
+    await u.click('a:has-text("Submit bukti")');
+  }
   await u.waitForURL(/\/submit/);
   await u.setInputFiles("#before_photo", f1);
   await u.setInputFiles("#after_photo", f2);
@@ -119,14 +129,14 @@ await step("buat + publish misi", async () => {
   await a.fill('input[name="metric1_key"]', "aksi_e2e");
   await a.fill('input[name="metric1_unit"]', "x");
   await a.click('button:has-text("Buat misi")');
-  await a.waitForURL(/\/admin\/missions\/.+/);
+  await a.waitForURL((url) => url.pathname.startsWith("/admin/missions/") && !url.pathname.endsWith("/new"));
   assert.match(await a.content(), /DRAFT/);
   await a.goto(`${BASE}/admin/missions`);
   await a.locator('li:has-text("E2E Misi Browser"), tr:has-text("E2E Misi Browser")').first().waitFor();
   // klik tombol ->ACTIVE pada baris tsb
   const row = a.locator('tr:has-text("E2E Misi Browser")');
   await row.locator('button:has-text("ACTIVE")').click();
-  await a.getByText("ACTIVE").first().waitFor({ timeout: 15000 });
+  await row.locator('button:has-text("PAUSED")').waitFor({ timeout: 15000 });
   await u.goto(`${BASE}/missions?q=E2E+Misi`);
   assert.match(await u.content(), /E2E Misi Browser/);
 });
@@ -147,7 +157,7 @@ await step("buat + nonaktifkan reward", async () => {
   await a.fill("#point_cost", "100");
   await a.fill("#stock", "5");
   await a.click('button:has-text("Buat reward")');
-  await a.waitForURL(/\/admin\/rewards\/.+/);
+  await a.waitForURL((url) => url.pathname.startsWith("/admin/rewards/") && !url.pathname.endsWith("/new"));
   await u.goto(`${BASE}/rewards`);
   assert.match(await u.content(), /E2E Voucher/);
   const rid = a.url().split("/").pop();

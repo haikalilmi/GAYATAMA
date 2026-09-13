@@ -50,7 +50,7 @@ export async function storeEvidenceFile(
   if (!checkMagic(buf, file.type)) throw new EvidenceError("Isi file bukan gambar valid.");
   const fileHash = createHash("sha256").update(buf).digest("hex");
   // data/evidence/{user_id}/{submission_id}/{uuid}.ext, relatif dari root proyek
-  const rel = join("data", "evidence", userId, submissionId, `${crypto.randomUUID()}.${ext}`);
+  const rel = join("data", "evidence", userId, submissionId, `${crypto.randomUUID()}.${ext}`).replaceAll("\\", "/");
   const abs = join(getProjectRoot(), rel);
   mkdirSync(join(abs, ".."), { recursive: true });
   writeFileSync(abs, buf);

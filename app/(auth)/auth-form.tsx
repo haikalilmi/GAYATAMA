@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import type { AuthState } from "./actions";
+import { Loader2, ArrowRight } from "lucide-react";
 
 interface Props {
   action: (prev: AuthState | null, form: FormData) => Promise<AuthState>;
@@ -16,9 +17,12 @@ export function AuthForm({ action, submitLabel, next, showName }: Props) {
   return (
     <form action={formAction} className="space-y-4">
       {showName ? (
-        <div className="space-y-1">
-          <label htmlFor="full_name" className="text-sm font-medium">
-            Nama lengkap
+        <div className="space-y-1.5">
+          <label
+            htmlFor="full_name"
+            className="block text-xs font-bold uppercase tracking-wider text-slate-700"
+          >
+            Nama Lengkap
           </label>
           <input
             id="full_name"
@@ -28,13 +32,18 @@ export function AuthForm({ action, submitLabel, next, showName }: Props) {
             minLength={2}
             maxLength={100}
             autoComplete="name"
-            className="w-full rounded border bg-white px-3 py-2 text-sm"
+            placeholder="Nama Lengkapmu"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all"
           />
         </div>
       ) : null}
-      <div className="space-y-1">
-        <label htmlFor="email" className="text-sm font-medium">
-          Email
+
+      <div className="space-y-1.5">
+        <label
+          htmlFor="email"
+          className="block text-xs font-bold uppercase tracking-wider text-slate-700"
+        >
+          Alamat Email
         </label>
         <input
           id="email"
@@ -42,12 +51,17 @@ export function AuthForm({ action, submitLabel, next, showName }: Props) {
           type="email"
           required
           autoComplete="email"
-          className="w-full rounded border bg-white px-3 py-2 text-sm"
+          placeholder="email@domain.com"
+          className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all"
         />
       </div>
-      <div className="space-y-1">
-        <label htmlFor="password" className="text-sm font-medium">
-          Password
+
+      <div className="space-y-1.5">
+        <label
+          htmlFor="password"
+          className="block text-xs font-bold uppercase tracking-wider text-slate-700"
+        >
+          Kata Sandi
         </label>
         <input
           id="password"
@@ -56,21 +70,38 @@ export function AuthForm({ action, submitLabel, next, showName }: Props) {
           required
           minLength={4}
           autoComplete={showName ? "new-password" : "current-password"}
-          className="w-full rounded border bg-white px-3 py-2 text-sm"
+          placeholder="••••••••"
+          className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all"
         />
       </div>
+
       {next ? <input type="hidden" name="next" value={next} /> : null}
+
       {state?.error ? (
-        <p role="alert" className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div
+          role="alert"
+          className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs font-medium text-rose-800 shadow-2xs"
+        >
           {state.error}
-        </p>
+        </div>
       ) : null}
+
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded bg-slate-900 px-4 py-2 text-sm text-white disabled:opacity-50"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition-all duration-150 active:scale-[0.98] disabled:opacity-50 cursor-pointer"
       >
-        {pending ? "Memproses..." : submitLabel}
+        {pending ? (
+          <>
+            <Loader2 className="h-3.5 w-3.5 animate-spin text-sky-400" />
+            <span>Memvalidasi kredensial...</span>
+          </>
+        ) : (
+          <>
+            <span>{submitLabel}</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </>
+        )}
       </button>
     </form>
   );

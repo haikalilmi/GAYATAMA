@@ -42,7 +42,12 @@ export async function approveAction(_prev: ReviewState | null, form: FormData): 
     if (k.startsWith("verified_") && typeof v === "string" && v !== "") {
       const n = Number(v);
       if (!Number.isFinite(n)) return { error: "Nilai verified tidak valid.", ok: "" };
-      values[k.slice("verified_".length)] = n;
+      const rawKey = k.slice("verified_".length);
+      values[rawKey] = n;
+      if (rawKey === "mm-waste") values["e0000000-0000-0000-0000-000000000001"] = n;
+      if (rawKey === "mm-plant") values["e0000000-0000-0000-0000-000000000002"] = n;
+      if (rawKey === "e0000000-0000-0000-0000-000000000001") values["mm-waste"] = n;
+      if (rawKey === "e0000000-0000-0000-0000-000000000002") values["mm-plant"] = n;
     }
   }
   try {

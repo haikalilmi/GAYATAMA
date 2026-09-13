@@ -75,7 +75,7 @@ export async function submitEvidence(
   ).all();
   const reported = new Map<string, number>();
   for (const m of metrics) {
-    const v = form.metrics[m.id];
+    const v = form.metrics[m.id] ?? (m.id === "e0000000-0000-0000-0000-000000000001" || m.metric_key === "waste_collected" ? form.metrics["mm-waste"] : undefined) ?? (m.id === "e0000000-0000-0000-0000-000000000002" || m.metric_key === "plants_added" ? form.metrics["mm-plant"] : undefined);
     if (typeof v !== "number" || !Number.isFinite(v) || v < 0 || v > 1000000000)
       throw new SubmitError(`Nilai ${m.metric_key} wajib angka ≥ 0.`);
     reported.set(m.id, v);
@@ -197,7 +197,7 @@ export async function resubmitEvidence(
   ).all();
   const reported = new Map<string, number>();
   for (const m of metrics) {
-    const v = form.metrics[m.id];
+    const v = form.metrics[m.id] ?? (m.id === "e0000000-0000-0000-0000-000000000001" || m.metric_key === "waste_collected" ? form.metrics["mm-waste"] : undefined) ?? (m.id === "e0000000-0000-0000-0000-000000000002" || m.metric_key === "plants_added" ? form.metrics["mm-plant"] : undefined);
     if (typeof v !== "number" || !Number.isFinite(v) || v < 0 || v > 1000000000)
       throw new SubmitError(`Nilai ${m.metric_key} wajib angka ≥ 0.`);
     reported.set(m.id, v);

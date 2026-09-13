@@ -1,12 +1,17 @@
 // E2E ImpactQuest via Brave sistem. Jalan: npm run test:e2e (server prod otomatis).
-import { writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { chromium } from "playwright-core";
 import assert from "node:assert";
 
 const BASE = process.env.E2E_BASE ?? "http://localhost:3185";
-const BRAVE = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe";
+const BRAVE = [
+  process.env.BROWSER_PATH,
+  "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
+  "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+].find((p) => p && existsSync(p)) ?? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const PNG = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
   "base64"
@@ -73,7 +78,12 @@ await step("join ganda ditolak", async () => {
 let subUrl = "";
 await step("submit bukti", async () => {
   await u.goto(`${BASE}/my-missions`);
-  await u.click('a:has-text("Submit bukti")');
+  const cleanCard = u.locator(`[data-mission-slug="clean-your-neighborhood"], div:has-text("${proof}")`).filter({ has: u.locator('a:has-text("Submit bukti")') });
+  if (await cleanCard.count() > 0) {
+    await cleanCard.last().locator('a:has-text("Submit bukti")').click();
+  } else {
+    await u.click('a:has-text("Submit bukti")');
+  }
   await u.waitForURL(/\/submit/);
   await u.setInputFiles("#before_photo", before);
   await u.setInputFiles("#after_photo", after);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useScroll, useTransform } from "motion/react";
@@ -44,15 +44,15 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [isOpen, setIsOpen] = useState(false);
-  const [isMd, setIsMd] = useState(true);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    setIsMd(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsMd(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
+  const isMd = useSyncExternalStore(
+    (onStoreChange) => {
+      const mq = window.matchMedia("(min-width: 768px)");
+      mq.addEventListener("change", onStoreChange);
+      return () => mq.removeEventListener("change", onStoreChange);
+    },
+    () => window.matchMedia("(min-width: 768px)").matches,
+    () => true
+  );
 
   const { scrollY } = useScroll();
   const sidebarX = useTransform(scrollY, [0, SHRINK_DISTANCE], [-SIDEBAR_W, 0], {
@@ -126,7 +126,9 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
         className={`fixed top-0 bottom-0 left-0 z-50 flex w-72 flex-col border-r border-slate-200 bg-white ${
           !isHome || !isMd
             ? `transition-transform duration-200 ease-out ${
-                isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+                isOpen
+                  ? "translate-x-0 pointer-events-auto"
+                  : "-translate-x-full pointer-events-none md:pointer-events-auto md:translate-x-0"
               }`
             : ""
         }`}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { Camera, KeyRound, Loader2, ArrowRight } from "lucide-react";
 
 export interface EvidenceFormState {
   error: string;
@@ -21,73 +22,197 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
   const [state, formAction, pending] = useActionState<EvidenceFormState | null, FormData>(action, null);
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form action={formAction} className="space-y-6">
       <input type="hidden" name={idName} value={idValue} />
-      {requires.before ? (
-        <div className="space-y-1">
-          <label htmlFor="before_photo" className="text-sm font-medium">Foto sebelum *</label>
-          <input id="before_photo" name="before_photo" type="file" accept="image/jpeg,image/png,image/webp" required
-            className="w-full text-sm" />
-        </div>
-      ) : null}
-      {requires.after ? (
-        <div className="space-y-1">
-          <label htmlFor="after_photo" className="text-sm font-medium">Foto sesudah *</label>
-          <input id="after_photo" name="after_photo" type="file" accept="image/jpeg,image/png,image/webp" required
-            className="w-full text-sm" />
-        </div>
-      ) : null}
-      <div className="space-y-1">
-        <label htmlFor="description" className="text-sm font-medium">
-          Deskripsi kegiatan {requires.description ? "*" : ""}
-        </label>
-        <textarea id="description" name="description" rows={4} maxLength={2000} required={requires.description}
-          defaultValue={defaults?.description ?? ""}
-          className="w-full rounded border bg-white px-3 py-2 text-sm" />
+
+      {/* Photo Uploads Section */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        {requires.before ? (
+          <div className="space-y-2">
+            <label htmlFor="before_photo" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+              Foto Sebelum (Before) *
+            </label>
+            <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/60 p-4 transition-colors hover:border-sky-400 hover:bg-sky-50/20">
+              <div className="flex flex-col items-center justify-center text-center space-y-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-500 shadow-2xs border border-slate-200">
+                  <Camera className="h-5 w-5" />
+                </div>
+                <input
+                  id="before_photo"
+                  name="before_photo"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  required
+                  className="w-full text-xs text-slate-500 file:mr-2 file:rounded-lg file:border-0 file:bg-slate-900 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-slate-800 cursor-pointer"
+                />
+                <span className="text-[10px] text-slate-400 font-mono">JPG, PNG, WEBP (Maks 5 MB)</span>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {requires.after ? (
+          <div className="space-y-2">
+            <label htmlFor="after_photo" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+              Foto Sesudah (After) *
+            </label>
+            <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/60 p-4 transition-colors hover:border-emerald-400 hover:bg-emerald-50/20">
+              <div className="flex flex-col items-center justify-center text-center space-y-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-500 shadow-2xs border border-slate-200">
+                  <Camera className="h-5 w-5" />
+                </div>
+                <input
+                  id="after_photo"
+                  name="after_photo"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  required
+                  className="w-full text-xs text-slate-500 file:mr-2 file:rounded-lg file:border-0 file:bg-slate-900 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-slate-800 cursor-pointer"
+                />
+                <span className="text-[10px] text-slate-400 font-mono">JPG, PNG, WEBP (Maks 5 MB)</span>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
-      {requires.proofCode ? (
-        <div className="space-y-1">
-          <label htmlFor="proof_code_input" className="text-sm font-medium">Kode bukti *</label>
-          <input id="proof_code_input" name="proof_code_input" type="text" required maxLength={32}
-            placeholder="Contoh: IQ-ABC123"
-            defaultValue={defaults?.proof_code_input ?? ""}
-            className="w-full rounded border bg-white px-3 py-2 font-mono text-sm" />
+
+      {/* Description Field */}
+      <div className="space-y-2">
+        <label htmlFor="description" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+          Deskripsi & Catatan Lapangan {requires.description ? "*" : ""}
+        </label>
+        <textarea
+          id="description"
+          name="description"
+          rows={4}
+          maxLength={2000}
+          required={requires.description}
+          defaultValue={defaults?.description ?? ""}
+          placeholder="Ceritakan proses aksi, lokasi spesifik, tantangan di lapangan, dan hasil yang dicapai..."
+          className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all leading-relaxed"
+        />
+      </div>
+
+      {/* Proof Code & Partner Code Fields */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        {requires.proofCode ? (
+          <div className="space-y-2">
+            <label htmlFor="proof_code_input" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+              Konfirmasi Kode Bukti Fisik *
+            </label>
+            <div className="relative">
+              <KeyRound className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input
+                id="proof_code_input"
+                name="proof_code_input"
+                type="text"
+                required
+                maxLength={32}
+                placeholder="Contoh: IQ-ABC123"
+                defaultValue={defaults?.proof_code_input ?? ""}
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-9 pr-3.5 py-2.5 font-mono text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all uppercase"
+              />
+            </div>
+            <p className="text-[11px] text-slate-500">Wajib persis sama dengan kode di kartu misimu.</p>
+          </div>
+        ) : null}
+
+        {requires.partnerCode ? (
+          <div className="space-y-2">
+            <label htmlFor="partner_code_input" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+              Kode Partner / Event *
+            </label>
+            <input
+              id="partner_code_input"
+              name="partner_code_input"
+              type="text"
+              required
+              maxLength={64}
+              defaultValue={defaults?.partner_code_input ?? ""}
+              placeholder="Masukkan kode acara..."
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all"
+            />
+          </div>
+        ) : null}
+      </div>
+
+      {/* Numeric Metrics */}
+      {metrics.length > 0 && (
+        <div className="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 sm:p-5 space-y-4">
+          <span className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+            Kalkulasi Angka Dampak Nyata
+          </span>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {metrics.map((m) => {
+              const inputId = m.id === "e0000000-0000-0000-0000-000000000001" || m.name.toLowerCase().includes("waste") || m.name.toLowerCase().includes("sampah")
+                ? "metric_mm-waste"
+                : m.id === "e0000000-0000-0000-0000-000000000002" || m.name.toLowerCase().includes("plant") || m.name.toLowerCase().includes("pohon")
+                ? "metric_mm-plant"
+                : `metric_${m.id}`;
+              return (
+                <div key={m.id} className="space-y-1.5">
+                  <label htmlFor={inputId} className="block text-xs font-semibold text-slate-700">
+                    {m.name} ({m.unit}) *
+                  </label>
+                  <div className="relative">
+                    <input
+                      id={inputId}
+                      name={inputId}
+                      type="number"
+                      min={0}
+                      step="any"
+                      required
+                      defaultValue={defaults?.metrics?.[m.id] ?? defaults?.metrics?.[inputId.slice(7)] ?? ""}
+                      placeholder="0.0"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 font-mono text-sm font-bold text-slate-900 placeholder:text-slate-300 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all"
+                    />
+                    <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-400">
+                      {m.unit}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      ) : null}
-      {requires.partnerCode ? (
-        <div className="space-y-1">
-          <label htmlFor="partner_code_input" className="text-sm font-medium">Kode partner/acara *</label>
-          <input id="partner_code_input" name="partner_code_input" type="text" required maxLength={64}
-            defaultValue={defaults?.partner_code_input ?? ""}
-            className="w-full rounded border bg-white px-3 py-2 text-sm" />
-        </div>
-      ) : null}
-      {metrics.map((m) => (
-        <div key={m.id} className="space-y-1">
-          <label htmlFor={`metric_${m.id}`} className="text-sm font-medium">
-            {m.name} ({m.unit}) *
-          </label>
-          <input id={`metric_${m.id}`} name={`metric_${m.id}`} type="number" min={0} step="any" required
-            defaultValue={defaults?.metrics?.[m.id] ?? ""}
-            className="w-full rounded border bg-white px-3 py-2 text-sm" />
-        </div>
-      ))}
-      <div className="space-y-1">
-        <label className="flex items-start gap-2 text-sm">
-          <input type="checkbox" required className="mt-1" />
-          <span>
-            Kegiatan ini asli, bukti milik saya, dan tidak memuat info pribadi sensitif tanpa izin.
+      )}
+
+      {/* Integrity Agreement Checkbox */}
+      <div className="rounded-xl border border-slate-200/70 bg-white p-4">
+        <label className="flex items-start gap-3 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            required
+            className="mt-0.5 h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500/20"
+          />
+          <span className="text-xs text-slate-600 leading-relaxed">
+            Saya menyatakan bahwa aksi ini benar-benar telah dilaksanakan di lapangan secara jujur, bukti dokumentasi milik saya sendiri, dan data yang dilaporkan dapat diverifikasi secara transparan.
           </span>
         </label>
       </div>
+
       {state?.error ? (
-        <p role="alert" className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-medium text-rose-800 shadow-2xs">
           {state.error}
-        </p>
+        </div>
       ) : null}
-      <button type="submit" disabled={pending}
-        className="w-full rounded bg-slate-900 px-4 py-2 text-sm text-white disabled:opacity-50">
-        {pending ? pendingLabel : submitLabel}
+
+      <button
+        type="submit"
+        disabled={pending}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-6 py-3.5 text-sm font-bold text-white shadow-xs hover:bg-slate-800 transition-all duration-150 active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+      >
+        {pending ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin text-sky-400" />
+            <span>{pendingLabel}</span>
+          </>
+        ) : (
+          <>
+            <span>{submitLabel}</span>
+            <ArrowRight className="h-4 w-4" />
+          </>
+        )}
       </button>
     </form>
   );
