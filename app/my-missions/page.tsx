@@ -62,7 +62,7 @@ export default async function MyMissionsPage({
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-700 border border-sky-200/60">
               <CheckCircle2 className="h-3 w-3" />
-              FLIGHT LOG
+              Riwayat Misi
             </span>
             <span className="text-xs font-mono text-slate-400">
               {allParts.length} TOTAL PARTISIPASI

@@ -30,7 +30,7 @@ export default async function PortfolioPage() {
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-700 border border-sky-200/60">
                 <ShieldCheck className="h-3 w-3" />
-                VERIFIED DOSSIER
+                Portofolio Terverifikasi
               </span>
               <span className="text-xs font-mono text-slate-400">
                 AUDITED PROFILE
@@ -144,7 +144,7 @@ export default async function PortfolioPage() {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900">{b.name}</h3>
-                  <p className="mt-0.5 text-xs text-slate-600 leading-relaxed">
+                  <p className="mt-0.5 text-sm text-slate-600 leading-relaxed">
                     {b.description}
                   </p>
                 </div>

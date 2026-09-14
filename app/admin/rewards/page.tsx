@@ -16,7 +16,7 @@ export default async function AdminRewardsPage() {
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200/60">
               <Gift className="h-3 w-3" />
-              REWARD INVENTORY
+              Stok Reward
             </span>
             <span className="text-xs font-mono text-slate-400">
               {rows.length} ITEM REWARD

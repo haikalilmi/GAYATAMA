@@ -35,7 +35,7 @@ const statusStyles: Record<string, { label: string; className: string }> = {
     className: "bg-blue-50 text-blue-700 border-blue-200/70",
   },
   UNDER_REVIEW: {
-    label: "UNDER_REVIEW",
+    label: "Sedang Ditinjau",
     className: "bg-indigo-50 text-indigo-700 border-indigo-200/70",
   },
   RESUBMITTED: {
@@ -63,7 +63,7 @@ const statusStyles: Record<string, { label: string; className: string }> = {
     className: "bg-slate-100 text-slate-500 border-slate-200",
   },
   PENDING: {
-    label: "PENDING",
+    label: "Menunggu Ditinjau",
     className: "bg-amber-50 text-amber-700 border-amber-200/80",
   },
   ACTIVE: {

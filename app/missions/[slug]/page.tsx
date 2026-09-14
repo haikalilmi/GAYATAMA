@@ -42,6 +42,12 @@ export default async function MissionDetailPage({
       icon: Camera,
       desc: "Foto hasil akhir aksi nyata dengan sudut serupa.",
     });
+  if (!mission.requires_before_photo && !mission.requires_after_photo)
+    evidence.push({
+      label: "Foto Bukti Aksi",
+      icon: Camera,
+      desc: "Foto dokumentasi aksi yang kamu lakukan di lapangan.",
+    });
   if (mission.requires_description)
     evidence.push({
       label: "Catatan Lapangan & Deskripsi",
@@ -311,7 +317,7 @@ export default async function MissionDetailPage({
             <h3 className="font-bold text-base text-slate-900">
               Masuk untuk Mengikuti Misi Ini
             </h3>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+            <p className="text-sm text-slate-500 max-w-sm mx-auto">
               Daftarkan diri atau masuk dengan akun Google / demo untuk mencatat dampak sosialmu.
             </p>
             <Link

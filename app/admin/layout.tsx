@@ -41,7 +41,7 @@ export default async function AdminLayout({
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-slate-900 px-2.5 py-0.5 text-xs font-semibold text-white">
               <ShieldCheck className="h-3 w-3 text-sky-400" />
-              MISSION CONTROL
+              Portal Admin
             </span>
             <span className="text-xs font-mono text-slate-400">
               PORTAL VERIFIKASI & AUDIT

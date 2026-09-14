@@ -23,7 +23,7 @@ export default async function NotificationsPage() {
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-700 border border-sky-200/60">
               <Bell className="h-3 w-3" />
-              SIGNAL DISPATCH
+              Notifikasi
             </span>
             {unreadCount > 0 && (
               <span className="rounded-full bg-rose-50 px-2 py-0.5 text-xs font-mono font-bold text-rose-700 border border-rose-200/60">
@@ -122,7 +122,7 @@ export default async function NotificationsPage() {
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-600 leading-relaxed">
+                  <p className="text-sm text-slate-600 leading-relaxed">
                     {n.message}
                   </p>
 

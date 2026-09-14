@@ -60,7 +60,7 @@ export default async function DashboardPage() {
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-700 border border-sky-200/60">
               <span className="h-1.5 w-1.5 rounded-full bg-sky-600 animate-pulse" />
-              FLIGHT DECK
+              Dasbor
             </span>
             <span className="text-xs font-mono text-slate-400">
               ID: {user.id.slice(0, 8)}
@@ -229,7 +229,7 @@ export default async function DashboardPage() {
             <p className="mt-3 text-sm font-semibold text-slate-800">
               Belum ada misi aktif yang sedang diikuti
             </p>
-            <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">
+            <p className="mt-1 text-sm text-slate-500 max-w-sm mx-auto">
               Pilih misi sosial yang relevan, simpan kode bukti unik, dan lakukan aksi nyata di lapangan.
             </p>
             <Link

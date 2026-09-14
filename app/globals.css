@@ -1,11 +1,156 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   color-scheme: light;
   --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-expo: cubic-bezier(0.7, 0, 0.84, 0);
   --spring-tactile: cubic-bezier(0.34, 1.56, 0.64, 1);
   --surface-border: rgba(15, 23, 42, 0.08);
+}
+
+/* Mode gelap. Seluruh komponen memakai token warna Tailwind, jadi cukup
+   memetakan ulang token di sini. Beberapa kelas yang memakai warna gelap
+   sebagai latar tombol ditimpa terpisah di bawah. */
+.dark {
+  color-scheme: dark;
+
+  --color-slate-50: #0a1425;
+  --color-slate-100: #1b2942;
+  --color-slate-200: #2b3c5a;
+  --color-slate-300: #55688a;
+  --color-slate-400: #8593ae;
+  --color-slate-500: #a0aec6;
+  --color-slate-600: #bcc8dc;
+  --color-slate-700: #d3dced;
+  --color-slate-800: #e6ecf5;
+  --color-slate-900: #f5f8fc;
+  --color-slate-950: #060b16;
+
+  --color-sky-50: #10243d;
+  --color-sky-100: #16324f;
+  --color-sky-200: #1e4568;
+  --color-sky-300: #7dd3fc;
+  --color-sky-400: #38bdf8;
+  --color-sky-500: #0ea5e9;
+  --color-sky-600: #0284c7;
+  --color-sky-700: #7dd3fc;
+  --color-sky-800: #bae6fd;
+  --color-sky-900: #e0f2fe;
+
+  --color-emerald-50: #0b2e26;
+  --color-emerald-100: #0f3d31;
+  --color-emerald-200: #175143;
+  --color-emerald-300: #6ee7b7;
+  --color-emerald-400: #34d399;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #6ee7b7;
+  --color-emerald-800: #a7f3d0;
+  --color-emerald-900: #d1fae5;
+
+  --color-amber-50: #33260a;
+  --color-amber-100: #43320c;
+  --color-amber-200: #5c440f;
+  --color-amber-300: #fcd34d;
+  --color-amber-500: #f59e0b;
+  --color-amber-600: #d97706;
+  --color-amber-700: #fcd34d;
+  --color-amber-800: #fde68a;
+  --color-amber-900: #fef3c7;
+
+  --color-rose-50: #3a1119;
+  --color-rose-100: #4c1620;
+  --color-rose-200: #6b1f2c;
+  --color-rose-300: #fda4af;
+  --color-rose-500: #f43f5e;
+  --color-rose-600: #e11d48;
+  --color-rose-700: #fda4af;
+  --color-rose-800: #fecdd3;
+  --color-rose-900: #ffe4e6;
+
+  --color-blue-50: #0e2740;
+  --color-blue-200: #1e4568;
+  --color-blue-600: #60a5fa;
+  --color-blue-700: #93c5fd;
+
+  --color-indigo-50: #171a3d;
+  --color-indigo-100: #1f2350;
+  --color-indigo-200: #2d3370;
+  --color-indigo-600: #818cf8;
+  --color-indigo-700: #a5b4fc;
+
+  --color-purple-50: #251238;
+  --color-purple-200: #40205c;
+  --color-purple-600: #c084fc;
+  --color-purple-700: #d8b4fe;
+
+  --color-green-50: #0b2e26;
+  --color-green-200: #175143;
+  --color-green-800: #a7f3d0;
+}
+
+/* Tombol dan chip memakai latar gelap pekat dengan teks putih. Setelah token
+   dibalik, latar itu jadi terang, jadi kembalikan ke warna aksen. */
+.dark .bg-slate-900 {
+  background-color: var(--color-sky-600);
+}
+.dark .hover\:bg-slate-800:hover {
+  background-color: #0369a1;
+}
+.dark .bg-slate-900\/50 {
+  background-color: rgba(2, 6, 23, 0.6);
+}
+.dark .border-slate-800 {
+  border-color: #075985;
+}
+.dark .bg-emerald-700 {
+  background-color: #047857;
+}
+.dark .bg-amber-700 {
+  background-color: #b45309;
+}
+.dark .bg-rose-700 {
+  background-color: #be123c;
+}
+
+/* Permukaan kartu memakai bg-white. Token white dibiarkan putih karena
+   dipakai juga untuk teks di atas tombol berwarna. */
+.dark .bg-white {
+  background-color: #141f36;
+}
+.dark .bg-white\/60 {
+  background-color: rgba(20, 31, 54, 0.6);
+}
+.dark .bg-white\/90 {
+  background-color: rgba(16, 26, 46, 0.9);
+}
+.dark .bg-white\/95 {
+  background-color: rgba(16, 26, 46, 0.95);
+}
+.dark .hover\:bg-white:hover {
+  background-color: #1b2942;
+}
+.dark .to-white {
+  --tw-gradient-to: #141f36;
+}
+
+/* Rim shadow versi gelap. */
+.dark .shadow-rim {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+}
+.dark .shadow-rim-md {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 4px 12px rgba(0, 0, 0, 0.4);
+}
+.dark .shadow-rim-lg {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
 @media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
@@ -15,8 +160,8 @@
 }
 
 body {
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: var(--color-slate-50);
+  color: var(--color-slate-900);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

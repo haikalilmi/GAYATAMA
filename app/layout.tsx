@@ -10,6 +10,8 @@ export const metadata: Metadata = {
     "Complete verified social missions and track the impact you create.",
 };
 
+const themeScript = `(function(){try{var t=localStorage.getItem("iq-theme");var d=t?t==="dark":true;var r=document.documentElement;r.classList.toggle("dark",d);r.style.colorScheme=d?"dark":"light";}catch(e){document.documentElement.classList.add("dark");document.documentElement.style.colorScheme="dark";}})();`;
+
 export default async function RootLayout({
   children,
 }: {
@@ -18,7 +20,10 @@ export default async function RootLayout({
   const user = await getCurrentUser();
 
   return (
-    <html lang="id">
+    <html lang="id" className="dark" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="min-h-screen bg-slate-50 antialiased text-slate-900">
         <div className="flex min-h-screen flex-col md:flex-row">
           <Sidebar user={user} logoutAction={logoutAction} />

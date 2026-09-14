@@ -25,7 +25,7 @@ export default async function AnalyticsPage() {
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-700 border border-sky-200/60">
             <BarChart3 className="h-3 w-3" />
-            OPERATIONAL TELEMETRY
+            Ringkasan Data
           </span>
         </div>
         <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">

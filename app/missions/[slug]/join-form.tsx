@@ -37,7 +37,7 @@ export function JoinForm({
           <span>Memverifikasi slot misi...</span>
         ) : (
           <>
-            <span>Ikut misi ini</span>
+            <span>Ikut Misi Ini</span>
             <ArrowRight className="h-4 w-4" />
           </>
         )}

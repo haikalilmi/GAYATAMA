@@ -43,7 +43,7 @@ export async function resubmitEvidenceAction(
         partner_code_input: typeof form.get("partner_code_input") === "string" ? (form.get("partner_code_input") as string) : undefined,
         metrics,
       },
-      { before: fileOrUndef(form.get("before_photo")), after: fileOrUndef(form.get("after_photo")) }
+      { before: fileOrUndef(form.get("before_photo")), after: fileOrUndef(form.get("after_photo")), supporting: fileOrUndef(form.get("supporting_photo")) }
     );
     redirect(`/submissions/${sid}`);
   } catch (e) {

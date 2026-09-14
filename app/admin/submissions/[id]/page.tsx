@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getReviewData } from "@/lib/verification";
+import { EVIDENCE_LABELS } from "@/lib/evidence";
 import { ReviewForms } from "./forms";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
@@ -140,7 +141,7 @@ export default async function AdminReviewPage({
                     className="w-full h-48 object-cover rounded-lg border border-slate-200"
                   />
                   <figcaption className="mt-2 px-1 text-[11px] font-mono font-semibold uppercase text-slate-600 flex items-center justify-between">
-                    <span>{e.evidence_type}</span>
+                    <span>{EVIDENCE_LABELS[e.evidence_type] ?? e.evidence_type}</span>
                     <span className="text-slate-400">Tervalidasi SHA-256</span>
                   </figcaption>
                 </figure>

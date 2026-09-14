@@ -134,7 +134,7 @@ export default async function Home() {
               Bagaimana ImpactQuest Bekerja
             </h2>
           </div>
-          <p className="text-xs text-slate-500 max-w-sm">
+          <p className="text-sm text-slate-500 max-w-sm">
             Empat langkah terstruktur memastikan setiap aksi kebaikan tercatat dengan akuntabilitas tinggi.
           </p>
         </div>
@@ -152,7 +152,7 @@ export default async function Home() {
                 <span className="h-2 w-2 rounded-full bg-sky-500" />
               </div>
               <h3 className="mt-3 font-semibold text-slate-900 text-sm">{step.title}</h3>
-              <p className="mt-2 text-xs text-slate-600 leading-relaxed">{step.desc}</p>
+              <p className="mt-2 text-sm text-slate-600 leading-relaxed">{step.desc}</p>
             </div>
           ))}
         </div>
@@ -233,7 +233,7 @@ export default async function Home() {
                 <span className="text-xs text-slate-500 font-medium">Program Aktif</span>
               </div>
               <h3 className="text-lg font-bold text-slate-900">{campaign.name}</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">{campaign.description}</p>
+              <p className="text-sm text-slate-600 leading-relaxed">{campaign.description}</p>
             </div>
 
             <div className="md:text-right space-y-1">

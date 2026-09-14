@@ -49,7 +49,7 @@ export default async function MissionsPage({
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-700 border border-sky-200/60">
               <Target className="h-3 w-3" />
-              MISSION DISPATCH
+              Katalog Misi
             </span>
             <span className="text-xs font-mono text-slate-400">
               {missions.length} MISI TERSEDIA

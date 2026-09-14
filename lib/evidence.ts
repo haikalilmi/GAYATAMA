@@ -5,6 +5,12 @@ import { getProjectRoot } from "./db";
 
 export class EvidenceError extends Error {}
 
+export const EVIDENCE_LABELS: Record<string, string> = {
+  BEFORE_PHOTO: "Foto Sebelum",
+  AFTER_PHOTO: "Foto Sesudah",
+  SUPPORTING_PHOTO: "Foto Bukti Aksi",
+};
+
 export const MAX_FILE_BYTES = 5 * 1024 * 1024;
 
 const MIME_TO_EXT: Record<string, string> = {

@@ -302,6 +302,9 @@ export function MissionForm({
         <p className="text-xs font-bold uppercase tracking-wider text-slate-700">
           Syarat Protokol Bukti
         </p>
+        <p className="text-[11px] text-slate-500">
+          Semua misi wajib menyertakan satu foto bukti aksi. Aktifkan Foto Sebelum dan Foto Sesudah bila misi butuh perbandingan kondisi.
+        </p>
         <div className="grid gap-2 sm:grid-cols-2 pt-1">
           <Check
             name="requires_before_photo"

@@ -16,7 +16,7 @@ export default async function RewardsPage() {
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200/60">
               <Gift className="h-3 w-3" />
-              IMPACT EXCHANGE
+              Tukar Poin
             </span>
             <span className="text-xs font-mono text-slate-400">
               KATALOG REWARD SIMULASI
@@ -104,7 +104,7 @@ export default async function RewardsPage() {
                 <h3 className="mt-3 text-lg font-bold tracking-tight text-slate-900">
                   {r.title}
                 </h3>
-                <p className="mt-1.5 text-xs text-slate-600 leading-relaxed">
+                <p className="mt-1.5 text-sm text-slate-600 leading-relaxed">
                   {r.description}
                 </p>
               </div>

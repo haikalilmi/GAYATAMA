@@ -20,6 +20,7 @@ interface Props {
 
 export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel, requires, metrics, defaults }: Props) {
   const [state, formAction, pending] = useActionState<EvidenceFormState | null, FormData>(action, null);
+  const needsSupporting = !requires.before && !requires.after;
 
   return (
     <form action={formAction} className="space-y-6">
@@ -64,6 +65,30 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
                 <input
                   id="after_photo"
                   name="after_photo"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  required
+                  className="w-full text-xs text-slate-500 file:mr-2 file:rounded-lg file:border-0 file:bg-slate-900 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-slate-800 cursor-pointer"
+                />
+                <span className="text-[10px] text-slate-400 font-mono">JPG, PNG, WEBP (Maks 5 MB)</span>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {needsSupporting ? (
+          <div className="space-y-2 sm:col-span-2">
+            <label htmlFor="supporting_photo" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+              Foto Bukti Aksi *
+            </label>
+            <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/60 p-4 transition-colors hover:border-sky-400 hover:bg-sky-50/20">
+              <div className="flex flex-col items-center justify-center text-center space-y-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-500 shadow-2xs border border-slate-200">
+                  <Camera className="h-5 w-5" />
+                </div>
+                <input
+                  id="supporting_photo"
+                  name="supporting_photo"
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
                   required

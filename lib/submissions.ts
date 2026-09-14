@@ -15,6 +15,7 @@ const textSchema = z.object({
 export interface SubmitFiles {
   before?: File;
   after?: File;
+  supporting?: File;
 }
 
 export async function submitEvidence(
@@ -68,6 +69,8 @@ export async function submitEvidence(
     throw new SubmitError("Foto sebelum wajib diunggah.");
   if (mission.requires_after_photo && !files.after)
     throw new SubmitError("Foto sesudah wajib diunggah.");
+  if (!mission.requires_before_photo && !mission.requires_after_photo && !files.supporting)
+    throw new SubmitError("Foto bukti aksi wajib diunggah.");
 
   const metrics = await sql<{ id: string; metric_key: string }>(
     "SELECT id, metric_key FROM mission_metrics WHERE mission_id = ?",
@@ -92,6 +95,8 @@ export async function submitEvidence(
       stored.push({ type: "BEFORE_PHOTO", meta: await storeEvidenceFile(files.before, userId, submissionId) });
     if (files.after)
       stored.push({ type: "AFTER_PHOTO", meta: await storeEvidenceFile(files.after, userId, submissionId) });
+    if (files.supporting)
+      stored.push({ type: "SUPPORTING_PHOTO", meta: await storeEvidenceFile(files.supporting, userId, submissionId) });
   } catch (e) {
     if (e instanceof EvidenceError) throw new SubmitError(e.message);
     throw e;
@@ -190,6 +195,8 @@ export async function resubmitEvidence(
     throw new SubmitError("Foto sebelum wajib diunggah ulang.");
   if (mission.requires_after_photo && !files.after)
     throw new SubmitError("Foto sesudah wajib diunggah ulang.");
+  if (!mission.requires_before_photo && !mission.requires_after_photo && !files.supporting)
+    throw new SubmitError("Foto bukti aksi wajib diunggah ulang.");
 
   const metrics = await sql<{ id: string; metric_key: string }>(
     "SELECT id, metric_key FROM mission_metrics WHERE mission_id = ?",
@@ -210,6 +217,8 @@ export async function resubmitEvidence(
       stored.push({ type: "BEFORE_PHOTO", meta: await storeEvidenceFile(files.before, userId, submissionId) });
     if (files.after)
       stored.push({ type: "AFTER_PHOTO", meta: await storeEvidenceFile(files.after, userId, submissionId) });
+    if (files.supporting)
+      stored.push({ type: "SUPPORTING_PHOTO", meta: await storeEvidenceFile(files.supporting, userId, submissionId) });
   } catch (e) {
     if (e instanceof EvidenceError) throw new SubmitError(e.message);
     throw e;

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { getSubmissionForUser } from "@/lib/submissions";
+import { EVIDENCE_LABELS } from "@/lib/evidence";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   ArrowLeft,
@@ -192,7 +193,7 @@ export default async function SubmissionPage({
                 className="w-full h-48 object-cover rounded-lg border border-slate-200"
               />
               <figcaption className="mt-2 px-1 text-[11px] font-mono font-semibold uppercase text-slate-600 flex items-center justify-between">
-                <span>{e.evidence_type}</span>
+                <span>{EVIDENCE_LABELS[e.evidence_type] ?? e.evidence_type}</span>
                 <span className="text-emerald-700">Tersimpan</span>
               </figcaption>
             </figure>

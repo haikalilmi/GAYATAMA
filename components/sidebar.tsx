@@ -24,6 +24,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { SessionUser } from "@/lib/auth";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface SidebarProps {
   user: SessionUser | null;
@@ -58,9 +59,6 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
   const sidebarX = useTransform(scrollY, [0, SHRINK_DISTANCE], [-SIDEBAR_W, 0], {
     clamp: true,
   });
-  const sidebarPointerEvents = useTransform(scrollY, (y) =>
-    y < 15 ? "none" : "auto",
-  );
 
   const mainNav: NavItem[] = [
     { label: "Beranda", href: "/", icon: Compass },
@@ -71,20 +69,17 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
   ];
 
   const userNav: NavItem[] = [
+    { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "Misi Saya", href: "/my-missions", icon: CheckCircle2 },
     { label: "Portofolio Dampak", href: "/portfolio", icon: Award },
     { label: "Notifikasi", href: "/notifications", icon: Bell },
   ];
 
-  const manageNav: NavItem[] = [
-    { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    {
-      label: "Portal Admin",
-      href: "/admin",
-      icon: ShieldCheck,
-      badge: user?.role === "ADMIN" ? "Admin" : undefined,
-    },
-  ];
+  const isAdmin = user?.role === "ADMIN";
+
+  const manageNav: NavItem[] = isAdmin
+    ? [{ label: "Portal Admin", href: "/admin", icon: ShieldCheck, badge: "Admin" }]
+    : [];
 
   const isLinkActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -104,13 +99,16 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
             <span className="block text-[10px] font-medium tracking-wider text-sky-600 uppercase">Flight Hub</span>
           </div>
         </Link>
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Buka navigasi"
-          className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
-        >
-          {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle compact />
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Buka navigasi"
+            className="flex h-10 w-10 touch-manipulation items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 transition-all select-none hover:bg-slate-100 active:scale-[0.98]"
+          >
+            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Backdrop for Mobile */}
@@ -134,8 +132,10 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
         }`}
         style={
           isHome && isMd
-            ? { x: sidebarX, pointerEvents: sidebarPointerEvents }
-            : undefined
+            ? { x: sidebarX }
+            : // Selalu definisikan x supaya framer-motion tidak meninggalkan
+              // inline style basi saat kondisi berubah (mis. SSR desktop ke mobile).
+              { x: 0 }
         }
       >
         {/* Sidebar Header / Brand */}
@@ -223,10 +223,11 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
           )}
 
           {/* Management & Admin Section */}
-          <div className="space-y-1 pt-2 border-t border-slate-100">
-            <p className="px-3 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
-              Kelola & Analitik
-            </p>
+          {manageNav.length > 0 ? (
+            <div className="space-y-1 pt-2 border-t border-slate-100">
+              <p className="px-3 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
+                Kelola & Analitik
+              </p>
             {manageNav.map((item) => {
               const active = isLinkActive(item.href);
               const Icon = item.icon;
@@ -253,8 +254,8 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
                 </Link>
               );
             })}
-          </div>
-
+            </div>
+          ) : null}
           {/* Flight Altitude Live Telemetry Mini-Card */}
           <div className="rounded-xl border border-sky-100 bg-linear-to-b from-sky-50/70 to-white p-3.5 shadow-2xs">
             <div className="flex items-center gap-2 text-sky-700 font-semibold text-xs mb-1">
@@ -296,6 +297,7 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
                   <span>Keluar Akun</span>
                 </button>
               </form>
+              <ThemeToggle className="w-full" />
             </div>
           ) : (
             <div className="space-y-2">
@@ -318,6 +320,7 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
                   <span>Daftar</span>
                 </Link>
               </div>
+              <ThemeToggle className="w-full" />
             </div>
           )}
         </div>
