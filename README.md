@@ -1,137 +1,100 @@
 # ImpactQuest
 
-Aplikasi web misi sosial. Pengguna mengikuti misi, mengunggah bukti
-berupa foto, melewati verifikasi oleh admin, kemudian memperoleh XP,
-Impact Points, badge, dan reward simulasi. Angka dampak yang tampil
-di halaman publik hanya dihitung dari submission yang disetujui.
+ImpactQuest is a social action platform where people complete real-world positive activities, submit photo evidence, get verified by administrators, and earn XP, impact points, achievement badges, and reward vouchers.
 
-Repositori ini merupakan prototype lomba. Aplikasi dirancang agar
-dapat berjalan luring sepenuhnya: satu aplikasi Next.js, database
-SQLite satu berkas, tanpa layanan eksternal yang perlu dijalankan.
+The public impact numbers only reflect verified and approved activities.
 
-## Menjalankan aplikasi
+## Quick Start
 
-Membutuhkan Node.js 22 ke atas.
+### Prerequisites
+- Node.js 20 or higher
+- An internet connection for Supabase database access
+
+### Installation & Running
 
 ```bash
+# 1. Install dependencies
 npm install
-npm run db:setup
+
+# 2. Run the development server
 npm run dev
 ```
 
-Kemudian buka http://localhost:3000.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Build produksi:
+To access from a mobile phone on the same Wi-Fi network, open `http://<YOUR_LOCAL_IP>:3000` (e.g. `http://192.168.1.19:3000`).
+
+### Production Build
 
 ```bash
 npm run build
 npm run start
 ```
 
-## Akun demo
+## Demo Accounts
 
-Perintah `npm run db:reset` mengembalikan database ke kondisi awal
-sesuai tabel berikut.
+You can explore the platform using these pre-configured accounts:
 
-| Email | Password | Kondisi awal |
-|---|---|---|
-| demo@impactquest.local | demo1234 | USER, XP 1900, 470 poin |
-| admin@impactquest.local | admin1234 | ADMIN |
-| org@impactquest.local | org1234 | ORGANIZATION |
+| Role | Email | Password | What You Can Do |
+|---|---|---|---|
+| **Contributor** | `demo@impactquest.local` | `demo1234` | Join missions, upload proof photos, track level & XP, redeem rewards |
+| **Admin / Verifier** | `admin@impactquest.local` | `admin1234` | Review incoming submissions, approve/reject/request revision, manage missions & rewards |
+| **Organization** | `org@impactquest.local` | `org1234` | View organization campaigns and partner initiatives |
 
-## Skenario demo lima menit
+You can also create a new account via the **Sign Up** page or use Google OAuth login.
 
-Gunakan dua peramban atau dua profil berbeda, satu untuk demo dan
-satu untuk admin.
+## 5-Minute Quick Demo Walkthrough
 
-1. Masuk sebagai demo. Buka "Clean Your Neighborhood", klik Ikut.
-   Simpan kode bukti yang tampil (`IQ-XXXXXX`).
-2. Buka Misi Saya, klik Submit bukti. Unggah foto sebelum dan
-   sesudah, tulis deskripsi, masukkan kode bukti, isi 3 kg.
-   Kirim. Status menjadi PENDING.
-3. Masuk sebagai admin di peramban kedua. Buka Antrian, klik
-   submission tersebut. Klik Mulai review, isi verified 3 kg,
-   klik Approve.
-4. Kembali ke peramban demo:
-   - XP berubah dari 1900 menjadi 2000, level naik dari Advocate
-     menjadi Changemaker
-   - poin berubah dari 470 menjadi 500
-   - badge Eco Starter terbuka dan tiga notifikasi masuk
-5. Buka Reward. Tukarkan Coffee Voucher seharga 500 poin. Saldo
-   menjadi 0 dan kode demo tampil di Riwayat.
-6. Buka Community. Sampah terkumpul bertambah 3 kg dari baseline
-   (12.000 menjadi 12.003).
+Try opening two different browsers (or one normal window and one incognito window) to see both sides in action:
 
-## Pemeriksaan mandiri oleh juri
+1. **Contributor Side (Browser 1):**
+   - Log in as `demo@impactquest.local` (`demo1234`).
+   - Go to **Explore Missions** and click **Clean Your Neighborhood**.
+   - Click **Join This Mission** and note the unique proof code shown (e.g. `IQ-ABC123`).
+   - Open **My Missions**, click **Submit Evidence**, upload your photo proof, write a brief description, enter the proof code and reported waste amount (e.g. 3 kg), and submit.
+   - The status is now **Pending Review**.
 
-Misi berstatus DRAFT tidak tampil kepada pengguna, hanya misi
-ACTIVE. Satu misi hanya memiliki satu slot aktif per pengguna,
-dilengkapi proof code unik dan batas waktu submit, serta dapat
-dibatalkan sebelum submit. Foto yang diterima terbatas pada JPG,
-PNG, dan WEBP dengan ukuran maksimal 5 MB per berkas, dan isi
-berkas diperiksa selain ekstensinya. Kode bukti yang salah atau
-pengiriman ganda ditolak disertai pesan yang jelas. Berkas bukti
-hanya dapat dibuka oleh pemilik dan admin melalui route khusus.
+2. **Admin Side (Browser 2):**
+   - Log in as `admin@impactquest.local` (`admin1234`).
+   - The **Admin Portal** tab appears in the sidebar.
+   - Go to **Review Queue**, find the submission, and click **Start File Review**.
+   - Check the photos, enter the verified amount (3 kg), and click **Approve and Release Rewards**.
 
-Setiap submission memperoleh skor risiko beserta penjelasan flag:
-berkas kembar, kode salah, pengiriman terlalu sering, dan akun
-baru. Skor tersebut tidak menyetujui atau menolak apa pun,
-keputusan tetap berada pada admin. Halaman review admin memuat
-bukti foto, perbandingan reported dan verified yang dapat
-dikoreksi, riwayat pengguna, dan jejak audit.
+3. **Check Results (Browser 1):**
+   - Return to the Contributor window.
+   - Check **Dashboard**: XP and level updated automatically, notifications received.
+   - Check **Rewards**: Points can now be redeemed for demo vouchers.
+   - Check **Community**: The total impact numbers reflect the new approved contribution.
 
-Approve dieksekusi dalam satu transaksi yang mencakup status,
-verified impact, XP dan poin yang dibaca dari data misi (bukan
-dari input peramban), ledger, badge, notifikasi level, dan log.
-Approve yang dikirim dua kali tidak memberikan reward ganda.
-Penolakan wajib menyertakan alasan. Revisi hanya diperbolehkan
-sekali, berkas lama digantikan berkas baru, kemudian submission
-kembali ke antrian.
+## Key Features
 
-Penukaran poin mengurangi stok tepat satu dan mencatat ledger,
-kode demo, serta notifikasi. Saldo yang kurang dan stok yang
-habis ditangani dengan pesan yang jelas. XP tidak berkurang
-ketika poin ditukarkan. Tersedia pula portfolio terverifikasi,
-dampak komunitas, leaderboard berbasis XP, notifikasi, kelola
-misi dan reward oleh admin, analitik, halaman campaign, dan
-dashboard organisasi.
+- **Evidence-Based Verification**: Every mission requires real photo proof. Submissions go through manual verification before any XP or reward points are released.
+- **Role-Based Access**: The Admin Portal is hidden from regular contributors and only accessible after logging in with an authorized admin account.
+- **Dark Mode by Default**: Modern dark theme enabled by default with a quick toggle available on both desktop and mobile headers.
+- **Mobile-Friendly**: Responsive layout with touch optimization, collapsible sidebar drawer, and quick theme toggle.
+- **Gamified Impact Portfolio**: Track personal progress, level progression, unlocked badges, and verified environmental metrics in an audit-ready format.
+- **Fraud & Anomaly Detection**: Built-in duplicate photo hash detection, submission velocity checks, and proof code matching to support verifiers during review.
 
-Pengujian E2E sebanyak 22 langkah mencakup loop demo di atas
-beserta kasus negatif. Seluruhnya lolos di Brave. Skrip tersedia
-di `e2e/` dan dijalankan dengan `npm run test:e2e` selagi server
-berjalan.
+## Available Scripts
 
-## Aturan yang dijaga oleh kode
-
-Submission yang belum disetujui tidak menghasilkan XP, poin,
-badge, maupun dampak. Identitas pengguna selalu diambil dari
-sesi di server, bukan dari parameter request.
-
-## Isi repositori
-
-Logika domain berada di `lib/` (auth, missions, participation,
-submissions, evidence, risk, verification, gamification,
-rewards, impact, campaigns, analytics), sedangkan halaman
-mengikuti konvensi App Router di `app/`. Skema database ada di
-`db/schema.sql` dan seed di `scripts/db-setup.mjs`. Dokumen
-perancangan: `PRD.md`, `BUSINESS_RULES.md`, `DATABASE.md`,
-`IMPLEMENTATION_PLAN.md`.
-
-| Perintah | Kegunaan |
+| Command | Description |
 |---|---|
-| `npm run dev` | server development |
-| `npm run build` | build produksi |
-| `npm run start` | menjalankan hasil build |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | pemeriksaan TypeScript |
-| `npm run db:setup` / `db:reset` | membuat dan mengisi database |
-| `npm run test:e2e` | E2E Playwright dan Brave |
+| `npm run dev` | Start the local development server |
+| `npm run build` | Build the application for production |
+| `npm run start` | Run the production build |
+| `npm run lint` | Run ESLint checks |
+| `npm run typecheck` | Run TypeScript compiler check |
+| `npm run test:e2e` | Run end-to-end automated tests with Playwright |
 
-## Batasan
+## Project Architecture
 
-Reward bersifat simulasi. Tidak terdapat uang nyata, payment,
-KYC, maupun dompet. Tidak ada AI yang menyetujui atau menolak.
-Tidak tersedia feed, chat, komentar, maupun video. Database satu
-berkas dan bukti di folder lokal memadai untuk demo luring,
-tetapi bukan arsitektur produksi. Grafik analitik dirender di
-sisi klien.
+- **Framework**: Next.js 16 (App Router) + React 19 + TypeScript
+- **Styling**: Tailwind CSS v4 with custom dark mode theme tokens
+- **Database & Auth**: Supabase (PostgreSQL with RPC execution) + custom session cookies
+- **Icons & Motion**: Lucide React + Motion (Framer Motion engine)
+- **Charts**: Recharts
+
+## Important Notes
+
+- All reward vouchers and point redemptions are simulated for competition purposes. No real monetary transactions or financial balances are involved.
+- All evidence photos uploaded during local development are stored in `data/evidence/` with SHA-256 integrity hashing.
