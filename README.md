@@ -115,6 +115,17 @@ participations.
 - **Icons & Motion**: Lucide React + Motion (Framer Motion engine)
 - **Charts**: Recharts
 
+## Technical Documentation
+
+Detailed documentation lives in [`docs/`](./docs/):
+
+| Document | What it covers |
+|---|---|
+| [Architecture](./docs/ARCHITECTURE.md) | Runtime components, request flows, module map, rendering strategy |
+| [Database](./docs/DATABASE.md) | Tables, columns, relationships, status values |
+| [Business Rules](./docs/BUSINESS-RULES.md) | Mission lifecycle, verification rules, risk scoring, gamification |
+| [Security](./docs/SECURITY.md) | Authentication, authorization, evidence protection, known gaps |
+
 ## Important Notes
 
 - All reward vouchers and point redemptions are simulated for competition purposes. No real monetary transactions or financial balances are involved.
