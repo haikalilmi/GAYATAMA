@@ -61,12 +61,7 @@ export async function listMissions(filter: MissionFilter): Promise<MissionCard[]
   // Use $N directly since we built them manually
   const pgQuery = `SELECT id, title, slug, short_description, category, difficulty, mission_type, xp_reward, point_reward
      FROM missions WHERE ${where.join(" AND ")} ORDER BY title`;
-  const { data, error } = await (await import("./db")).getSupabase().rpc("exec_sql", {
-    query_text: pgQuery,
-    params: params as unknown as Record<string, unknown>,
-  });
-  if (error) throw new Error(`SQL Error: ${error.message}`);
-  return (data ?? []) as MissionCard[];
+  return sql<MissionCard>(pgQuery, ...params).all();
 }
 
 export interface MissionMetric {

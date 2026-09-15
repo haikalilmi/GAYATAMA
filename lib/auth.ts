@@ -60,7 +60,8 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
     sid
   ).get();
   if (!row) return null;
-  if (row.expires_at < new Date().toISOString()) {
+  const expiresAt = new Date(row.expires_at).getTime();
+  if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
     await sql("DELETE FROM sessions WHERE id = ?", sid).run();
     return null;
   }

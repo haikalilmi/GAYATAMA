@@ -2,7 +2,7 @@
 
 ImpactQuest is a social action platform where people complete real-world positive activities, submit photo evidence, get verified by administrators, and earn XP, impact points, achievement badges, and reward vouchers.
 
-The public impact numbers only reflect verified and approved activities.
+Public impact numbers combine seeded demo baselines with verified, approved activities. The seeded totals are illustrative, not independently verified real-world impact.
 
 ## Quick Start
 
@@ -16,11 +16,22 @@ The public impact numbers only reflect verified and approved activities.
 # 1. Install dependencies
 npm install
 
-# 2. Run the development server
+# 2. Copy .env.example to .env and configure your Supabase project.
+# SUPABASE_SERVICE_ROLE_KEY must be a server secret or service_role key.
+# Never reuse the anon/public key for this variable.
+
+# 3. Run the development server
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+The runtime database is Supabase/PostgreSQL. `db/schema.sql`, `db:setup`, and
+`db:reset` are legacy SQLite demo tools and do not initialize or reset Supabase.
+The required Supabase schema and `exec_sql(text,jsonb)` RPC must already exist.
+`db/supabase-hardening.sql` restricts that RPC to the server role; use a real
+server key before applying it to a new environment. Never expose generic SQL
+execution to `anon` or `authenticated` roles.
 
 To access from a mobile phone on the same Wi-Fi network, open `http://<YOUR_LOCAL_IP>:3000` (e.g. `http://192.168.1.19:3000`).
 
@@ -85,6 +96,16 @@ Try opening two different browsers (or one normal window and one incognito windo
 | `npm run lint` | Run ESLint checks |
 | `npm run typecheck` | Run TypeScript compiler check |
 | `npm run test:e2e` | Run end-to-end automated tests with Playwright |
+| `npm run test:regressions` | Run isolated bug regression tests with a mocked database |
+| `npm run test:smoke` | Check public pages, role logins and mobile width in a running browser |
+
+Start the server separately before browser tests, e.g. `npm run start -- --port 3185`
+after building. Set `E2E_BASE` when using another port and `BROWSER_PATH` if needed.
+The legacy `test:e2e` and `e2e/extra.mjs` scripts change demo data, assume a fresh
+seed, and contain selectors that need updating for the current UI. They do not
+start or reset a server automatically. `test:smoke` does not create submissions
+or redeem rewards; login creates sessions and dashboard reads can expire old
+participations.
 
 ## Project Architecture
 
@@ -98,3 +119,5 @@ Try opening two different browsers (or one normal window and one incognito windo
 
 - All reward vouchers and point redemptions are simulated for competition purposes. No real monetary transactions or financial balances are involved.
 - All evidence photos uploaded during local development are stored in `data/evidence/` with SHA-256 integrity hashing.
+- Organization accounts currently view aggregate campaigns; there is no organization-owned campaign editor or per-organization account mapping.
+- Approval and redemption currently use multiple database calls without a single atomic transaction. Concurrent requests and interrupted writes require further database-level hardening before production use.

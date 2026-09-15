@@ -8,8 +8,9 @@ const nextConfig = {
   // sehingga tombol navigasi dan toggle tema tidak merespons.
   allowedDevOrigins: ["192.168.*.*", "10.*.*.*", "172.*.*.*", "*.local"],
   experimental: {
-    // 2 foto @ 5 MB + field teks muat lewat, validasi ramah di lib/evidence.
-    serverActions: { bodySizeLimit: "10mb" },
+    // Allow multipart headers and text in addition to two 5 MiB photos.
+    // Each individual file remains limited to 5 MiB in lib/evidence.
+    serverActions: { bodySizeLimit: "11mb" },
   },
 };
 

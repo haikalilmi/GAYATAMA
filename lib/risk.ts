@@ -37,12 +37,15 @@ export async function calculateSubmissionRisk(input: RiskInput): Promise<RiskRes
       `SELECT 1 FROM submission_evidence WHERE file_hash IN (${ph}) LIMIT 1`,
       ...input.fileHashes
     ).get();
-    if (dup) {
+    const duplicateInSubmission = new Set(input.fileHashes).size < input.fileHashes.length;
+    if (dup || duplicateInSubmission) {
       score += 50;
       flags.push({
         type: "EXACT_DUPLICATE",
         severity: "HIGH",
-        message: "An identical file was submitted before.",
+        message: duplicateInSubmission
+          ? "The same file is used for multiple evidence photos in this submission."
+          : "An identical file was submitted before.",
       });
     }
   }

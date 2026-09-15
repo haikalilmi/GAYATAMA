@@ -1,4 +1,4 @@
-import { sql, getSupabase } from "./db";
+import { sql } from "./db";
 
 export interface CampaignProgress {
   id: string;
@@ -65,27 +65,27 @@ export async function getCampaigns(): Promise<CampaignProgress[]> {
     let participants = 0;
     if (mids.length > 0) {
       const ph = mids.map((_, i) => `$${i + 2}`).join(",");
-      const currentRow = await getSupabase().rpc("exec_sql", {
-        query_text: `SELECT SUM(si.verified_value) AS v FROM submission_impacts si
+      const currentRow = await sql<{ v: number | null }>(
+        `SELECT SUM(si.verified_value) AS v FROM submission_impacts si
              JOIN submissions s ON s.id = si.submission_id
              JOIN mission_metrics mm ON mm.id = si.mission_metric_id
              WHERE s.status = 'APPROVED' AND si.verified_value IS NOT NULL
              AND mm.metric_key = $1 AND s.mission_id IN (${ph})`,
-        params: [c.target_metric_key, ...mids] as unknown as Record<string, unknown>,
-      });
-      current = Number((currentRow.data as { v: number | null }[])?.[0]?.v ?? 0);
+        c.target_metric_key, ...mids
+      ).get();
+      current = Number(currentRow?.v ?? 0);
 
-      const actionsRow = await getSupabase().rpc("exec_sql", {
-        query_text: `SELECT COUNT(*) AS c FROM submissions WHERE status = 'APPROVED' AND mission_id IN (${mids.map((_, i) => `$${i + 1}`).join(",")})`,
-        params: mids as unknown as Record<string, unknown>,
-      });
-      actions = Number((actionsRow.data as { c: number }[])?.[0]?.c ?? 0);
+      const actionsRow = await sql<{ c: number }>(
+        `SELECT COUNT(*) AS c FROM submissions WHERE status = 'APPROVED' AND mission_id IN (${mids.map((_, i) => `$${i + 1}`).join(",")})`,
+        ...mids
+      ).get();
+      actions = Number(actionsRow?.c ?? 0);
 
-      const partRow = await getSupabase().rpc("exec_sql", {
-        query_text: `SELECT COUNT(DISTINCT user_id) AS c FROM participations WHERE status = 'APPROVED' AND mission_id IN (${mids.map((_, i) => `$${i + 1}`).join(",")})`,
-        params: mids as unknown as Record<string, unknown>,
-      });
-      participants = Number((partRow.data as { c: number }[])?.[0]?.c ?? 0);
+      const partRow = await sql<{ c: number }>(
+        `SELECT COUNT(DISTINCT user_id) AS c FROM participations WHERE status = 'APPROVED' AND mission_id IN (${mids.map((_, i) => `$${i + 1}`).join(",")})`,
+        ...mids
+      ).get();
+      participants = Number(partRow?.c ?? 0);
     }
     results.push({
       id: c.id, name: c.name, slug: c.slug, description: c.description,

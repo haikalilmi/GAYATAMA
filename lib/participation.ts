@@ -43,6 +43,9 @@ export async function joinMission(userId: string, userRole: string, missionId: s
   if (mission.start_at && now < new Date(mission.start_at)) throw new JoinError("The mission has not started yet.");
   if (mission.end_at && now > new Date(mission.end_at)) throw new JoinError("The mission period has ended.");
 
+  // Expire stale entries even when joining directly from a mission page.
+  await markExpiredParticipations(userId);
+
   // Build IN clause with $N
   const ph = ACTIVE_STATUSES.map((_, i) => `$${i + 3}`).join(",");
   const dup = await sql(

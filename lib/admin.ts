@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { sql, getSupabase } from "./db";
+import { sql } from "./db";
 
 export interface AdminStats {
   pending: number;
@@ -106,12 +106,7 @@ export async function listSubmissions(filter: QueueFilter): Promise<QueueRow[]> 
      JOIN missions m ON m.id = s.mission_id` +
     (where.length > 0 ? ` WHERE ${where.join(" AND ")}` : "") +
     " ORDER BY s.risk_score DESC, s.submitted_at ASC";
-  const { data, error } = await getSupabase().rpc("exec_sql", {
-    query_text: pgQuery,
-    params: params as unknown as Record<string, unknown>,
-  });
-  if (error) throw new Error(`SQL Error: ${error.message}`);
-  return (data ?? []) as QueueRow[];
+  return sql<QueueRow>(pgQuery, ...params).all();
 }
 
 export async function listMissionsForFilter(): Promise<{ id: string; title: string }[]> {

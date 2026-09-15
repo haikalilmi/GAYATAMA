@@ -15,6 +15,7 @@ import {
   Bell,
   LayoutDashboard,
   ShieldCheck,
+  Building2,
   LogOut,
   LogIn,
   UserPlus,
@@ -79,7 +80,9 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
 
   const manageNav: NavItem[] = isAdmin
     ? [{ label: "Admin Portal", href: "/admin", icon: ShieldCheck, badge: "Admin" }]
-    : [];
+    : user?.role === "ORGANIZATION"
+      ? [{ label: "Organization Portal", href: "/org", icon: Building2 }]
+      : [];
 
   const isLinkActive = (href: string) => {
     if (href === "/") return pathname === "/";

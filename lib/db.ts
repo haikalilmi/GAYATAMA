@@ -7,6 +7,18 @@ let client: SupabaseClient | null = null;
 
 export function getSupabase(): SupabaseClient {
   if (client) return client;
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error("Missing Supabase URL or server key. Check the server .env configuration.");
+  }
+  let role: unknown;
+  try {
+    role = JSON.parse(Buffer.from(supabaseKey.split(".")[1] ?? "", "base64url").toString()).role;
+  } catch {
+    // New Supabase secret keys are opaque rather than JWTs.
+  }
+  if (!supabaseKey.startsWith("sb_secret_") && role !== "service_role") {
+    throw new Error("SUPABASE_SERVICE_ROLE_KEY must be a server secret or service_role key, not an anon/public key.");
+  }
   client = createClient(supabaseUrl, supabaseKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
@@ -29,7 +41,13 @@ export function sql<T = Record<string, unknown>>(
       params: params as unknown as Record<string, unknown>,
     });
     if (error) throw new Error(`SQL Error: ${error.message}\nQuery: ${pgQuery}`);
-    return (data ?? []) as unknown[];
+    const rows = (data ?? []) as unknown[];
+    // The deployed legacy RPC catches SQL exceptions and returns them as rows.
+    // Never report such a write as successful or expose its embedded parameters.
+    if (rows.some((row) => row && typeof row === "object" && "error" in row && "modified_sql" in row)) {
+      throw new Error("SQL execution failed. Check the database schema and constraints.");
+    }
+    return rows;
   }
 
   return {
