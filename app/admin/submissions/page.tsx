@@ -14,10 +14,10 @@ import {
 
 const tabs = [
   { key: "pending", label: "Pending" },
-  { key: "flagged", label: "Risiko Tinggi" },
-  { key: "revision", label: "Revisi" },
-  { key: "approved", label: "Disetujui" },
-  { key: "rejected", label: "Ditolak" },
+  { key: "flagged", label: "High Risk" },
+  { key: "revision", label: "Revision" },
+  { key: "approved", label: "Approved" },
+  { key: "rejected", label: "Rejected" },
   { key: "all", label: "Semua" },
 ] as const;
 
@@ -38,10 +38,10 @@ export default async function SubmissionQueuePage({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-            Antrian Verifikasi Berkas
+            Submission Review Queue
           </h1>
           <p className="text-sm text-slate-500">
-            Audit foto bukti lapangan, validasi angka metrik, dan berikan persetujuan reward.
+            Audit field evidence photos, validate metric values, and approve rewards.
           </p>
         </div>
       </div>
@@ -82,7 +82,7 @@ export default async function SubmissionQueuePage({
               name="q"
               type="search"
               defaultValue={filter.q ?? ""}
-              placeholder="Cari nama relawan / judul misi..."
+              placeholder="Search volunteer name or mission title..."
               maxLength={100}
               className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-9 pr-3.5 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all"
             />
@@ -96,7 +96,7 @@ export default async function SubmissionQueuePage({
               defaultValue={filter.mission ?? "ALL"}
               className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
             >
-              <option value="ALL">Semua Misi</option>
+              <option value="ALL">All Missions</option>
               {missions.map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.title}
@@ -113,7 +113,7 @@ export default async function SubmissionQueuePage({
               defaultValue={filter.risk ?? "ALL"}
               className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
             >
-              <option value="ALL">Semua Tingkat Risiko</option>
+              <option value="ALL">All Risk Levels</option>
               <option value="LOW">LOW</option>
               <option value="MEDIUM">MEDIUM</option>
               <option value="HIGH">HIGH</option>
@@ -135,10 +135,10 @@ export default async function SubmissionQueuePage({
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white/60 p-12 text-center">
           <Inbox className="h-10 w-10 text-slate-400 mx-auto" />
           <p className="mt-3 text-base font-semibold text-slate-800">
-            Tidak ada submission ditemukan
+            No submissions found
           </p>
           <p className="mt-1 text-xs text-slate-500">
-            Ubah filter status tab atau kata kunci pencarian di atas.
+            Change the status tab or search keyword above.
           </p>
         </div>
       ) : (
@@ -147,12 +147,12 @@ export default async function SubmissionQueuePage({
             <table className="w-full text-left text-xs">
               <thead className="border-b border-slate-200/80 bg-slate-50/80 font-semibold uppercase tracking-wider text-slate-500">
                 <tr>
-                  <th className="px-5 py-3.5">Misi Lapangan</th>
-                  <th className="px-5 py-3.5">Nama Relawan</th>
-                  <th className="px-5 py-3.5">Status Audit</th>
-                  <th className="px-5 py-3.5">Skor Risiko</th>
-                  <th className="px-5 py-3.5">Tanggal Masuk</th>
-                  <th className="px-5 py-3.5 text-right">Aksi</th>
+                  <th className="px-5 py-3.5">Field Mission</th>
+                  <th className="px-5 py-3.5">Volunteer Name</th>
+                  <th className="px-5 py-3.5">Audit Status</th>
+                  <th className="px-5 py-3.5">Risk Score</th>
+                  <th className="px-5 py-3.5">Submitted At</th>
+                  <th className="px-5 py-3.5 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -187,7 +187,7 @@ export default async function SubmissionQueuePage({
                       </span>
                     </td>
                     <td className="px-5 py-4 font-mono text-slate-500">
-                      {new Date(r.submitted_at).toLocaleString("id-ID")}
+                      {new Date(r.submitted_at).toLocaleString("en-US")}
                     </td>
                     <td className="px-5 py-4 text-right">
                       <Link

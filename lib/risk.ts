@@ -42,7 +42,7 @@ export async function calculateSubmissionRisk(input: RiskInput): Promise<RiskRes
       flags.push({
         type: "EXACT_DUPLICATE",
         severity: "HIGH",
-        message: "File yang sama persis pernah disubmit sebelumnya.",
+        message: "An identical file was submitted before.",
       });
     }
   }
@@ -52,7 +52,7 @@ export async function calculateSubmissionRisk(input: RiskInput): Promise<RiskRes
     flags.push({
       type: "INVALID_PROOF_CODE",
       severity: "MEDIUM",
-      message: "Kode bukti tidak cocok dengan kode partisipasi.",
+      message: "The proof code does not match the participation code.",
     });
   }
 
@@ -66,7 +66,7 @@ export async function calculateSubmissionRisk(input: RiskInput): Promise<RiskRes
     flags.push({
       type: "MANY_SUBMISSIONS",
       severity: "MEDIUM",
-      message: `Sudah ${day.c} submission dalam 24 jam terakhir.`,
+      message: `${day.c} submissions in the last 24 hours.`,
     });
   }
 
@@ -81,7 +81,7 @@ export async function calculateSubmissionRisk(input: RiskInput): Promise<RiskRes
       flags.push({
         type: "NEW_ACCOUNT",
         severity: "LOW",
-        message: "Akun dibuat kurang dari 24 jam lalu.",
+        message: "Account was created less than 24 hours ago.",
       });
     }
   }

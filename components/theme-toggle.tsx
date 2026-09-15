@@ -29,15 +29,15 @@ export function ThemeToggle({ className, compact }: { className?: string; compac
     <button
       type="button"
       onClick={toggle}
-      aria-label="Ganti mode gelap atau terang"
+      aria-label="Toggle dark or light mode"
       className={`inline-flex touch-manipulation items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white text-slate-700 shadow-2xs transition-all select-none hover:bg-slate-100 hover:text-slate-900 active:scale-[0.98] ${compact ? "h-10 w-10 p-0" : "px-3 py-2 text-xs font-medium"} ${className ?? ""}`}
     >
       <Moon className="h-4 w-4 text-slate-500 dark:hidden" />
       <Sun className="hidden h-4 w-4 text-amber-600 dark:block" />
       {compact ? null : (
         <>
-          <span className="dark:hidden">Mode Gelap</span>
-          <span className="hidden dark:inline">Mode Terang</span>
+          <span className="dark:hidden">Dark Mode</span>
+          <span className="hidden dark:inline">Light Mode</span>
         </>
       )}
     </button>

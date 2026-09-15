@@ -32,39 +32,39 @@ export default async function MissionDetailPage({
   const evidence: { label: string; icon: typeof Camera; desc: string }[] = [];
   if (mission.requires_before_photo)
     evidence.push({
-      label: "Foto Kondisi Sebelum",
+      label: "Before Photo",
       icon: Camera,
-      desc: "Foto area sebelum aksi dilakukan untuk validasi baseline.",
+      desc: "Photo of the area before the action, used to validate the baseline.",
     });
   if (mission.requires_after_photo)
     evidence.push({
-      label: "Foto Kondisi Sesudah",
+      label: "After Photo",
       icon: Camera,
-      desc: "Foto hasil akhir aksi nyata dengan sudut serupa.",
+      desc: "Photo of the final result from a similar angle.",
     });
   if (!mission.requires_before_photo && !mission.requires_after_photo)
     evidence.push({
-      label: "Foto Bukti Aksi",
+      label: "Action Photo",
       icon: Camera,
-      desc: "Foto dokumentasi aksi yang kamu lakukan di lapangan.",
+      desc: "Photo documenting the action you performed in the field.",
     });
   if (mission.requires_description)
     evidence.push({
-      label: "Catatan Lapangan & Deskripsi",
+      label: "Field Notes and Description",
       icon: FileText,
-      desc: "Laporan ringkas mengenai langkah aksi yang diambil.",
+      desc: "A short report on the steps you took.",
     });
   if (mission.requires_proof_code)
     evidence.push({
-      label: "Kertas / Tanda Kode Bukti",
+      label: "Written Proof Code",
       icon: KeyRound,
-      desc: "Wajib menyertakan kode unik saat pengambilan dokumentasi.",
+      desc: "You must include the unique code in your documentation.",
     });
   if (mission.requires_partner_code)
     evidence.push({
-      label: "Kode Partner / Acara",
+      label: "Partner / Event Code",
       icon: KeyRound,
-      desc: "Kode khusus dari koordinator kegiatan atau sponsor.",
+      desc: "A special code from the event coordinator or sponsor.",
     });
 
   let sdg: string[] = [];
@@ -82,7 +82,7 @@ export default async function MissionDetailPage({
         className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
-        <span>Kembali ke Direktori Misi</span>
+        <span>Back to Mission Directory</span>
       </Link>
 
       {/* Main Header Card */}
@@ -96,7 +96,7 @@ export default async function MissionDetailPage({
               Level: {mission.difficulty}
             </span>
             <span className="text-xs font-mono text-slate-400 uppercase">
-              Tipe: {mission.mission_type}
+              Type: {mission.mission_type}
             </span>
           </div>
 
@@ -127,17 +127,17 @@ export default async function MissionDetailPage({
         <div className="flex flex-wrap items-center gap-4 rounded-xl bg-slate-50 p-4 border border-slate-200/60">
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Reward Terverifikasi:
+              Verified Reward:
             </span>
           </div>
           <div className="flex items-center gap-3 font-mono text-sm font-bold">
             <span className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-sky-700 border border-slate-200 shadow-2xs">
               <Sparkles className="h-4 w-4 text-sky-600" />
-              +{mission.xp_reward.toLocaleString("id-ID")} XP
+              +{mission.xp_reward.toLocaleString("en-US")} XP
             </span>
             <span className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-amber-700 border border-slate-200 shadow-2xs">
               <Award className="h-4 w-4 text-amber-600" />
-              +{mission.point_reward.toLocaleString("id-ID")} Impact Points
+              +{mission.point_reward.toLocaleString("en-US")} Impact Points
             </span>
           </div>
         </div>
@@ -150,7 +150,7 @@ export default async function MissionDetailPage({
           <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
             <ShieldCheck className="h-4 w-4 text-sky-600" />
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-              Protokol Bukti Wajib
+              Required Evidence
             </h2>
           </div>
 
@@ -174,11 +174,11 @@ export default async function MissionDetailPage({
           </ul>
 
           <div className="pt-2 text-[11px] font-mono text-slate-400 border-t border-slate-100">
-            Format: JPG/PNG/WEBP (Maks 5 MB). Masa unggah:{" "}
+            Format: JPG/PNG/WEBP (max 5 MB). Upload window:{" "}
             <span className="font-bold text-slate-700">
-              {mission.participation_expiry_hours} jam
+              {mission.participation_expiry_hours} hours
             </span>{" "}
-            sejak konfirmasi slot.
+            after slot confirmation.
           </div>
         </div>
 
@@ -187,13 +187,13 @@ export default async function MissionDetailPage({
           <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
             <Layers className="h-4 w-4 text-emerald-600" />
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-              Metrik Dampak Terukur
+              Measurable Impact Metrics
             </h2>
           </div>
 
           {mission.metrics.length === 0 ? (
             <p className="text-xs text-slate-500">
-              Belum ada metrik numerik khusus untuk misi ini.
+              No numeric metrics for this mission yet.
             </p>
           ) : (
             <ul className="space-y-3">
@@ -214,7 +214,7 @@ export default async function MissionDetailPage({
           )}
 
           <div className="pt-2 text-[11px] font-mono text-slate-400 border-t border-slate-100">
-            Frekuensi Aksi:{" "}
+            Action Frequency:{" "}
             <span className="font-semibold text-slate-700">
               {mission.repeat_type}
             </span>
@@ -234,7 +234,7 @@ export default async function MissionDetailPage({
                   <div className="flex items-center gap-2 text-emerald-700">
                     <CheckCircle2 className="h-5 w-5" />
                     <h3 className="font-bold text-base text-slate-900">
-                      Kamu sudah ikut misi ini
+                      You have joined this mission
                     </h3>
                   </div>
 
@@ -242,7 +242,7 @@ export default async function MissionDetailPage({
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <div>
                         <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                          Kode bukti:
+                          Proof code:
                         </span>
                         <p className="font-mono text-2xl font-black text-sky-900 tracking-wider">
                           {part.proof_code}
@@ -251,20 +251,20 @@ export default async function MissionDetailPage({
                       <div className="text-left sm:text-right">
                         <span className="text-xs text-slate-500 flex items-center gap-1">
                           <Clock className="h-3.5 w-3.5 text-amber-600" />
-                          Batas Waktu Submit:
+                          Submit Deadline:
                         </span>
                         <p
                           className={`font-mono text-xs font-bold ${
                             expired ? "text-rose-600" : "text-slate-800"
                           }`}
                         >
-                          {new Date(part.expires_at).toLocaleString("id-ID")}
-                          {expired ? " (Kedaluwarsa)" : ""}
+                          {new Date(part.expires_at).toLocaleString("en-US")}
+                          {expired ? " (Expired)" : ""}
                         </p>
                       </div>
                     </div>
                     <p className="text-xs text-slate-600">
-                      Tuliskan kode di atas pada kertas dan sertakan saat mengambil foto aksi nyata di lapangan.
+                      Write the code above on paper and include it in your field photos.
                     </p>
                   </div>
 
@@ -273,14 +273,14 @@ export default async function MissionDetailPage({
                       href="/my-missions"
                       className="text-xs font-semibold text-slate-600 hover:text-slate-900"
                     >
-                      Buka di Misi Saya
+                      Open in My Missions
                     </Link>
                     {!expired && part.status === "JOINED" ? (
                       <Link
                         href={`/my-missions/${part.id}/submit`}
                         className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition-colors shadow-2xs"
                       >
-                        <span>Unggah Bukti Aksi</span>
+                        <span>Upload Action Evidence</span>
                         <ArrowRight className="h-4 w-4" />
                       </Link>
                     ) : null}
@@ -293,7 +293,7 @@ export default async function MissionDetailPage({
                 <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-4 border border-slate-200 text-sm text-slate-600">
                   <AlertCircle className="h-5 w-5 text-slate-400 shrink-0" />
                   <p>
-                    Akun bertipe <span className="font-mono font-bold">{user.role}</span> hanya bertindak sebagai pengelola atau verifikator dan tidak dapat mendaftar misi lapangan.
+                    Accounts of type <span className="font-mono font-bold">{user.role}</span> act only as managers or verifiers and cannot join field missions.
                   </p>
                 </div>
               );
@@ -302,10 +302,10 @@ export default async function MissionDetailPage({
               <div className="space-y-4">
                 <div>
                   <h3 className="font-bold text-base text-slate-900">
-                    Siap Mengambil Aksi Ini?
+                    Ready to Take This Action?
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Klik tombol di bawah untuk memesan slot verifikasi dan mendapatkan kode unik partisipasi.
+                    Click below to reserve a verification slot and get your unique participation code.
                   </p>
                 </div>
                 <JoinForm missionId={mission.id} slug={mission.slug} />
@@ -315,16 +315,16 @@ export default async function MissionDetailPage({
         ) : (
           <div className="text-center py-4 space-y-3">
             <h3 className="font-bold text-base text-slate-900">
-              Masuk untuk Mengikuti Misi Ini
+              Sign In to Join This Mission
             </h3>
             <p className="text-sm text-slate-500 max-w-sm mx-auto">
-              Daftarkan diri atau masuk dengan akun Google / demo untuk mencatat dampak sosialmu.
+              Sign up or sign in with Google or a demo account to record your social impact.
             </p>
             <Link
               href={`/login?next=${encodeURIComponent(`/missions/${mission.slug}`)}`}
               className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs"
             >
-              <span>Login untuk Ikut Misi</span>
+              <span>Sign In to Join</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

@@ -12,7 +12,7 @@ export async function redeemAction(_prev: RedeemState | null, form: FormData): P
   const user = await getCurrentUser();
   if (!user) redirect("/login?next=%2Frewards");
   const id = form.get("reward_id");
-  if (typeof id !== "string") return { error: "Data tidak lengkap." };
+  if (typeof id !== "string") return { error: "Incomplete data." };
   try {
     const { demoCode } = await redeemReward(user.id, id);
     redirect(`/rewards/history?code=${encodeURIComponent(demoCode)}`);

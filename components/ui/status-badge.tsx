@@ -27,43 +27,43 @@ export type StatusType =
 const statusStyles: Record<string, { label: string; className: string }> = {
   // Participations / Submissions
   JOINED: {
-    label: "Aktif Bergabung",
+    label: "Joined",
     className: "bg-sky-50 text-sky-700 border-sky-200/70",
   },
   SUBMITTED: {
-    label: "Terkirim",
+    label: "Submitted",
     className: "bg-blue-50 text-blue-700 border-blue-200/70",
   },
   UNDER_REVIEW: {
-    label: "Sedang Ditinjau",
+    label: "Under Review",
     className: "bg-indigo-50 text-indigo-700 border-indigo-200/70",
   },
   RESUBMITTED: {
-    label: "Telah Direvisi",
+    label: "Resubmitted",
     className: "bg-purple-50 text-purple-700 border-purple-200/70",
   },
   REVISION_REQUESTED: {
-    label: "Perlu Revisi",
+    label: "Revision Requested",
     className: "bg-amber-50 text-amber-800 border-amber-300/70",
   },
   APPROVED: {
-    label: "Disetujui",
+    label: "Approved",
     className: "bg-emerald-50 text-emerald-700 border-emerald-300/70",
   },
   REJECTED: {
-    label: "Ditolak",
+    label: "Rejected",
     className: "bg-rose-50 text-rose-700 border-rose-200/70",
   },
   CANCELLED: {
-    label: "Dibatalkan",
+    label: "Cancelled",
     className: "bg-slate-100 text-slate-600 border-slate-200",
   },
   EXPIRED: {
-    label: "Kedaluwarsa",
+    label: "Expired",
     className: "bg-slate-100 text-slate-500 border-slate-200",
   },
   PENDING: {
-    label: "Menunggu Ditinjau",
+    label: "Pending Review",
     className: "bg-amber-50 text-amber-700 border-amber-200/80",
   },
   ACTIVE: {
@@ -81,31 +81,31 @@ const statusStyles: Record<string, { label: string; className: string }> = {
 
   // Risk levels
   LOW: {
-    label: "Risiko Rendah",
+    label: "Low Risk",
     className: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
   },
   HIGH: {
-    label: "Risiko Tinggi",
+    label: "High Risk",
     className: "bg-rose-50 text-rose-700 border-rose-200/80 font-semibold",
   },
 
   // Difficulties
   EASY: {
-    label: "Mudah",
+    label: "Easy",
     className: "bg-slate-100 text-slate-700 border-slate-200/80",
   },
   MEDIUM: {
-    label: "Sedang",
+    label: "Medium",
     className: "bg-sky-50 text-sky-700 border-sky-200/60",
   },
 
   // Mission types
   STANDARD: {
-    label: "Standar",
+    label: "Standard",
     className: "bg-slate-100 text-slate-700 border-slate-200/80",
   },
   LIMITED: {
-    label: "Terbatas",
+    label: "Limited",
     className: "bg-amber-50 text-amber-700 border-amber-200/80",
   },
   SPONSORED: {

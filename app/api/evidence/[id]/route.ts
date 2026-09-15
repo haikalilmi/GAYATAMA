@@ -13,15 +13,15 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
      JOIN submissions s ON s.id = se.submission_id WHERE se.id = ?`,
     id
   ).get();
-  if (!row) return new Response("Tidak ketemu.", { status: 404 });
+  if (!row) return new Response("Not found.", { status: 404 });
   if (user.role !== "ADMIN" && row.user_id !== user.id)
-    return new Response("Akses ditolak.", { status: 403 });
+    return new Response("Access denied.", { status: 403 });
   try {
     const buf = await readFile(evidenceAbsPath(row.storage_path));
     return new Response(new Uint8Array(buf), {
       headers: { "Content-Type": row.mime_type, "Cache-Control": "private, max-age=3600" },
     });
   } catch {
-    return new Response("File hilang.", { status: 410 });
+    return new Response("File missing.", { status: 410 });
   }
 }

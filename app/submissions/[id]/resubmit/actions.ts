@@ -17,13 +17,13 @@ export async function resubmitEvidenceAction(
   const user = await getCurrentUser();
   if (!user) redirect("/login");
   const sid = form.get("submission_id");
-  if (typeof sid !== "string") return { error: "Data tidak lengkap." };
+  if (typeof sid !== "string") return { error: "Incomplete data." };
 
   const metrics: Record<string, number> = {};
   for (const [key, value] of form.entries()) {
     if (key.startsWith("metric_") && typeof value === "string" && value !== "") {
       const n = Number(value);
-      if (!Number.isFinite(n)) return { error: "Nilai metrik tidak valid." };
+      if (!Number.isFinite(n)) return { error: "Invalid metric value." };
       const rawKey = key.slice("metric_".length);
       metrics[rawKey] = n;
       if (rawKey === "mm-waste") metrics["e0000000-0000-0000-0000-000000000001"] = n;

@@ -19,14 +19,14 @@ export default async function CommunityPage() {
               LIVE TELEMETRY
             </span>
             <span className="text-xs font-mono text-slate-400">
-              AGREGAT DAMPAK SOSIAL
+              AGGREGATE SOCIAL IMPACT
             </span>
           </div>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
-            Dampak Kolektif Komunitas
+            Collective Community Impact
           </h1>
           <p className="text-sm text-slate-500">
-            Seluruh data dampak dihitung dari submission aksi lapangan yang telah disetujui komite verifikasi.
+            All impact data is calculated from field submissions approved by the verification committee.
           </p>
         </div>
       </div>
@@ -36,7 +36,7 @@ export default async function CommunityPage() {
         <div className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-7 shadow-rim transition-all hover:shadow-rim-md">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Total Aksi Terverifikasi
+              Total Verified Actions
             </span>
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-50 text-sky-600 border border-sky-100">
               <CheckCircle2 className="h-5 w-5" />
@@ -44,11 +44,11 @@ export default async function CommunityPage() {
           </div>
           <div className="mt-4">
             <p className="font-mono text-4xl font-black tracking-tight text-slate-900">
-              {c.verifiedActions.toLocaleString("id-ID")}
+              {c.verifiedActions.toLocaleString("en-US")}
             </p>
             <p className="mt-2 text-xs text-slate-500 flex items-center gap-1">
-              <span className="font-semibold text-emerald-600">100% Audit Selesai</span> ·
-              Tervalidasi melalui bukti foto & koordinat
+              <span className="font-semibold text-emerald-600">100% Audited</span> ·
+              Validated through photo evidence and coordinates
             </p>
           </div>
         </div>
@@ -56,7 +56,7 @@ export default async function CommunityPage() {
         <div className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-7 shadow-rim transition-all hover:shadow-rim-md">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Relawan Kontributor Aktif
+              Active Volunteer Contributors
             </span>
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100">
               <Users className="h-5 w-5" />
@@ -64,10 +64,10 @@ export default async function CommunityPage() {
           </div>
           <div className="mt-4">
             <p className="font-mono text-4xl font-black tracking-tight text-slate-900">
-              {c.contributors.toLocaleString("id-ID")}
+              {c.contributors.toLocaleString("en-US")}
             </p>
             <p className="mt-2 text-xs text-slate-500">
-              Warga dan penggerak sosial yang terdaftar aktif
+              Registered community members and social drivers
             </p>
           </div>
         </div>
@@ -76,7 +76,7 @@ export default async function CommunityPage() {
       {/* Metrics Telemetry Grid */}
       <div className="space-y-4">
         <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
-          Metrik Lingkungan & Sosial Terukur
+          Measurable Environmental and Social Metrics
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {c.metrics.map((m) => (
@@ -94,10 +94,10 @@ export default async function CommunityPage() {
               </div>
               <div className="mt-3">
                 <p className="font-mono text-2xl font-bold tracking-tight text-slate-900">
-                  {m.value.toLocaleString("id-ID")}
+                  {m.value.toLocaleString("en-US")}
                 </p>
                 <p className="mt-1 text-[11px] text-slate-400">
-                  Dihimpun dari seluruh relawan terverifikasi
+                  Collected from all verified volunteers
                 </p>
               </div>
             </div>
@@ -109,10 +109,10 @@ export default async function CommunityPage() {
       <div className="flex items-start gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-5 text-xs text-slate-600">
         <Info className="h-4 w-4 text-sky-600 mt-0.5 shrink-0" />
         <p className="leading-relaxed">
-          <strong className="text-slate-800">Transparansi Audit:</strong> Angka dasar
-          berasal dari baseline demonstration data. Setiap submission aksi lapangan
-          prototype yang disetujui admin secara otomatis menambahkan nilai riil ke
-          dalam total agregat di atas dalam transaksi atomik.
+          <strong className="text-slate-800">Audit Transparency:</strong> Baseline
+          figures come from demonstration data. Every prototype field submission
+          approved by an admin automatically adds real values to the aggregate
+          totals above.
         </p>
       </div>
     </div>

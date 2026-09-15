@@ -78,10 +78,10 @@ export function ReviewForms({
           <input type="hidden" name="submission_id" value={submissionId} />
           <div>
             <h3 className="font-bold text-sm text-slate-900">
-              Mulai Audit Berkas
+              Start File Review
             </h3>
             <p className="text-xs text-slate-600">
-              Kunci submission ini ke status &quot;Sedang Ditinjau&quot; agar tidak ditangani ganda.
+              Lock this submission to &quot;Under Review&quot; so it is not handled twice.
             </p>
           </div>
           <Msg state={startState} />
@@ -93,12 +93,12 @@ export function ReviewForms({
             {startPending ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin text-sky-400" />
-                <span>Memproses...</span>
+                <span>Processing...</span>
               </>
             ) : (
               <>
                 <Play className="h-3.5 w-3.5 fill-current text-sky-400" />
-                <span>Mulai Review Berkas</span>
+                <span>Start File Review</span>
               </>
             )}
           </button>
@@ -115,10 +115,10 @@ export function ReviewForms({
             <div className="border-b border-slate-100 pb-3">
               <h3 className="text-sm font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
                 <Check className="h-4 w-4 text-emerald-600" />
-                <span>Setujui (Approve Submission)</span>
+                <span>Approve Submission</span>
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Konfirmasi angka dampak terverifikasi. Transaksi akan memberikan XP dan Impact Points.
+                Confirm the verified impact values. This will grant XP and Impact Points.
               </p>
             </div>
 
@@ -132,7 +132,7 @@ export function ReviewForms({
                 >
                   {m.name} ({m.unit}) —{" "}
                   <span className="text-slate-400 font-mono">
-                    dilaporkan: {m.reported_value}
+                    reported: {m.reported_value}
                   </span>
                 </label>
                 <div className="relative">
@@ -160,7 +160,7 @@ export function ReviewForms({
               disabled={apprPending}
               className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-emerald-600 transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
             >
-              {apprPending ? "Memproses Verifikasi..." : "Approve (Setujui & Terbitkan Reward)"}
+              {apprPending ? "Processing verification..." : "Approve and Release Rewards"}
             </button>
           </form>
 
@@ -172,10 +172,10 @@ export function ReviewForms({
             <div className="border-b border-slate-100 pb-2">
               <h3 className="text-sm font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
                 <RotateCcw className="h-4 w-4 text-amber-600" />
-                <span>Minta Revisi (Hanya 1x Kesempatan)</span>
+                <span>Request Revision (one chance only)</span>
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Kembalikan berkas ke relawan jika foto kurang jelas atau kode bukti buram.
+                Send the submission back if photos are unclear or the proof code is unreadable.
               </p>
             </div>
 
@@ -186,7 +186,7 @@ export function ReviewForms({
                 htmlFor="rev-note"
                 className="block text-xs font-semibold text-slate-700"
               >
-                Instruksi Revisi untuk Relawan *
+                Revision Instructions for Volunteer *
               </label>
               <textarea
                 id="rev-note"
@@ -194,7 +194,7 @@ export function ReviewForms({
                 rows={2}
                 required
                 maxLength={1000}
-                placeholder="Contoh: Foto sesudah aksi terpotong, mohon unggah ulang foto yang menampilkan kode bukti dengan jelas..."
+                placeholder="e.g. The after photo is cut off; please re-upload a photo showing the proof code clearly..."
                 className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-xs text-slate-900 focus:bg-white focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all"
               />
             </div>
@@ -206,7 +206,7 @@ export function ReviewForms({
               disabled={revPending}
               className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-amber-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-amber-500 transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
             >
-              {revPending ? "Mengirim Permintaan..." : "Minta Revisi Berkas"}
+              {revPending ? "Sending request..." : "Request Revision"}
             </button>
           </form>
 
@@ -218,10 +218,10 @@ export function ReviewForms({
             <div className="border-b border-slate-100 pb-2">
               <h3 className="text-sm font-bold text-rose-800 uppercase tracking-wider flex items-center gap-1.5">
                 <X className="h-4 w-4 text-rose-600" />
-                <span>Tolak Permanen (Reject Submission)</span>
+                <span>Reject Submission</span>
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Gunakan jika bukti palsu, melanggar ketentuan, atau foto duplikasi terdeteksi.
+                Use when evidence is fake, violates the rules, or duplicate photos are detected.
               </p>
             </div>
 
@@ -232,7 +232,7 @@ export function ReviewForms({
                 htmlFor="rej-reason"
                 className="block text-xs font-semibold text-slate-700"
               >
-                Alasan Penolakan Wajib *
+                Rejection Reason (required) *
               </label>
               <select
                 id="rej-reason"
@@ -253,14 +253,14 @@ export function ReviewForms({
                 htmlFor="rej-note"
                 className="block text-xs font-semibold text-slate-700"
               >
-                Catatan Penjelasan (Opsional)
+                Explanatory Note (optional)
               </label>
               <textarea
                 id="rej-note"
                 name="note"
                 rows={2}
                 maxLength={1000}
-                placeholder="Penjelasan tambahan alasan penolakan..."
+                placeholder="Additional explanation for the rejection..."
                 className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-xs text-slate-900 focus:bg-white focus:border-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition-all"
               />
             </div>
@@ -272,13 +272,13 @@ export function ReviewForms({
               disabled={rejPending}
               className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-rose-700 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-rose-600 transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
             >
-              {rejPending ? "Memproses Penolakan..." : "Tolak Submission Ini"}
+              {rejPending ? "Processing rejection..." : "Reject This Submission"}
             </button>
           </form>
         </div>
       ) : (
         <div className="rounded-2xl border border-slate-200/80 bg-slate-50/60 p-5 text-center text-xs text-slate-500 font-mono">
-          Status submission telah final ({status}). Tidak ada aksi verifikasi lanjutan yang tersedia.
+          This submission is final ({status}). No further verification actions are available.
         </div>
       )}
     </div>

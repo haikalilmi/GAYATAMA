@@ -17,17 +17,17 @@ export default async function AdminMissionsPage() {
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-700 border border-sky-200/60">
               <Target className="h-3 w-3" />
-              Daftar Misi
+              Mission List
             </span>
             <span className="text-xs font-mono text-slate-400">
-              {rows.length} TOTAL MISI
+              {rows.length} TOTAL MISSIONS
             </span>
           </div>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
-            Kelola Misi Lapangan
+            Manage Field Missions
           </h1>
           <p className="text-sm text-slate-500">
-            Publikasikan misi baru, atur metrik target, dan perbarui status operasional.
+            Publish new missions, set target metrics, and update operational status.
           </p>
         </div>
 
@@ -36,7 +36,7 @@ export default async function AdminMissionsPage() {
           className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-slate-800 transition-colors cursor-pointer"
         >
           <Plus className="h-4 w-4" />
-          <span>Buat Misi Baru</span>
+          <span>Create New Mission</span>
         </Link>
       </div>
 
@@ -46,11 +46,11 @@ export default async function AdminMissionsPage() {
           <table className="w-full text-left text-xs">
             <thead className="border-b border-slate-200/80 bg-slate-50/80 font-semibold uppercase tracking-wider text-slate-500">
               <tr>
-                <th className="px-5 py-3.5">Judul Misi</th>
-                <th className="px-5 py-3.5">Kategori</th>
+                <th className="px-5 py-3.5">Mission Title</th>
+                <th className="px-5 py-3.5">Category</th>
                 <th className="px-5 py-3.5">Reward</th>
                 <th className="px-5 py-3.5">Status</th>
-                <th className="px-5 py-3.5 text-right">Ubah Status</th>
+                <th className="px-5 py-3.5 text-right">Change Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

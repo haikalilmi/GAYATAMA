@@ -24,17 +24,17 @@ export default async function RewardHistoryPage({
         className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
-        <span>Kembali ke Katalog Reward</span>
+        <span>Back to Reward Catalog</span>
       </Link>
 
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-            Riwayat Penukaran Reward
+            Reward Redemption History
           </h1>
           <p className="text-sm text-slate-500">
-            Daftar voucher demo dan merchandise yang telah kamu tukarkan.
+            Demo vouchers and merchandise you have redeemed.
           </p>
         </div>
       </div>
@@ -47,14 +47,14 @@ export default async function RewardHistoryPage({
         >
           <div className="flex items-center gap-2 text-emerald-800">
             <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-            <p className="font-bold text-sm">Penukaran Poin Berhasil!</p>
+            <p className="font-bold text-sm">Points Redeemed Successfully!</p>
           </div>
           <p className="text-xs text-emerald-700">
-            Simpan kode demo berikut untuk ditunjukkan kepada panitia atau merchant sponsor:
+            Save the demo code below to show to the organizers or sponsor merchant:
           </p>
           <div className="rounded-xl border border-emerald-300 bg-white p-3 text-center space-y-1">
             <span className="block text-[11px] font-semibold uppercase tracking-wider text-emerald-700">
-              Kode demo kamu:
+              Your demo code:
             </span>
             <span className="font-mono text-xl font-black text-emerald-900 tracking-wider block">
               {code}
@@ -68,16 +68,16 @@ export default async function RewardHistoryPage({
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white/60 p-12 text-center">
           <Ticket className="h-10 w-10 text-slate-400 mx-auto" />
           <p className="mt-3 text-base font-semibold text-slate-800">
-            Belum ada riwayat penukaran reward
+            No reward redemptions yet
           </p>
           <p className="mt-1 text-xs text-slate-500">
-            Kumpulkan Impact Points dengan menyelesaikan misi sosial terverifikasi.
+            Collect Impact Points by completing verified social missions.
           </p>
           <Link
             href="/rewards"
             className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800"
           >
-            <span>Buka Katalog Reward</span>
+            <span>Open Reward Catalog</span>
           </Link>
         </div>
       ) : (
@@ -99,7 +99,7 @@ export default async function RewardHistoryPage({
                       -{r.point_cost} PTS
                     </span>
                     <span className="text-[11px] font-mono text-slate-400">
-                      {new Date(r.created_at).toLocaleString("id-ID")}
+                      {new Date(r.created_at).toLocaleString("en-US")}
                     </span>
                   </div>
                   <p className="font-bold text-base text-slate-900">
@@ -112,7 +112,7 @@ export default async function RewardHistoryPage({
 
                 <div className="flex sm:flex-col items-end gap-1 shrink-0">
                   <span className="text-[10px] uppercase font-mono text-slate-400">
-                    Kode Demo:
+                    Demo Code:
                   </span>
                   <span className="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-3 py-1 font-mono text-sm font-black text-slate-800">
                     {r.demo_code}

@@ -8,8 +8,8 @@ export default async function EditRewardPage({ params }: { params: Promise<{ id:
   if (!reward) {
     return (
       <div className="space-y-3">
-        <h1 className="text-xl font-semibold">Reward tidak ketemu.</h1>
-        <Link href="/admin/rewards" className="text-sm underline">Kembali</Link>
+        <h1 className="text-xl font-semibold">Reward not found.</h1>
+        <Link href="/admin/rewards" className="text-sm underline">Back</Link>
       </div>
     );
   }
@@ -18,7 +18,7 @@ export default async function EditRewardPage({ params }: { params: Promise<{ id:
     <div className="space-y-6">
       <h1 className="text-xl font-semibold">Edit: {reward.title}</h1>
       <RewardForm mode="edit" rewardId={reward.id} initial={reward} />
-      <Link href="/admin/rewards" className="text-sm underline">Kembali ke daftar</Link>
+      <Link href="/admin/rewards" className="text-sm underline">Back to list</Link>
     </div>
   );
 }

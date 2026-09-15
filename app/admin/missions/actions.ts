@@ -31,7 +31,7 @@ function readForm(form: FormData): MissionForm {
     if (!(c in obj)) obj[c] = "0";
   }
   const parsed = missionFormSchema.safeParse(obj);
-  if (!parsed.success) throw new MissionAdminError(parsed.error.issues[0]?.message ?? "Input tidak valid.");
+  if (!parsed.success) throw new MissionAdminError(parsed.error.issues[0]?.message ?? "Invalid input.");
   return parsed.data;
 }
 
@@ -50,7 +50,7 @@ export async function createMissionAction(_prev: MissionState | null, form: Form
 
 export async function updateMissionAction(_prev: MissionState | null, form: FormData): Promise<MissionState> {
   const id = form.get("mission_id");
-  if (typeof id !== "string") return { error: "Data tidak lengkap." };
+  if (typeof id !== "string") return { error: "Incomplete data." };
   try {
     await mustAdmin();
     await updateMission(id, readForm(form));
@@ -67,7 +67,7 @@ export async function updateMissionAction(_prev: MissionState | null, form: Form
 export async function missionStatusAction(_prev: MissionState | null, form: FormData): Promise<MissionState> {
   const id = form.get("mission_id");
   const next = form.get("next_status");
-  if (typeof id !== "string" || typeof next !== "string") return { error: "Data tidak lengkap." };
+  if (typeof id !== "string" || typeof next !== "string") return { error: "Incomplete data." };
   try {
     await mustAdmin();
     await setMissionStatus(id, next);

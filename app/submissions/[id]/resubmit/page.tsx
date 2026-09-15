@@ -43,17 +43,17 @@ export default async function ResubmitPage({
       <div className="rounded-2xl border border-slate-200/80 bg-white p-8 text-center space-y-4 max-w-lg mx-auto shadow-rim">
         <AlertTriangle className="h-8 w-8 text-amber-500 mx-auto" />
         <h1 className="text-xl font-bold text-slate-900">
-          Tidak Dapat Melakukan Revisi
+          Cannot Submit a Revision
         </h1>
         <p className="text-xs text-slate-500">
-          Hanya berkas berstatus permintaan revisi milikmu yang dapat dikirimkan ulang.
+          Only your own submissions with a revision request can be resubmitted.
         </p>
         <Link
           href="/my-missions"
           className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Kembali ke Misi Saya</span>
+          <span>Back to My Missions</span>
         </Link>
       </div>
     );
@@ -84,7 +84,7 @@ export default async function ResubmitPage({
         className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
-        <span>Kembali ke Detail Submission</span>
+        <span>Back to Submission Detail</span>
       </Link>
 
       {/* Briefing Banner */}
@@ -92,11 +92,11 @@ export default async function ResubmitPage({
         <div className="flex items-center gap-2 text-amber-900">
           <RotateCcw className="h-5 w-5 text-amber-700" />
           <h1 className="text-xl font-bold tracking-tight">
-            Revisi Berkas: {sub.title}
+            Revise Submission: {sub.title}
           </h1>
         </div>
         <p className="text-xs text-amber-800 leading-relaxed">
-          Unggah ulang foto atau perbaiki data sesuai catatan verifikator. Kesempatan revisi hanya diberikan 1 kali sebelum keputusan akhir ditetapkan.
+          Re-upload photos or fix the data as noted by the reviewer. Only one revision is allowed before the final decision.
         </p>
       </div>
 
@@ -106,8 +106,8 @@ export default async function ResubmitPage({
           idName="submission_id"
           idValue={sub.id}
           action={resubmitEvidenceAction}
-          submitLabel="Kirim Revisi Berkas"
-          pendingLabel="Mengunggah perbaikan..."
+          submitLabel="Submit Revision"
+          pendingLabel="Uploading revision..."
           requires={{
             before: !!sub.requires_before_photo,
             after: !!sub.requires_after_photo,

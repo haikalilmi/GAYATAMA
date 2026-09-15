@@ -28,7 +28,7 @@ function readForm(form: FormData): RewardForm {
   if (!obj.demo_value) delete obj.demo_value;
   if (!obj.description) delete obj.description;
   const parsed = rewardFormSchema.safeParse(obj);
-  if (!parsed.success) throw new RewardAdminError(parsed.error.issues[0]?.message ?? "Input tidak valid.");
+  if (!parsed.success) throw new RewardAdminError(parsed.error.issues[0]?.message ?? "Invalid input.");
   return parsed.data;
 }
 
@@ -46,7 +46,7 @@ export async function createRewardAction(_prev: RewardState | null, form: FormDa
 
 export async function updateRewardAction(_prev: RewardState | null, form: FormData): Promise<RewardState> {
   const id = form.get("reward_id");
-  if (typeof id !== "string") return { error: "Data tidak lengkap." };
+  if (typeof id !== "string") return { error: "Incomplete data." };
   try {
     await mustAdmin();
     await updateReward(id, readForm(form));

@@ -3,7 +3,7 @@
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 export function CategoryChart({ data }: { data: { category: string; count: number }[] }) {
-  if (data.length === 0) return <p className="text-sm text-slate-500">Belum ada data terverifikasi.</p>;
+  if (data.length === 0) return <p className="text-sm text-slate-500">No verified data yet.</p>;
   return (
     <div className="h-56">
       <ResponsiveContainer width="100%" height="100%">

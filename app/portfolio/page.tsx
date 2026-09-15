@@ -15,7 +15,7 @@ export default async function PortfolioPage() {
   if (!p) {
     return (
       <div className="rounded-2xl border border-slate-200/80 bg-white p-8 text-center text-sm text-slate-500 max-w-lg mx-auto">
-        Profil portofolio tidak ditemukan.
+        Portfolio profile not found.
       </div>
     );
   }
@@ -30,7 +30,7 @@ export default async function PortfolioPage() {
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-700 border border-sky-200/60">
                 <ShieldCheck className="h-3 w-3" />
-                Portofolio Terverifikasi
+                Verified Portfolio
               </span>
               <span className="text-xs font-mono text-slate-400">
                 AUDITED PROFILE
@@ -40,7 +40,7 @@ export default async function PortfolioPage() {
               {p.full_name}
             </h1>
             <p className="text-sm text-slate-500">
-              Relawan Kontributor Terdaftar · Bukti Aksi Lolos Verifikasi
+              Registered Volunteer Contributor · Verified Action Evidence
             </p>
           </div>
 
@@ -55,21 +55,21 @@ export default async function PortfolioPage() {
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="rounded-xl bg-slate-50 p-4 border border-slate-200/60">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Total XP Terkumpul
+              Total XP Earned
             </span>
             <p className="mt-1 font-mono text-2xl font-bold text-slate-900">
-              {p.total_xp.toLocaleString("id-ID")}{" "}
+              {p.total_xp.toLocaleString("en-US")}{" "}
               <span className="text-xs text-slate-400">XP</span>
             </p>
           </div>
 
           <div className="rounded-xl bg-slate-50 p-4 border border-slate-200/60">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Aksi Terverifikasi
+              Verified Actions
             </span>
             <p className="mt-1 font-mono text-2xl font-bold text-emerald-700">
-              {p.verifiedActions.toLocaleString("id-ID")}{" "}
-              <span className="text-xs text-slate-400">Aksi</span>
+              {p.verifiedActions.toLocaleString("en-US")}{" "}
+              <span className="text-xs text-slate-400">Actions</span>
             </p>
           </div>
 
@@ -78,7 +78,7 @@ export default async function PortfolioPage() {
               Impact Points
             </span>
             <p className="mt-1 font-mono text-2xl font-bold text-amber-700">
-              {p.points_balance.toLocaleString("id-ID")}{" "}
+              {p.points_balance.toLocaleString("en-US")}{" "}
               <span className="text-xs text-slate-400">PTS</span>
             </p>
           </div>
@@ -90,13 +90,13 @@ export default async function PortfolioPage() {
         <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
           <Layers className="h-4 w-4 text-sky-600" />
           <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-            Akumulasi Dampak Terverifikasi
+            Verified Impact Totals
           </h2>
         </div>
 
         {p.metrics.length === 0 ? (
           <p className="py-4 text-center text-xs text-slate-500">
-            Belum ada metrik dampak terakumulasi. Hanya submission yang telah disetujui komite yang dihitung.
+            No accumulated impact metrics yet. Only submissions approved by the committee are counted.
           </p>
         ) : (
           <div className="grid gap-3 sm:grid-cols-2">
@@ -109,7 +109,7 @@ export default async function PortfolioPage() {
                   {m.label}
                 </span>
                 <span className="font-mono text-sm font-black text-slate-900">
-                  {m.value.toLocaleString("id-ID")}
+                  {m.value.toLocaleString("en-US")}
                 </span>
               </div>
             ))}
@@ -123,14 +123,14 @@ export default async function PortfolioPage() {
           <div className="flex items-center gap-2">
             <Medal className="h-4 w-4 text-amber-600" />
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-              Lencana Pencapaian ({p.badges.length})
+              Achievement Badges ({p.badges.length})
             </h2>
           </div>
         </div>
 
         {p.badges.length === 0 ? (
           <p className="py-4 text-center text-xs text-slate-500">
-            Belum ada badge yang terbuka. Terus ikuti misi sosial untuk membuka lencana khusus.
+            No badges unlocked yet. Keep joining social missions to unlock special badges.
           </p>
         ) : (
           <div className="grid gap-3 sm:grid-cols-2">
@@ -159,13 +159,13 @@ export default async function PortfolioPage() {
         <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
           <Clock className="h-4 w-4 text-slate-500" />
           <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-            Jejak Audit Aktivitas Terakhir
+            Recent Activity Audit Trail
           </h2>
         </div>
 
         {p.recent.length === 0 ? (
           <p className="py-4 text-center text-xs text-slate-500">
-            Belum ada riwayat aktivitas verifikasi.
+            No verification activity yet.
           </p>
         ) : (
           <ul className="space-y-3">
@@ -179,8 +179,8 @@ export default async function PortfolioPage() {
                 </span>
                 <span className="font-mono text-slate-500">
                   {r.verified_at
-                    ? new Date(r.verified_at).toLocaleDateString("id-ID")
-                    : "Menunggu"}
+                    ? new Date(r.verified_at).toLocaleDateString("en-US")
+                    : "Pending"}
                 </span>
               </li>
             ))}

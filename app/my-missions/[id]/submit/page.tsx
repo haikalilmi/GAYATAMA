@@ -40,17 +40,17 @@ export default async function SubmitPage({
       <div className="rounded-2xl border border-slate-200/80 bg-white p-8 text-center space-y-4 max-w-lg mx-auto">
         <AlertTriangle className="h-8 w-8 text-amber-500 mx-auto" />
         <h1 className="text-xl font-bold text-slate-900">
-          Slot Partisipasi Tidak Ditemukan
+          Participation Slot Not Found
         </h1>
         <p className="text-sm text-slate-500">
-          Data pendaftaran tidak valid atau tidak terkait dengan akunmu.
+          The registration data is invalid or does not belong to your account.
         </p>
         <Link
           href="/my-missions"
           className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Kembali ke Misi Saya</span>
+          <span>Back to My Missions</span>
         </Link>
       </div>
     );
@@ -61,17 +61,17 @@ export default async function SubmitPage({
       <div className="rounded-2xl border border-slate-200/80 bg-white p-8 text-center space-y-4 max-w-lg mx-auto">
         <ShieldCheck className="h-8 w-8 text-sky-600 mx-auto" />
         <h1 className="text-xl font-bold text-slate-900">
-          Bukti Sudah Terkirim ({part.status})
+          Evidence Already Submitted ({part.status})
         </h1>
         <p className="text-sm text-slate-500">
-          Misi ini telah dikirimkan ke tim verifikator dan sedang dalam proses audit.
+          This mission has been sent to the verification team and is under review.
         </p>
         <Link
           href="/my-missions"
           className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Kembali ke Misi Saya</span>
+          <span>Back to My Missions</span>
         </Link>
       </div>
     );
@@ -92,7 +92,7 @@ export default async function SubmitPage({
         className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
-        <span>Kembali ke Misi Saya</span>
+        <span>Back to My Missions</span>
       </Link>
 
       {/* Mission Briefing Banner */}
@@ -100,7 +100,7 @@ export default async function SubmitPage({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-sky-600">
-              TERMINAL PENGUNGGAHAN BUKTI
+              EVIDENCE UPLOAD
             </span>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mt-0.5">
               {part.title}
@@ -117,9 +117,9 @@ export default async function SubmitPage({
         <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-slate-500">
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5 text-amber-600" />
-            Tenggat Pengiriman: {new Date(part.expires_at).toLocaleString("id-ID")}
+            Submit Deadline: {new Date(part.expires_at).toLocaleString("en-US")}
           </span>
-          <span className="text-slate-400">File: Maks 5 MB</span>
+          <span className="text-slate-400">File: max 5 MB</span>
         </div>
       </div>
 
@@ -129,8 +129,8 @@ export default async function SubmitPage({
           idName="participation_id"
           idValue={part.id}
           action={submitEvidenceAction}
-          submitLabel="Kirim Bukti untuk Diverifikasi"
-          pendingLabel="Mengunggah bukti ke server..."
+          submitLabel="Submit Evidence for Review"
+          pendingLabel="Uploading evidence..."
           requires={{
             before: !!part.requires_before_photo,
             after: !!part.requires_after_photo,

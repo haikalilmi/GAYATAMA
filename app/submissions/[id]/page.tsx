@@ -28,17 +28,17 @@ export default async function SubmissionPage({
       <div className="rounded-2xl border border-slate-200/80 bg-white p-8 text-center space-y-4 max-w-lg mx-auto shadow-rim">
         <AlertTriangle className="h-8 w-8 text-rose-500 mx-auto" />
         <h1 className="text-xl font-bold text-slate-900">
-          Berkas Submission Tidak Ditemukan
+          Submission Not Found
         </h1>
         <p className="text-xs text-slate-500">
-          Berkas mungkin telah dihapus atau kamu tidak memiliki akses.
+          The file may have been deleted or you do not have access.
         </p>
         <Link
           href="/my-missions"
           className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Kembali ke Misi Saya</span>
+          <span>Back to My Missions</span>
         </Link>
       </div>
     );
@@ -52,7 +52,7 @@ export default async function SubmissionPage({
         className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
-        <span>Kembali ke Misi Saya</span>
+        <span>Back to My Missions</span>
       </Link>
 
       {/* Main Status Header Card */}
@@ -60,7 +60,7 @@ export default async function SubmissionPage({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-              STATUS AUDIT DOKUMENTASI · Status: {sub.status}
+              DOCUMENTATION AUDIT STATUS · Status: {sub.status}
             </span>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mt-0.5">
               {sub.mission_title}
@@ -71,7 +71,7 @@ export default async function SubmissionPage({
 
         <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-slate-500">
           <span>
-            Dikirim pada: {new Date(sub.submitted_at).toLocaleString("id-ID")}
+            Submitted on: {new Date(sub.submitted_at).toLocaleString("en-US")}
           </span>
           <span
             className={`rounded px-2 py-0.5 font-bold ${
@@ -80,7 +80,7 @@ export default async function SubmissionPage({
                 : "bg-slate-100 text-slate-600"
             }`}
           >
-            Tingkat Risiko: {sub.risk_level} ({sub.risk_score}/100)
+            Risk Level: {sub.risk_level} ({sub.risk_score}/100)
           </span>
         </div>
       </div>
@@ -90,16 +90,16 @@ export default async function SubmissionPage({
         <div className="rounded-2xl border border-amber-300 bg-amber-50/80 p-6 shadow-rim space-y-3">
           <div className="flex items-center gap-2 text-amber-900">
             <RotateCcw className="h-5 w-5 text-amber-700" />
-            <h2 className="font-bold text-base">Permintaan Revisi dari Verifikator</h2>
+            <h2 className="font-bold text-base">Revision Requested by Reviewer</h2>
           </div>
           <p className="text-xs text-amber-800 leading-relaxed">
-            Tim verifikasi meminta perbaikan foto dokumentasi atau klarifikasi sebelum reward XP dan poin dapat dicairkan. Kamu memiliki 1 kali kesempatan untuk mengunggah ulang bukti.
+            The verification team needs better documentation photos or clarification before XP and points can be released. You have one chance to re-upload your evidence.
           </p>
           <Link
             href={`/submissions/${sub.id}/resubmit`}
             className="inline-flex items-center gap-1.5 rounded-xl bg-amber-700 px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-amber-600 transition-all"
           >
-            <span>Perbaiki dan kirim ulang bukti</span>
+            <span>Fix and resubmit evidence</span>
             <ArrowLeft className="h-3.5 w-3.5 rotate-180" />
           </Link>
         </div>
@@ -109,7 +109,7 @@ export default async function SubmissionPage({
       {sub.risk_flags.length > 0 ? (
         <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-5 space-y-2">
           <span className="text-xs font-bold uppercase tracking-wider text-amber-900 block">
-            Indikator Deteksi Otomatis:
+            Automatic Detection Flags:
           </span>
           <ul className="space-y-1.5 text-xs text-amber-800">
             {sub.risk_flags.map((f) => (
@@ -129,7 +129,7 @@ export default async function SubmissionPage({
         <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
           <Layers className="h-4 w-4 text-emerald-600" />
           <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-            Angka Dampak Lapangan
+            Field Impact Values
           </h2>
         </div>
 
@@ -147,11 +147,11 @@ export default async function SubmissionPage({
               </p>
               {m.verified_value !== null ? (
                 <p className="text-[11px] font-mono text-emerald-700 font-semibold">
-                  ✓ Terverifikasi: {m.verified_value} {m.unit}
+                  ✓ Verified: {m.verified_value} {m.unit}
                 </p>
               ) : (
                 <p className="text-[11px] font-mono text-slate-400">
-                  Menunggu penetapan verifikator
+                  Awaiting verifier confirmation
                 </p>
               )}
             </div>
@@ -163,7 +163,7 @@ export default async function SubmissionPage({
       {sub.description ? (
         <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-rim space-y-2">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-            Catatan Lapangan & Deskripsi:
+            Field Notes and Description:
           </span>
           <p className="text-xs text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200/60">
             {sub.description}
@@ -176,7 +176,7 @@ export default async function SubmissionPage({
         <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
           <Camera className="h-4 w-4 text-sky-600" />
           <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-            Dokumentasi Bukti yang Diunggah
+            Uploaded Evidence
           </h2>
         </div>
 
@@ -194,7 +194,7 @@ export default async function SubmissionPage({
               />
               <figcaption className="mt-2 px-1 text-[11px] font-mono font-semibold uppercase text-slate-600 flex items-center justify-between">
                 <span>{EVIDENCE_LABELS[e.evidence_type] ?? e.evidence_type}</span>
-                <span className="text-emerald-700">Tersimpan</span>
+                <span className="text-emerald-700">Stored</span>
               </figcaption>
             </figure>
           ))}
@@ -207,14 +207,14 @@ export default async function SubmissionPage({
           <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
             <History className="h-4 w-4 text-slate-500" />
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-              Jejak Riwayat Verifikasi
+              Verification History
             </h2>
           </div>
 
           <ul className="divide-y divide-slate-100 text-xs font-mono">
             <li className="py-2 flex items-center justify-between text-slate-600">
-              <span>Berkas Dikirimkan Awal</span>
-              <span>{new Date(sub.submitted_at).toLocaleString("id-ID")}</span>
+              <span>Initial Submission</span>
+              <span>{new Date(sub.submitted_at).toLocaleString("en-US")}</span>
             </li>
             {sub.timeline.map((t, i) => (
               <li key={i} className="py-2 flex items-center justify-between">
@@ -224,7 +224,7 @@ export default async function SubmissionPage({
                   {t.note ? ` (${t.note})` : ""}
                 </div>
                 <span className="text-slate-400">
-                  {new Date(t.created_at).toLocaleString("id-ID")}
+                  {new Date(t.created_at).toLocaleString("en-US")}
                 </span>
               </li>
             ))}

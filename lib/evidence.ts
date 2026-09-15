@@ -6,9 +6,9 @@ import { getProjectRoot } from "./db";
 export class EvidenceError extends Error {}
 
 export const EVIDENCE_LABELS: Record<string, string> = {
-  BEFORE_PHOTO: "Foto Sebelum",
-  AFTER_PHOTO: "Foto Sesudah",
-  SUPPORTING_PHOTO: "Foto Bukti Aksi",
+  BEFORE_PHOTO: "Before Photo",
+  AFTER_PHOTO: "After Photo",
+  SUPPORTING_PHOTO: "Action Photo",
 };
 
 export const MAX_FILE_BYTES = 5 * 1024 * 1024;
@@ -49,11 +49,11 @@ export async function storeEvidenceFile(
   submissionId: string
 ): Promise<StoredEvidence> {
   const ext = MIME_TO_EXT[file.type];
-  if (!ext) throw new EvidenceError("Format gambar harus JPG, PNG, atau WEBP.");
-  if (file.size <= 0) throw new EvidenceError("File gambar kosong.");
-  if (file.size > MAX_FILE_BYTES) throw new EvidenceError("Ukuran gambar maksimal 5 MB.");
+  if (!ext) throw new EvidenceError("Image format must be JPG, PNG, or WEBP.");
+  if (file.size <= 0) throw new EvidenceError("The image file is empty.");
+  if (file.size > MAX_FILE_BYTES) throw new EvidenceError("Maximum image size is 5 MB.");
   const buf = Buffer.from(await file.arrayBuffer());
-  if (!checkMagic(buf, file.type)) throw new EvidenceError("Isi file bukan gambar valid.");
+  if (!checkMagic(buf, file.type)) throw new EvidenceError("File content is not a valid image.");
   const fileHash = createHash("sha256").update(buf).digest("hex");
   // data/evidence/{user_id}/{submission_id}/{uuid}.ext, relatif dari root proyek
   const rel = join("data", "evidence", userId, submissionId, `${crypto.randomUUID()}.${ext}`).replaceAll("\\", "/");

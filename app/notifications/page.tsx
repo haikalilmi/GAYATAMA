@@ -23,19 +23,19 @@ export default async function NotificationsPage() {
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-700 border border-sky-200/60">
               <Bell className="h-3 w-3" />
-              Notifikasi
+              Notifications
             </span>
             {unreadCount > 0 && (
               <span className="rounded-full bg-rose-50 px-2 py-0.5 text-xs font-mono font-bold text-rose-700 border border-rose-200/60">
-                {unreadCount} BARU
+                {unreadCount} NEW
               </span>
             )}
           </div>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
-            Notifikasi & Sinyal Aksi
+            Notifications and Action Signals
           </h1>
           <p className="text-sm text-slate-500">
-            Pembaruan hasil verifikasi misi, kenaikan level, dan reward.
+            Updates on mission verification, level ups, and rewards.
           </p>
         </div>
 
@@ -46,7 +46,7 @@ export default async function NotificationsPage() {
               className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs cursor-pointer"
             >
               <CheckCheck className="h-3.5 w-3.5 text-sky-600" />
-              <span>Tandai Semua Dibaca</span>
+              <span>Mark All as Read</span>
             </button>
           </form>
         )}
@@ -57,10 +57,10 @@ export default async function NotificationsPage() {
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white/60 p-12 text-center">
           <Bell className="h-10 w-10 text-slate-300 mx-auto" />
           <p className="mt-3 text-base font-semibold text-slate-800">
-            Belum ada notifikasi
+            No notifications yet
           </p>
           <p className="mt-1 text-xs text-slate-500">
-            Sinyal pembaruan akan masuk setelah kamu mengirimkan bukti aksi lapangan.
+            Updates will appear after you submit field action evidence.
           </p>
         </div>
       ) : (
@@ -115,7 +115,7 @@ export default async function NotificationsPage() {
                       {n.title}
                     </p>
                     <span className="shrink-0 font-mono text-[10px] text-slate-400">
-                      {new Date(n.created_at).toLocaleTimeString("id-ID", {
+                      {new Date(n.created_at).toLocaleTimeString("en-US", {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
@@ -128,7 +128,7 @@ export default async function NotificationsPage() {
 
                   <div className="pt-1 flex items-center justify-between text-[11px] font-mono text-slate-400">
                     <span>{n.type}</span>
-                    <span>{new Date(n.created_at).toLocaleDateString("id-ID")}</span>
+                    <span>{new Date(n.created_at).toLocaleDateString("en-US")}</span>
                   </div>
                 </div>
               </div>

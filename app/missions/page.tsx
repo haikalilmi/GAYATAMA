@@ -16,16 +16,16 @@ import {
 } from "lucide-react";
 
 const labels: Record<string, string> = {
-  ENVIRONMENT: "Lingkungan",
-  EDUCATION: "Edukasi",
-  COMMUNITY: "Komunitas",
+  ENVIRONMENT: "Environment",
+  EDUCATION: "Education",
+  COMMUNITY: "Community",
   DIGITAL: "Digital",
-  SOCIAL: "Sosial",
-  EASY: "Mudah",
-  MEDIUM: "Sedang",
-  HIGH: "Sulit",
-  STANDARD: "Standar",
-  LIMITED: "Terbatas",
+  SOCIAL: "Social",
+  EASY: "Easy",
+  MEDIUM: "Medium",
+  HIGH: "Hard",
+  STANDARD: "Standard",
+  LIMITED: "Limited",
   SPONSORED: "Sponsor",
 };
 
@@ -49,17 +49,17 @@ export default async function MissionsPage({
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-700 border border-sky-200/60">
               <Target className="h-3 w-3" />
-              Katalog Misi
+              Mission Catalog
             </span>
             <span className="text-xs font-mono text-slate-400">
-              {missions.length} MISI TERSEDIA
+              {missions.length} MISSIONS AVAILABLE
             </span>
           </div>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
-            Jelajahi Misi Lapangan
+            Explore Field Missions
           </h1>
           <p className="text-sm text-slate-500">
-            Pilih misi sosial terverifikasi, selesaikan di lapangan, dan kumpulkan poin reward.
+            Pick a verified social mission, complete it in the field, and earn reward points.
           </p>
         </div>
       </div>
@@ -75,7 +75,7 @@ export default async function MissionsPage({
               name="q"
               type="search"
               defaultValue={filter.q ?? ""}
-              placeholder="Cari misi sosial, pembersihan, dsb..."
+              placeholder="Search missions, cleanups, and more..."
               maxLength={100}
               className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-9 pr-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all"
             />
@@ -89,7 +89,7 @@ export default async function MissionsPage({
               defaultValue={filter.category ?? "ALL"}
               className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
             >
-              <option value="ALL">Semua Kategori</option>
+              <option value="ALL">All Categories</option>
               {categories.map((c) => (
                 <option key={c} value={c}>
                   {labels[c] ?? c}
@@ -106,7 +106,7 @@ export default async function MissionsPage({
               defaultValue={filter.difficulty ?? "ALL"}
               className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
             >
-              <option value="ALL">Semua Level</option>
+              <option value="ALL">All Levels</option>
               {difficulties.map((d) => (
                 <option key={d} value={d}>
                   {labels[d] ?? d}
@@ -123,7 +123,7 @@ export default async function MissionsPage({
               defaultValue={filter.mission_type ?? "ALL"}
               className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-sm text-slate-800 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
             >
-              <option value="ALL">Semua Tipe</option>
+              <option value="ALL">All Types</option>
               {missionTypes.map((t) => (
                 <option key={t} value={t}>
                   {labels[t] ?? t}
@@ -138,7 +138,7 @@ export default async function MissionsPage({
               className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-slate-800 transition-colors cursor-pointer"
             >
               <SlidersHorizontal className="h-3.5 w-3.5" />
-              <span>Terapkan</span>
+              <span>Apply</span>
             </button>
             {isFiltered ? (
               <Link
@@ -159,16 +159,16 @@ export default async function MissionsPage({
             <Layers className="h-6 w-6" />
           </div>
           <p className="mt-3 text-base font-semibold text-slate-800">
-            Tidak ada misi cocok dengan kriteria filter
+            No missions match your filters
           </p>
           <p className="mt-1 text-xs text-slate-500">
-            Coba ubah kata kunci pencarian atau bersihkan parameter filter kategori.
+            Try a different keyword or clear the category filters.
           </p>
           <Link
             href="/missions"
             className="mt-4 inline-flex items-center rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors"
           >
-            Bersihkan Filter
+            Clear Filters
           </Link>
         </div>
       ) : (
@@ -212,7 +212,7 @@ export default async function MissionsPage({
                     +{m.xp_reward} XP
                   </span>
                   <span className="inline-flex items-center gap-1 rounded bg-amber-50 px-2 py-1 text-amber-700 border border-amber-200/60">
-                    +{m.point_reward} Poin
+                    +{m.point_reward} Pts
                   </span>
                 </div>
 
@@ -220,7 +220,7 @@ export default async function MissionsPage({
                   href={`/missions/${m.slug}`}
                   className="inline-flex items-center gap-1 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white group-hover:bg-sky-600 transition-colors shadow-2xs"
                 >
-                  <span>Lihat Detail</span>
+                  <span>View Details</span>
                   <ArrowUpRight className="h-3.5 w-3.5" />
                 </Link>
               </div>

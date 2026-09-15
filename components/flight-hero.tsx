@@ -119,7 +119,7 @@ export function FlightHero({
             </div>
             <div className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/15 px-2.5 py-1 text-[10px] font-medium text-white backdrop-blur-md shadow-xs">
               <Sparkles className="h-3 w-3 text-amber-300" />
-              <span>Aksi Terverifikasi</span>
+              <span>Verified Actions</span>
             </div>
           </div>
 
@@ -129,7 +129,7 @@ export function FlightHero({
               Turn Good Actions Into Measurable Impact
             </h1>
             <p className="text-xs text-white/90 leading-relaxed [text-shadow:0_1px_4px_rgba(10,35,60,0.3)]">
-              Pantau dan jalankan misi kebaikan dari sudut pandang ketinggian. Selesaikan aksi nyata di lapangan, verifikasi bukti secara transparan, dan raih reward berdampak.
+              Track and run missions from a bird&apos;s-eye view. Complete real-world actions, verify evidence transparently, and earn rewards.
             </p>
           </div>
 
@@ -140,7 +140,7 @@ export function FlightHero({
               className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-900 shadow-md transition-all hover:bg-white/90 active:scale-[0.98]"
             >
               <Compass className="h-3.5 w-3.5 text-sky-600" />
-              <span>Jelajahi Misi</span>
+              <span>Explore Missions</span>
               <ArrowRight className="h-3.5 w-3.5 text-slate-400" />
             </Link>
             {isLoggedIn ? (
@@ -148,14 +148,14 @@ export function FlightHero({
                 href="/dashboard"
                 className="inline-flex items-center gap-1.5 rounded-full border border-white/40 bg-white/10 px-3.5 py-2 text-xs font-semibold text-white backdrop-blur-md transition-all hover:bg-white/20 active:scale-[0.98]"
               >
-                Buka Dashboard
+                Open Dashboard
               </Link>
             ) : (
               <Link
                 href="/register"
                 className="inline-flex items-center gap-1.5 rounded-full border border-white/40 bg-white/10 px-3.5 py-2 text-xs font-semibold text-white backdrop-blur-md transition-all hover:bg-white/20 active:scale-[0.98]"
               >
-                Daftar Gratis
+                Sign Up Free
               </Link>
             )}
           </div>
@@ -177,28 +177,28 @@ export function FlightHero({
               <div className="rounded-lg border border-white/10 bg-white/5 p-2 space-y-0.5">
                 <div className="flex items-center gap-1 text-[10px] text-white/70">
                   <CheckCircle2 className="h-3 w-3 text-sky-300" />
-                  <span>Aksi Selesai</span>
+                  <span>Actions Completed</span>
                 </div>
                 <p className="text-base font-bold font-mono text-white tracking-tight">
-                  {verifiedActions.toLocaleString("id-ID")}
+                  {verifiedActions.toLocaleString("en-US")}
                 </p>
-                <p className="text-[9px] text-white/60">Terverifikasi</p>
+                <p className="text-[9px] text-white/60">Verified</p>
               </div>
               <div className="rounded-lg border border-white/10 bg-white/5 p-2 space-y-0.5">
                 <div className="flex items-center gap-1 text-[10px] text-white/70">
                   <Recycle className="h-3 w-3 text-emerald-300" />
-                  <span>Sampah Terpilih</span>
+                  <span>Waste Handled</span>
                 </div>
                 <p className="text-base font-bold font-mono text-white tracking-tight">
-                  {wasteCollected.toLocaleString("id-ID")}{" "}
+                  {wasteCollected.toLocaleString("en-US")}{" "}
                   <span className="text-xs font-sans font-medium text-white/80">kg</span>
                 </p>
-                <p className="text-[9px] text-white/60">Reduksi limbah</p>
+                <p className="text-[9px] text-white/60">Waste reduction</p>
               </div>
             </div>
             <div className="flex items-center justify-between text-[10px] text-white/70 pt-0.5">
-              <span>Relawan: <strong className="font-mono text-white">{contributors.toLocaleString("id-ID")}</strong></span>
-              <span className="font-mono text-emerald-300 font-semibold">100% TRANSPARAN</span>
+              <span>Volunteers: <strong className="font-mono text-white">{contributors.toLocaleString("en-US")}</strong></span>
+              <span className="font-mono text-emerald-300 font-semibold">100% TRANSPARENT</span>
             </div>
           </div>
         </div>
@@ -293,7 +293,7 @@ export function FlightHero({
                 </div>
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-3 py-1 text-xs font-medium text-white backdrop-blur-md shadow-xs">
                   <Sparkles className="h-3.5 w-3.5 text-amber-300" />
-                  <span>Platform Aksi Sosial & Lingkungan Terverifikasi</span>
+                  <span>Verified Social and Environmental Action Platform</span>
                 </div>
               </motion.div>
 
@@ -309,9 +309,9 @@ export function FlightHero({
                   </h1>
 
                   <p className="max-w-xl text-sm sm:text-base text-balance text-white/90 leading-relaxed [text-shadow:0_1px_4px_rgba(10,35,60,0.3)]">
-                    Pantau dan jalankan misi kebaikan dari sudut pandang ketinggian.
-                    Selesaikan aksi nyata di lapangan, verifikasi bukti dengan
-                    transparan, dan raih XP serta reward berdampak.
+                    Track and run missions from a bird&apos;s-eye view.
+                    Complete real-world actions, verify evidence transparently,
+                    and earn XP and rewards.
                   </p>
 
                   <div className="relative z-30 flex flex-wrap items-center gap-3 pt-1 pointer-events-auto">
@@ -320,7 +320,7 @@ export function FlightHero({
                       className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-bold text-slate-900 shadow-md transition-all hover:bg-white/90 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
                     >
                       <Compass className="h-4 w-4 text-sky-600" />
-                      <span>Jelajahi Misi Aktif</span>
+                      <span>Explore Active Missions</span>
                       <ArrowRight className="h-4 w-4 text-slate-400" />
                     </Link>
 
@@ -329,14 +329,14 @@ export function FlightHero({
                         href="/dashboard"
                         className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white backdrop-blur-md transition-all hover:bg-white/20"
                       >
-                        Buka Dashboard
+                        Open Dashboard
                       </Link>
                     ) : (
                       <Link
                         href="/register"
                         className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white backdrop-blur-md transition-all hover:bg-white/20"
                       >
-                        Daftar Gratis
+                        Sign Up Free
                       </Link>
                     )}
                   </div>
@@ -364,26 +364,26 @@ export function FlightHero({
                       <div className="rounded-xl border border-white/10 bg-white/5 p-3 space-y-1">
                         <div className="flex items-center gap-1.5 text-xs text-white/70">
                           <CheckCircle2 className="h-3.5 w-3.5 text-sky-300" />
-                          <span>Aksi Selesai</span>
+                          <span>Actions Completed</span>
                         </div>
                         <p className="text-xl font-bold font-mono text-white tracking-tight">
-                          {verifiedActions.toLocaleString("id-ID")}
+                          {verifiedActions.toLocaleString("en-US")}
                         </p>
-                        <p className="text-[10px] text-white/60">Terverifikasi</p>
+                        <p className="text-[10px] text-white/60">Verified</p>
                       </div>
 
                       <div className="rounded-xl border border-white/10 bg-white/5 p-3 space-y-1">
                         <div className="flex items-center gap-1.5 text-xs text-white/70">
                           <Recycle className="h-3.5 w-3.5 text-emerald-300" />
-                          <span>Sampah Terpilih</span>
+                          <span>Waste Handled</span>
                         </div>
                         <p className="text-xl font-bold font-mono text-white tracking-tight">
-                          {wasteCollected.toLocaleString("id-ID")}{" "}
+                          {wasteCollected.toLocaleString("en-US")}{" "}
                           <span className="text-sm font-sans font-medium text-white/80">
                             kg
                           </span>
                         </p>
-                        <p className="text-[10px] text-white/60">Reduksi limbah</p>
+                        <p className="text-[10px] text-white/60">Waste reduction</p>
                       </div>
                     </div>
 
@@ -393,9 +393,9 @@ export function FlightHero({
                           <Users2 className="h-4 w-4" />
                         </div>
                         <div>
-                          <p className="text-xs text-white/70">Kontributor Aktif</p>
+                          <p className="text-xs text-white/70">Active Contributors</p>
                           <p className="text-base font-bold font-mono text-white">
-                            {contributors.toLocaleString("id-ID")} Relawan
+                            {contributors.toLocaleString("en-US")} Volunteers
                           </p>
                         </div>
                       </div>
@@ -403,14 +403,14 @@ export function FlightHero({
                         href="/community"
                         className="text-xs font-semibold text-sky-300 hover:text-white transition-colors underline underline-offset-2 pointer-events-auto"
                       >
-                        Lihat &rarr;
+                        View &rarr;
                       </Link>
                     </div>
 
                     <div className="pt-0.5 text-[11px] text-white/70 flex items-center justify-between">
-                      <span>Verifikasi Multi-Pihak</span>
+                      <span>Multi-Party Verification</span>
                       <span className="font-mono text-emerald-300 font-semibold">
-                        100% TRANSPARAN
+                        100% TRANSPARENT
                       </span>
                     </div>
                   </div>

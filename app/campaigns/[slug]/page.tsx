@@ -29,11 +29,11 @@ export default async function CampaignPage({
         <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-700 border border-sky-200/60">
             <Flag className="h-3 w-3" />
-            KAMPANYE STRATEGIS
+            STRATEGIC CAMPAIGN
           </span>
           {c.organization_name ? (
             <span className="text-xs font-mono text-slate-500">
-              Inisiator: {c.organization_name}
+              Initiator: {c.organization_name}
             </span>
           ) : null}
         </div>
@@ -54,10 +54,10 @@ export default async function CampaignPage({
         <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-rim space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Capaian Target Terverifikasi
+              Verified Target Progress
             </span>
             <span className="font-mono text-xs font-bold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded border border-sky-200/60">
-              {pct}% TERCAPAI
+              {pct}% ACHIEVED
             </span>
           </div>
 
@@ -70,21 +70,21 @@ export default async function CampaignPage({
             </div>
             <div className="flex justify-between font-mono text-xs text-slate-600">
               <span className="font-bold text-slate-900">
-                {c.current.toLocaleString("id-ID")} kg terkumpul
+                {c.current.toLocaleString("en-US")} kg collected
               </span>
-              <span>Target: {c.target_value.toLocaleString("id-ID")} kg</span>
+              <span>Target: {c.target_value.toLocaleString("en-US")} kg</span>
             </div>
           </div>
 
           <div className="flex items-center gap-4 pt-2 border-t border-slate-100 text-xs font-mono text-slate-500">
             <span className="flex items-center gap-1">
               <Users className="h-3.5 w-3.5 text-slate-400" />
-              {c.participants} Relawan Bergabung
+              {c.participants} Volunteers Joined
             </span>
             <span>·</span>
             <span className="flex items-center gap-1">
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-              {c.actions} Aksi Lolos Verifikasi
+              {c.actions} Actions Verified
             </span>
           </div>
         </div>
@@ -93,7 +93,7 @@ export default async function CampaignPage({
       {/* Missions in this campaign */}
       <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-rim space-y-4">
         <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3">
-          Misi Lapangan dalam Kampanye Ini
+          Field Missions in This Campaign
         </h2>
 
         <div className="space-y-2.5">
@@ -118,7 +118,7 @@ export default async function CampaignPage({
                 href={`/missions/${m.slug}`}
                 className="inline-flex items-center gap-1 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-2xs"
               >
-                <span>Buka Misi</span>
+                <span>Open Mission</span>
                 <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
@@ -132,9 +132,9 @@ export default async function CampaignPage({
         <p className="leading-relaxed">
           Demo reward pool{" "}
           {c.demo_reward_pool
-            ? `Rp ${(c.demo_reward_pool as number).toLocaleString("id-ID")}`
+            ? `$${(c.demo_reward_pool as number).toLocaleString("en-US")}`
             : ""}{" "}
-          bersifat simulasi alokasi sponsor untuk keperluan kompetisi dan bukan merupakan transaksi perbankan riil.
+          is a simulated sponsor allocation for competition purposes, not a real banking transaction.
         </p>
       </div>
     </div>

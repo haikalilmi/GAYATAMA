@@ -22,13 +22,13 @@ export function CancelButton({ participationId }: { participationId: string }) {
         type="submit"
         disabled={pending}
         onClick={(e) => {
-          if (!confirm("Batalkan keikutsertaan misi ini? Slot kode bukti akan dikembalikan."))
+          if (!confirm("Cancel this mission participation? The proof code slot will be released."))
             e.preventDefault();
         }}
         className="inline-flex items-center gap-1 rounded-xl border border-slate-200/90 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-rose-300 hover:text-rose-700 transition-colors shadow-2xs disabled:opacity-50 cursor-pointer"
       >
         <XCircle className="h-3.5 w-3.5 text-slate-400" />
-        <span>{pending ? "Membatalkan..." : "Batalkan Slot"}</span>
+        <span>{pending ? "Cancelling..." : "Cancel Slot"}</span>
       </button>
     </form>
   );

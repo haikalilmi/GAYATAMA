@@ -27,17 +27,17 @@ export default async function AdminReviewPage({
       <div className="rounded-2xl border border-slate-200/80 bg-white p-8 text-center space-y-4 max-w-lg mx-auto shadow-rim">
         <AlertTriangle className="h-8 w-8 text-rose-500 mx-auto" />
         <h1 className="text-xl font-bold text-slate-900">
-          Submission Tidak Ditemukan
+          Submission Not Found
         </h1>
         <p className="text-xs text-slate-500">
-          ID submission tidak terdaftar atau sudah dibersihkan dari database.
+          The submission ID is not registered or has been removed from the database.
         </p>
         <Link
           href="/admin/submissions"
           className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Kembali ke Antrian</span>
+          <span>Back to Queue</span>
         </Link>
       </div>
     );
@@ -65,7 +65,7 @@ export default async function AdminReviewPage({
         className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
-        <span>Kembali ke Antrian Verifikasi</span>
+        <span>Back to Review Queue</span>
       </Link>
 
       {/* Optional Success Status Message */}
@@ -94,7 +94,7 @@ export default async function AdminReviewPage({
             </h1>
             <p className="mt-1 text-xs text-slate-500 flex items-center gap-2">
               <span>
-                Relawan: <strong className="text-slate-800">{user.full_name}</strong> ({user.email})
+                Volunteer: <strong className="text-slate-800">{user.full_name}</strong> ({user.email})
               </span>
               <span>·</span>
               <span className="font-mono">
@@ -105,11 +105,11 @@ export default async function AdminReviewPage({
 
           <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-right">
             <span className="text-[10px] uppercase tracking-wider font-mono text-slate-400 block">
-              Riwayat Kredibilitas Akun
+              Account Credibility History
             </span>
             <span className="font-mono text-xs font-bold text-slate-800">
-              <span className="text-emerald-700">{history.approved} Disetujui</span> /{" "}
-              <span className="text-rose-700">{history.rejected} Ditolak</span>
+              <span className="text-emerald-700">{history.approved} Approved</span> /{" "}
+              <span className="text-rose-700">{history.rejected} Rejected</span>
             </span>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default async function AdminReviewPage({
             <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
               <Camera className="h-4 w-4 text-sky-600" />
               <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-                Bukti Foto Lapangan
+                Field Photo Evidence
               </h2>
             </div>
 
@@ -151,22 +151,22 @@ export default async function AdminReviewPage({
             {/* Proof Code Comparison */}
             <div className="rounded-xl border border-slate-200/70 bg-slate-50/50 p-3.5 text-xs space-y-1">
               <span className="font-bold text-slate-700 block">
-                Verifikasi Kode Partisipasi:
+                Participation Code Check:
               </span>
               <div className="flex items-center gap-3 font-mono">
                 <span>
-                  Kode Ditugaskan:{" "}
+                  Assigned Code:{" "}
                   <strong className="text-slate-900">{participation.proof_code}</strong>
                 </span>
                 <span>·</span>
                 <span>
-                  Input Relawan:{" "}
+                  Volunteer Input:{" "}
                   <strong
                     className={
                       isCodeMatch ? "text-emerald-700" : "text-rose-700"
                     }
                   >
-                    {submission.proof_code_input ?? "Tidak Ada"}
+                    {submission.proof_code_input ?? "None"}
                   </strong>
                 </span>
                 {isCodeMatch ? (
@@ -185,7 +185,7 @@ export default async function AdminReviewPage({
             {submission.description ? (
               <div className="space-y-1 pt-1">
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                  Catatan Lapangan Relawan:
+                  Volunteer Field Notes:
                 </span>
                 <p className="text-xs text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-200/60">
                   {submission.description}
@@ -206,7 +206,7 @@ export default async function AdminReviewPage({
                   }`}
                 />
                 <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-                  Analisis Risiko ({submission.risk_level})
+                  Risk Analysis ({submission.risk_level})
                 </h2>
               </div>
               <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
@@ -218,7 +218,7 @@ export default async function AdminReviewPage({
               <p className="text-xs text-emerald-700 flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4" />
                 <span>
-                  Tidak ada indikator anomali atau bendera risiko terdeteksi.
+                  No anomaly indicators or risk flags detected.
                 </span>
               </p>
             ) : (
@@ -244,7 +244,7 @@ export default async function AdminReviewPage({
               <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
                 <History className="h-4 w-4 text-slate-500" />
                 <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-                  Jejak Audit Submission
+                  Submission Audit Trail
                 </h2>
               </div>
               <ul className="divide-y divide-slate-100 text-xs font-mono">
@@ -256,7 +256,7 @@ export default async function AdminReviewPage({
                       {l.note ? ` (${l.note})` : ""}
                     </div>
                     <span className="text-slate-400">
-                      {new Date(l.created_at).toLocaleString("id-ID")}
+                      {new Date(l.created_at).toLocaleString("en-US")}
                     </span>
                   </li>
                 ))}

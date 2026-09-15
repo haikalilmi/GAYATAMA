@@ -18,16 +18,16 @@ export default async function OrgDashboardPage() {
     return (
       <div className="mx-auto max-w-md rounded-2xl border border-slate-200/80 bg-white p-8 text-center space-y-4 shadow-rim">
         <Building2 className="h-8 w-8 text-slate-400 mx-auto" />
-        <h1 className="text-xl font-bold text-slate-900">Akses Dibatasi</h1>
+        <h1 className="text-xl font-bold text-slate-900">Access Restricted</h1>
         <p className="text-xs text-slate-600">
-          Dashboard organisasi hanya diperuntukkan bagi akun mitra terdaftar (demo: org@impactquest.local).
+          The organization dashboard is only for registered partner accounts (demo: org@impactquest.local).
         </p>
         <Link
           href="/dashboard"
           className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Kembali ke Dashboard Utama</span>
+          <span>Back to Main Dashboard</span>
         </Link>
       </div>
     );
@@ -46,14 +46,14 @@ export default async function OrgDashboardPage() {
               ORGANIZATION PORTAL
             </span>
             <span className="text-xs font-mono text-slate-400">
-              MITRA SPONSOR
+              SPONSOR PARTNER
             </span>
           </div>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
-            Dashboard Organisasi & Inisiator
+            Organization and Initiator Dashboard
           </h1>
           <p className="text-sm text-slate-500">
-            Halo, {user.full_name}. Pantau keterlibatan publik dan capaian kampanye sosialmu.
+            Halo, {user.full_name}. Track public engagement and your social campaign progress.
           </p>
         </div>
       </div>
@@ -61,7 +61,7 @@ export default async function OrgDashboardPage() {
       {/* Campaigns List */}
       <div className="space-y-4">
         <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-          Daftar Inisiatif Kampanye ({campaigns.length})
+          Campaign Initiatives ({campaigns.length})
         </h2>
 
         {campaigns.map((c) => {
@@ -81,7 +81,7 @@ export default async function OrgDashboardPage() {
                   {c.name}
                 </Link>
                 <span className="font-mono text-xs font-bold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded border border-sky-200/60">
-                  {pct}% Capaian
+                  {pct}% Achieved
                 </span>
               </div>
 
@@ -93,8 +93,8 @@ export default async function OrgDashboardPage() {
                   />
                 </div>
                 <div className="flex justify-between font-mono text-xs text-slate-600">
-                  <span>{c.current.toLocaleString("id-ID")} kg terkumpul</span>
-                  <span>Target: {target.toLocaleString("id-ID")} kg</span>
+                  <span>{c.current.toLocaleString("en-US")} kg collected</span>
+                  <span>Target: {target.toLocaleString("en-US")} kg</span>
                 </div>
               </div>
 
@@ -102,12 +102,12 @@ export default async function OrgDashboardPage() {
                 <div className="flex items-center gap-3">
                   <span className="flex items-center gap-1">
                     <Users className="h-3.5 w-3.5 text-slate-400" />
-                    {c.participants} Partisipan
+                    {c.participants} Participants
                   </span>
                   <span>·</span>
                   <span className="flex items-center gap-1">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                    {c.actions} Aksi Terverifikasi
+                    {c.actions} Verified Actions
                   </span>
                 </div>
 
@@ -115,7 +115,7 @@ export default async function OrgDashboardPage() {
                   href={`/campaigns/${c.slug}`}
                   className="inline-flex items-center gap-1 text-xs font-semibold text-sky-600 hover:text-sky-700"
                 >
-                  <span>Detail Kampanye</span>
+                  <span>Campaign Detail</span>
                   <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>

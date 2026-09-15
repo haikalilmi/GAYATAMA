@@ -18,34 +18,34 @@ export default async function RegisterPage() {
           <Plane className="h-6 w-6 -rotate-45 text-sky-400" />
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          Daftar Kontributor
+          Join as Contributor
         </h1>
         <p className="text-xs text-slate-500">
-          Gabung sebagai relawan untuk mulai mengambil misi dan mencatat aksi nyata.
+          Join as a volunteer to start taking missions and recording real actions.
         </p>
       </div>
 
       {/* Main Card */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-rim space-y-5">
-        <GoogleLoginButton label="Daftar Cepat dengan Google" />
+        <GoogleLoginButton label="Sign Up Quickly with Google" />
 
         <div className="flex items-center gap-3">
           <div className="h-px flex-1 bg-slate-200/80" />
           <span className="text-[11px] font-mono uppercase text-slate-400">
-            atau data akun
+            or account details
           </span>
           <div className="h-px flex-1 bg-slate-200/80" />
         </div>
 
-        <AuthForm action={registerAction} submitLabel="Buat Akun Relawan" showName />
+        <AuthForm action={registerAction} submitLabel="Create Volunteer Account" showName />
 
         <p className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
-          Sudah memiliki akun terdaftar?{" "}
+          Already have an account?{" "}
           <Link
             href="/login"
             className="font-semibold text-slate-900 hover:text-sky-600 underline transition-colors"
           >
-            Masuk ke Akun
+            Sign In
           </Link>
         </p>
       </div>

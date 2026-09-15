@@ -60,12 +60,12 @@ await step("login demo", async () => {
 let proof = "";
 await step("join clean", async () => {
   await u.goto(`${BASE}/missions/clean-your-neighborhood`);
-  await u.click('button:has-text("Ikut misi ini")');
+  await u.click('button:has-text("Join This Mission")');
   await u.waitForURL(/joined=1/);
-  await u.getByText("Kode bukti:").waitFor({ timeout: 15000 });
+  await u.getByText("Proof code:").waitFor({ timeout: 15000 });
   const t = await u.textContent("body");
   const m = t.match(/IQ-[A-Z0-9]{6}/);
-  assert.ok(m, "kode bukti tampil");
+  assert.ok(m, "proof code shown");
   proof = m[0];
   console.log("  proof:", proof);
 });
@@ -76,13 +76,13 @@ await step("join ganda ditolak", async () => {
 });
 
 let subUrl = "";
-await step("submit bukti", async () => {
+await step("submit evidence", async () => {
   await u.goto(`${BASE}/my-missions`);
-  const cleanCard = u.locator(`[data-mission-slug="clean-your-neighborhood"], div:has-text("${proof}")`).filter({ has: u.locator('a:has-text("Submit bukti")') });
+  const cleanCard = u.locator(`[data-mission-slug="clean-your-neighborhood"], div:has-text("${proof}")`).filter({ has: u.locator('a:has-text("Submit Evidence")') });
   if (await cleanCard.count() > 0) {
-    await cleanCard.last().locator('a:has-text("Submit bukti")').click();
+    await cleanCard.last().locator('a:has-text("Submit Evidence")').click();
   } else {
-    await u.click('a:has-text("Submit bukti")');
+    await u.click('a:has-text("Submit Evidence")');
   }
   await u.waitForURL(/\/submit/);
   await u.setInputFiles("#before_photo", before);
@@ -91,20 +91,20 @@ await step("submit bukti", async () => {
   await u.fill("#proof_code_input", proof);
   await u.fill('input[name="metric_mm-waste"]', "3");
   await u.check('input[type="checkbox"]');
-  await u.click('button:has-text("Kirim bukti")');
+  await u.click('button:has-text("Submit Evidence for Review")');
   await u.waitForURL(/\/submissions\//);
   subUrl = u.url();
-  await u.getByText("PENDING").first().waitFor({ timeout: 15000 });
+  await u.getByText("Pending Review").first().waitFor({ timeout: 15000 });
 });
 
-await step("user tak bisa buka admin", async () => {
+await step("user cannot open admin", async () => {
   await u.goto(`${BASE}/admin`);
   assert.match(await u.content(), /Akses ditolak/);
 });
 
 // --- ADMIN ---
 const { p: a } = await ctx();
-await step("login admin + antrian", async () => {
+await step("admin login + queue", async () => {
   await a.goto(`${BASE}/login`);
   await a.fill("#email", "admin@impactquest.local");
   await a.fill("#password", "admin1234");
@@ -118,22 +118,22 @@ await step("review + approve", async () => {
   await a.click('a:has-text("Clean Your Neighborhood")');
   await a.waitForURL(/\/admin\/submissions\//);
   assert.match(await a.content(), /Bersih-bersih RT 05/);
-  await a.click('button:has-text("Mulai review")');
-  await a.getByText("UNDER_REVIEW").first().waitFor({ timeout: 15000 });
+  await a.click('button:has-text("Start File Review")');
+  await a.getByText("Under Review").first().waitFor({ timeout: 15000 });
   await a.fill('input[name="verified_mm-waste"]', "3");
   await a.click('button:has-text("Approve")');
   await a.waitForURL(/msg=/);
-  await a.getByText("Disetujui!").waitFor({ timeout: 15000 });
+  await a.getByText("Approved!").waitFor({ timeout: 15000 });
   {
     const t = await a.textContent("body");
-    assert.match(t, /Disetujui!/);
+    assert.match(t, /Approved!/);
     assert.match(t, /Changemaker/);
     assert.match(t, /Eco Starter/);
   }
 });
 
 // --- cek hasil demo ---
-await step("dashboard naik level", async () => {
+await step("dashboard level up", async () => {
   await u.goto(`${BASE}/dashboard`);
   const t = await u.content();
   assert.match(t, /Changemaker/);
@@ -148,7 +148,7 @@ await step("portfolio + notif", async () => {
   assert.match(t, /LEVEL_UP/);
   assert.match(t, /BADGE_UNLOCKED/);
 });
-await step("komunitas +3kg", async () => {
+await step("community +3kg", async () => {
   await u.goto(`${BASE}/community`);
   assert.match(await u.content(), /12\.003/);
 });
@@ -156,9 +156,9 @@ await step("redeem coffee", async () => {
   await u.goto(`${BASE}/rewards`);
   await u.click('li:has-text("Coffee Voucher") button');
   await u.waitForURL(/\/rewards\/history\?code=/);
-  await u.getByText("Kode demo kamu").waitFor({ timeout: 15000 });
+  await u.getByText("Your demo code:").waitFor({ timeout: 15000 });
   await u.goto(`${BASE}/rewards`);
-  assert.match(await u.content(), /Poin belum cukup/);
+  assert.match(await u.content(), /Not enough points/);
 });
 
 // --- user2: bukti orang lain 403 ---
@@ -179,7 +179,7 @@ await step("register user2 + evidence 403", async () => {
 });
 
 // bukti 403 beneran: ambil evidence id via halaman submission owner
-await step("evidence milik orang 403", async () => {
+await step("other user evidence 403", async () => {
   await u.goto(subUrl);
   const src = await u.getAttribute("figure img", "src");
   assert.ok(src && src.startsWith("/api/evidence/"));

@@ -61,24 +61,24 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
   });
 
   const mainNav: NavItem[] = [
-    { label: "Beranda", href: "/", icon: Compass },
-    { label: "Jelajahi Misi", href: "/missions", icon: Target },
-    { label: "Komunitas", href: "/community", icon: Users },
-    { label: "Papan Peringkat", href: "/leaderboard", icon: Trophy },
-    { label: "Katalog Reward", href: "/rewards", icon: Gift },
+    { label: "Home", href: "/", icon: Compass },
+    { label: "Explore Missions", href: "/missions", icon: Target },
+    { label: "Community", href: "/community", icon: Users },
+    { label: "Leaderboard", href: "/leaderboard", icon: Trophy },
+    { label: "Reward Catalog", href: "/rewards", icon: Gift },
   ];
 
   const userNav: NavItem[] = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { label: "Misi Saya", href: "/my-missions", icon: CheckCircle2 },
-    { label: "Portofolio Dampak", href: "/portfolio", icon: Award },
-    { label: "Notifikasi", href: "/notifications", icon: Bell },
+    { label: "My Missions", href: "/my-missions", icon: CheckCircle2 },
+    { label: "Impact Portfolio", href: "/portfolio", icon: Award },
+    { label: "Notifications", href: "/notifications", icon: Bell },
   ];
 
   const isAdmin = user?.role === "ADMIN";
 
   const manageNav: NavItem[] = isAdmin
-    ? [{ label: "Portal Admin", href: "/admin", icon: ShieldCheck, badge: "Admin" }]
+    ? [{ label: "Admin Portal", href: "/admin", icon: ShieldCheck, badge: "Admin" }]
     : [];
 
   const isLinkActive = (href: string) => {
@@ -103,7 +103,7 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
           <ThemeToggle compact />
           <button
             onClick={() => setIsOpen(!isOpen)}
-            aria-label="Buka navigasi"
+            aria-label="Open navigation"
             className="flex h-10 w-10 touch-manipulation items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 transition-all select-none hover:bg-slate-100 active:scale-[0.98]"
           >
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -151,7 +151,7 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
                   LIVE
                 </span>
               </div>
-              <p className="text-[11px] font-medium text-slate-500 tracking-tight">Social Action & Flight Hub</p>
+              <p className="text-[11px] font-medium text-slate-500 tracking-tight">Social Action and Flight Hub</p>
             </div>
           </Link>
           <button
@@ -167,7 +167,7 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
           {/* Main Section */}
           <div className="space-y-1">
             <p className="px-3 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
-              Eksplorasi
+              Explore
             </p>
             {mainNav.map((item) => {
               const active = isLinkActive(item.href);
@@ -196,7 +196,7 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
           {user && (
             <div className="space-y-1 pt-2 border-t border-slate-100">
               <p className="px-3 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
-                Aktivitas Saya
+                My Activity
               </p>
               {userNav.map((item) => {
                 const active = isLinkActive(item.href);
@@ -226,7 +226,7 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
           {manageNav.length > 0 ? (
             <div className="space-y-1 pt-2 border-t border-slate-100">
               <p className="px-3 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
-                Kelola & Analitik
+                Manage and Analytics
               </p>
             {manageNav.map((item) => {
               const active = isLinkActive(item.href);
@@ -260,10 +260,10 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
           <div className="rounded-xl border border-sky-100 bg-linear-to-b from-sky-50/70 to-white p-3.5 shadow-2xs">
             <div className="flex items-center gap-2 text-sky-700 font-semibold text-xs mb-1">
               <Sparkles className="h-3.5 w-3.5 text-sky-600" />
-              <span>Altitude Dampak</span>
+              <span>Impact Altitude</span>
             </div>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Misi aktif dimonitor secara real-time dari ketinggian untuk verifikasi transparan.
+              Active missions are monitored in real time for transparent verification.
             </p>
           </div>
         </div>
@@ -294,14 +294,14 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
                   className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-100 hover:text-slate-900 transition-colors"
                 >
                   <LogOut className="h-3.5 w-3.5 text-slate-500" />
-                  <span>Keluar Akun</span>
+                  <span>Sign Out</span>
                 </button>
               </form>
               <ThemeToggle className="w-full" />
             </div>
           ) : (
             <div className="space-y-2">
-              <p className="text-xs font-medium text-slate-600">Mulai aksi sosial terverifikasi</p>
+              <p className="text-xs font-medium text-slate-600">Start verified social action</p>
               <div className="grid grid-cols-2 gap-2">
                 <Link
                   href="/login"
@@ -309,7 +309,7 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
                   className="flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-2xs hover:bg-slate-50 transition-colors"
                 >
                   <LogIn className="h-3.5 w-3.5" />
-                  <span>Masuk</span>
+                  <span>Sign In</span>
                 </Link>
                 <Link
                   href="/register"
@@ -317,7 +317,7 @@ export function Sidebar({ user, logoutAction }: SidebarProps) {
                   className="flex items-center justify-center gap-1.5 rounded-lg bg-sky-600 px-3 py-2 text-xs font-semibold text-white shadow-xs hover:bg-sky-500 transition-colors"
                 >
                   <UserPlus className="h-3.5 w-3.5" />
-                  <span>Daftar</span>
+                  <span>Sign Up</span>
                 </Link>
               </div>
               <ThemeToggle className="w-full" />

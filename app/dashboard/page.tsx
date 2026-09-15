@@ -19,11 +19,11 @@ const thresholds = [0, 500, 1200, 2000, 3500];
 
 function formatTimeRemaining(expiresAt: string): string {
   const ms = new Date(expiresAt).getTime() - Date.now();
-  if (ms <= 0) return "Kedaluwarsa";
+  if (ms <= 0) return "Expired";
   const h = Math.floor(ms / 3600000);
-  if (h < 1) return `Sisa ${Math.max(1, Math.floor(ms / 60000))} mnt`;
-  if (h < 48) return `Sisa ${h} jam`;
-  return `Sisa ${Math.floor(h / 24)} hari`;
+  if (h < 1) return `Left ${Math.max(1, Math.floor(ms / 60000))} min`;
+  if (h < 48) return `Left ${h} h`;
+  return `Left ${Math.floor(h / 24)} d`;
 }
 
 export default async function DashboardPage() {
@@ -60,7 +60,7 @@ export default async function DashboardPage() {
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-700 border border-sky-200/60">
               <span className="h-1.5 w-1.5 rounded-full bg-sky-600 animate-pulse" />
-              Dasbor
+              Dashboard
             </span>
             <span className="text-xs font-mono text-slate-400">
               ID: {user.id.slice(0, 8)}
@@ -70,7 +70,7 @@ export default async function DashboardPage() {
             Halo, {user.full_name}
           </h1>
           <p className="text-sm text-slate-500">
-            Kontributor Aktif · Divisi Aksi Sosial & Restorasi Lingkungan
+            Active Contributor · Social Action and Environmental Restoration
           </p>
         </div>
 
@@ -80,14 +80,14 @@ export default async function DashboardPage() {
             className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-slate-800 transition-colors"
           >
             <Target className="h-4 w-4" />
-            <span>Jelajahi Misi</span>
+            <span>Explore Missions</span>
           </Link>
           <Link
             href="/rewards"
             className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition-colors"
           >
             <Gift className="h-4 w-4 text-sky-600" />
-            <span>Tukar Reward</span>
+            <span>Redeem Rewards</span>
           </Link>
         </div>
       </div>
@@ -102,26 +102,26 @@ export default async function DashboardPage() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Status Level
+                  Level Status
                 </span>
                 <span className="rounded-md bg-slate-900 px-2 py-0.5 text-xs font-bold text-white tracking-wide">
                   {title}
                 </span>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
-                Akumulasi seluruh kontribusi terverifikasi tim penilai
+                Total verified contribution across all reviewed actions
               </p>
             </div>
           </div>
           <div className="text-left sm:text-right">
             <span className="font-mono text-xl font-bold tracking-tight text-slate-900">
-              {user.total_xp.toLocaleString("id-ID")}
+              {user.total_xp.toLocaleString("en-US")}
             </span>
             <span className="text-xs font-mono text-slate-400 ml-1">XP</span>
             <p className="text-xs text-slate-500 font-mono">
               {nextAt === null
-                ? "Level Maksimal Tercapai"
-                : `${(nextAt - user.total_xp).toLocaleString("id-ID")} XP menuju level berikutnya`}
+                ? "Maximum level reached"
+                : `${(nextAt - user.total_xp).toLocaleString("en-US")} XP to the next level`}
             </p>
           </div>
         </div>
@@ -146,7 +146,7 @@ export default async function DashboardPage() {
         <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-rim transition-all hover:shadow-rim-md">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Aksi Terverifikasi
+              Verified Actions
             </span>
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100">
               <CheckCircle2 className="h-4 w-4" />
@@ -157,7 +157,7 @@ export default async function DashboardPage() {
               {portfolio?.verifiedActions ?? 0}
             </p>
             <p className="mt-1 text-xs text-slate-500">
-              Aksi lolos audit komite verifikator
+              Actions approved by the review committee
             </p>
           </div>
         </div>
@@ -165,7 +165,7 @@ export default async function DashboardPage() {
         <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-rim transition-all hover:shadow-rim-md">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Misi Aktif Lapangan
+              Active Field Missions
             </span>
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 text-sky-600 border border-sky-100">
               <Target className="h-4 w-4" />
@@ -176,7 +176,7 @@ export default async function DashboardPage() {
               {active.length}
             </p>
             <p className="mt-1 text-xs text-slate-500">
-              Menunggu penyelesaian & submit bukti
+              Awaiting completion and evidence submission
             </p>
           </div>
         </div>
@@ -184,7 +184,7 @@ export default async function DashboardPage() {
         <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-rim transition-all hover:shadow-rim-md">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Saldo Impact Points
+              Impact Points Balance
             </span>
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600 border border-amber-100">
               <Gift className="h-4 w-4" />
@@ -192,31 +192,31 @@ export default async function DashboardPage() {
           </div>
           <div className="mt-3">
             <p className="font-mono text-3xl font-extrabold tracking-tight text-slate-900">
-              {user.points_balance.toLocaleString("id-ID")}
+              {user.points_balance.toLocaleString("en-US")}
             </p>
             <p className="mt-1 text-xs text-slate-500">
-              Poin aktif siap ditukar voucher demo
+              Points ready to redeem for demo vouchers
             </p>
           </div>
         </div>
       </div>
 
-      {/* Misi Aktif Section */}
+      {/* Active Missions Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between border-b border-slate-200/60 pb-3">
           <div>
             <h2 className="text-lg font-bold tracking-tight text-slate-900">
-              Misi Aktif Lapangan
+              Active Field Missions
             </h2>
             <p className="text-xs text-slate-500">
-              Misi yang sedang kamu jalankan dengan slot proof code aktif
+              Missions you are running with an active proof code slot
             </p>
           </div>
           <Link
             href="/my-missions"
             className="text-xs font-semibold text-sky-600 hover:text-sky-700 flex items-center gap-1"
           >
-            <span>Lihat Semua</span>
+            <span>View All</span>
             <ChevronRight className="h-3.5 w-3.5" />
           </Link>
         </div>
@@ -227,16 +227,16 @@ export default async function DashboardPage() {
               <Compass className="h-6 w-6" />
             </div>
             <p className="mt-3 text-sm font-semibold text-slate-800">
-              Belum ada misi aktif yang sedang diikuti
+              No active missions yet
             </p>
             <p className="mt-1 text-sm text-slate-500 max-w-sm mx-auto">
-              Pilih misi sosial yang relevan, simpan kode bukti unik, dan lakukan aksi nyata di lapangan.
+              Pick a relevant social mission, save your unique proof code, and take real action in the field.
             </p>
             <Link
               href="/missions"
               className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-slate-800 transition-colors"
             >
-              <span>Eksplorasi Misi Lapangan</span>
+              <span>Explore Field Missions</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
@@ -264,7 +264,7 @@ export default async function DashboardPage() {
                     {a.mission_title}
                   </Link>
                   <p className="mt-1 text-xs text-slate-500 font-mono">
-                    Tenggat: {new Date(a.expires_at).toLocaleString("id-ID")}
+                    Deadline: {new Date(a.expires_at).toLocaleString("en-US")}
                   </p>
                 </div>
 
@@ -279,7 +279,7 @@ export default async function DashboardPage() {
                     href={`/my-missions/${a.id}/submit`}
                     className="inline-flex items-center gap-1 rounded-xl bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800 shadow-2xs transition-colors"
                   >
-                    <span>Submit Bukti</span>
+                    <span>Submit Evidence</span>
                     <ArrowRight className="h-3 w-3" />
                   </Link>
                 </div>
@@ -294,17 +294,17 @@ export default async function DashboardPage() {
         <div className="flex items-center justify-between border-b border-slate-200/60 pb-3">
           <div>
             <h2 className="text-lg font-bold tracking-tight text-slate-900">
-              Saran Misi Rekomendasi
+              Recommended Missions
             </h2>
             <p className="text-xs text-slate-500">
-              Misi prioritas tinggi yang membutuhkan dukungan relawan terverifikasi
+              High-priority missions that need verified volunteers
             </p>
           </div>
           <Link
             href="/missions"
             className="text-xs font-semibold text-sky-600 hover:text-sky-700 flex items-center gap-1"
           >
-            <span>Semua Misi</span>
+            <span>All Missions</span>
             <ChevronRight className="h-3.5 w-3.5" />
           </Link>
         </div>
@@ -344,7 +344,7 @@ export default async function DashboardPage() {
                 <Link
                   href={`/missions/${m.slug}`}
                   className="rounded-lg p-1 text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-                  aria-label={`Buka misi ${m.title}`}
+                  aria-label={`Open mission ${m.title}`}
                 >
                   <ArrowRight className="h-4 w-4" />
                 </Link>

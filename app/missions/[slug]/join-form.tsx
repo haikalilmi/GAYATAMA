@@ -34,10 +34,10 @@ export function JoinForm({
         className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-xs hover:bg-slate-800 transition-all duration-150 active:scale-[0.98] disabled:opacity-50 cursor-pointer"
       >
         {pending ? (
-          <span>Memverifikasi slot misi...</span>
+          <span>Reserving your mission slot...</span>
         ) : (
           <>
-            <span>Ikut Misi Ini</span>
+            <span>Join This Mission</span>
             <ArrowRight className="h-4 w-4" />
           </>
         )}

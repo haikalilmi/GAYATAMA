@@ -59,95 +59,95 @@ await login(a, "admin@impactquest.local", "admin1234");
 // --- loop revisi via plant ---
 await step("join+submit plant", async () => {
   await u.goto(`${BASE}/missions/plant-for-tomorrow`);
-  await u.click('button:has-text("Ikut misi ini")');
+  await u.click('button:has-text("Join This Mission")');
   await u.waitForURL(/joined=1/);
   await u.goto(`${BASE}/my-missions`);
   const plantCard = u.locator('[data-mission-slug="plant-for-tomorrow"]');
   if (await plantCard.count() > 0) {
-    await plantCard.first().locator('a:has-text("Submit bukti")').click();
+    await plantCard.first().locator('a:has-text("Submit Evidence")').click();
   } else {
-    await u.click('a:has-text("Submit bukti")');
+    await u.click('a:has-text("Submit Evidence")');
   }
   await u.waitForURL(/\/submit/);
   await u.setInputFiles("#before_photo", f1);
   await u.setInputFiles("#after_photo", f2);
-  await u.fill("#description", "Tanam mangga.");
+  await u.fill("#description", "Planted a mango tree.");
   await u.fill('input[name="metric_mm-plant"]', "2");
   await u.check('input[type="checkbox"]');
-  await u.click('button:has-text("Kirim bukti")');
+  await u.click('button:has-text("Submit Evidence for Review")');
   await u.waitForURL(/\/submissions\//);
-  await u.getByText("PENDING").first().waitFor({ timeout: 15000 });
+  await u.getByText("Pending Review").first().waitFor({ timeout: 15000 });
 });
 
-await step("admin minta revisi", async () => {
+await step("admin requests revision", async () => {
   await a.goto(`${BASE}/admin/submissions?tab=pending`);
   await a.locator("td a").first().click();
   await a.waitForURL(/\/admin\/submissions\//);
-  await a.fill("#rev-note", "Foto kurang jelas, unggah ulang.");
-  await a.click('button:has-text("Minta revisi")');
+  await a.fill("#rev-note", "Photos are unclear, please re-upload.");
+  await a.click('button:has-text("Request Revision")');
   await a.waitForURL(/msg=/);
-  await a.getByText("Revisi diminta").waitFor({ timeout: 15000 });
+  await a.getByText("Revision requested").waitFor({ timeout: 15000 });
 });
 
-await step("user kirim revisi", async () => {
+await step("user submits revision", async () => {
   await u.goto(`${BASE}/my-missions?tab=attention`);
   await u.getByText("REVISION_REQUESTED").first().waitFor({ timeout: 15000 });
   await u.click('a:has-text("Detail")');
   await u.waitForURL(/\/submissions\//);
-  await u.click('a:has-text("Perbaiki dan kirim ulang")');
+  await u.click('a:has-text("Fix and resubmit evidence")');
   await u.waitForURL(/\/resubmit/);
   await u.setInputFiles("#before_photo", f1);
   await u.setInputFiles("#after_photo", f2);
-  await u.fill("#description", "Tanam mangga, revisi foto.");
+  await u.fill("#description", "Planted a mango tree, revised photos.");
   await u.fill('input[name="metric_mm-plant"]', "2");
   await u.check('input[type="checkbox"]');
-  await u.click('button:has-text("Kirim revisi")');
+  await u.click('button:has-text("Submit Revision")');
   await u.waitForURL(/\/submissions\//);
-  await u.getByText("UNDER_REVIEW").first().waitFor({ timeout: 15000 });
+  await u.getByText("Under Review").first().waitFor({ timeout: 15000 });
 });
 
-await step("approve hasil revisi", async () => {
+await step("approve revision result", async () => {
   await a.goto(`${BASE}/admin/submissions?tab=pending`);
   await a.locator("td a").first().click();
   await a.waitForURL(/\/admin\/submissions\//);
   await a.fill('input[name="verified_mm-plant"]', "2");
   await a.click('button:has-text("Approve")');
   await a.waitForURL(/msg=/);
-  await a.getByText("Disetujui!").waitFor({ timeout: 15000 });
+  await a.getByText("Approved!").waitFor({ timeout: 15000 });
 });
 
 // --- CRUD misi via browser ---
-await step("buat + publish misi", async () => {
+await step("create + publish mission", async () => {
   await a.goto(`${BASE}/admin/missions/new`);
-  await a.fill("#title", "E2E Misi Browser");
-  await a.fill("#short_description", "Ringkasan e2e.");
-  await a.fill("#description", "Deskripsi e2e.");
+  await a.fill("#title", "E2E Browser Mission");
+  await a.fill("#short_description", "E2E summary.");
+  await a.fill("#description", "Description e2e.");
   await a.selectOption("#category", "SOCIAL");
   await a.fill("#xp_reward", "60");
   await a.fill("#point_reward", "15");
   await a.fill('input[name="metric1_name"]', "Aksi");
   await a.fill('input[name="metric1_key"]', "aksi_e2e");
   await a.fill('input[name="metric1_unit"]', "x");
-  await a.click('button:has-text("Buat misi")');
+  await a.click('button:has-text("Create Mission")');
   await a.waitForURL((url) => url.pathname.startsWith("/admin/missions/") && !url.pathname.endsWith("/new"));
   assert.match(await a.content(), /DRAFT/);
   await a.goto(`${BASE}/admin/missions`);
-  await a.locator('li:has-text("E2E Misi Browser"), tr:has-text("E2E Misi Browser")').first().waitFor();
+  await a.locator('li:has-text("E2E Browser Mission"), tr:has-text("E2E Browser Mission")').first().waitFor();
   // klik tombol ->ACTIVE pada baris tsb
-  const row = a.locator('tr:has-text("E2E Misi Browser")');
+  const row = a.locator('tr:has-text("E2E Browser Mission")');
   await row.locator('button:has-text("ACTIVE")').click();
   await row.locator('button:has-text("PAUSED")').waitFor({ timeout: 15000 });
-  await u.goto(`${BASE}/missions?q=E2E+Misi`);
-  assert.match(await u.content(), /E2E Misi Browser/);
+  await u.goto(`${BASE}/missions?q=E2E+Browser`);
+  assert.match(await u.content(), /E2E Browser Mission/);
 });
 
-await step("pause misi hilang dari explorer", async () => {
+await step("paused mission hidden from explorer", async () => {
   await a.goto(`${BASE}/admin/missions`);
-  const row = a.locator('tr:has-text("E2E Misi Browser")');
+  const row = a.locator('tr:has-text("E2E Browser Mission")');
   await row.locator('button:has-text("PAUSED")').click();
   await a.waitForTimeout(2000);
-  await u.goto(`${BASE}/missions?q=E2E+Misi`);
-  assert.match(await u.content(), /Tidak ada misi cocok/);
+  await u.goto(`${BASE}/missions?q=E2E+Browser`);
+  assert.match(await u.content(), /No missions match/);
 });
 
 // --- CRUD reward via browser ---
@@ -156,15 +156,15 @@ await step("buat + nonaktifkan reward", async () => {
   await a.fill("#title", "E2E Voucher");
   await a.fill("#point_cost", "100");
   await a.fill("#stock", "5");
-  await a.click('button:has-text("Buat reward")');
+  await a.click('button:has-text("Create reward")');
   await a.waitForURL((url) => url.pathname.startsWith("/admin/rewards/") && !url.pathname.endsWith("/new"));
   await u.goto(`${BASE}/rewards`);
   assert.match(await u.content(), /E2E Voucher/);
   const rid = a.url().split("/").pop();
   await a.goto(`${BASE}/admin/rewards/${rid}`);
   await a.selectOption("#status", "INACTIVE");
-  await a.click('button:has-text("Simpan")');
-  await a.getByText("Tersimpan").waitFor({ timeout: 15000 });
+  await a.click('button:has-text("Save")');
+  await a.getByText("Stored").waitFor({ timeout: 15000 });
   await u.goto(`${BASE}/rewards`);
   assert.doesNotMatch(await u.content(), /E2E Voucher/);
 });
@@ -173,7 +173,7 @@ await step("buat + nonaktifkan reward", async () => {
 await step("analitik ada angka + svg", async () => {
   await a.goto(`${BASE}/admin/analytics`);
   const t = await a.content();
-  assert.match(t, /Analitik/);
+  assert.match(t, /Analytics/);
   assert.ok(a.locator("svg").count());
 });
 

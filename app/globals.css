@@ -135,6 +135,13 @@
 .dark .to-white {
   --tw-gradient-to: #141f36;
 }
+.dark .via-white {
+  --tw-gradient-via: #141f36;
+}
+/* Logo brand pakai gradient aksen gelap + ikon putih. Jaga tetap gelap. */
+.dark .to-blue-700 {
+  --tw-gradient-to: #1d4ed8;
+}
 
 /* Rim shadow versi gelap. */
 .dark .shadow-rim {

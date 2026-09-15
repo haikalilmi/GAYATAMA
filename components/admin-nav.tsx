@@ -12,10 +12,10 @@ import {
 
 const links = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/admin/submissions", label: "Antrian Review", icon: Inbox },
-  { href: "/admin/missions", label: "Kelola Misi", icon: Target },
-  { href: "/admin/rewards", label: "Kelola Reward", icon: Gift },
-  { href: "/admin/analytics", label: "Analitik", icon: BarChart3 },
+  { href: "/admin/submissions", label: "Review Queue", icon: Inbox },
+  { href: "/admin/missions", label: "Manage Missions", icon: Target },
+  { href: "/admin/rewards", label: "Manage Rewards", icon: Gift },
+  { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
 export function AdminNav() {

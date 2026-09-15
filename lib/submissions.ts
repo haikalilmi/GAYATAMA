@@ -30,11 +30,11 @@ export async function submitEvidence(
     "SELECT id, user_id, mission_id, proof_code, status, expires_at FROM participations WHERE id = ?",
     participationId
   ).get();
-  if (!part || part.user_id !== userId) throw new SubmitError("Partisipasi tidak ditemukan.");
-  if (part.status !== "JOINED") throw new SubmitError("Partisipasi ini sudah disubmit atau selesai.");
+  if (!part || part.user_id !== userId) throw new SubmitError("Participation not found.");
+  if (part.status !== "JOINED") throw new SubmitError("This participation has already been submitted or completed.");
   if (new Date(part.expires_at) < new Date()) {
     await sql("UPDATE participations SET status = 'EXPIRED' WHERE id = ?", participationId).run();
-    throw new SubmitError("Masa partisipasi kedaluwarsa.");
+    throw new SubmitError("The participation window has expired.");
   }
   const mission = await sql<{
     id: string; requires_before_photo: boolean; requires_after_photo: boolean;
@@ -44,33 +44,33 @@ export async function submitEvidence(
             requires_proof_code, requires_partner_code FROM missions WHERE id = ?`,
     part.mission_id
   ).get();
-  if (!mission) throw new SubmitError("Misi tidak ditemukan.");
+  if (!mission) throw new SubmitError("Mission not found.");
 
   const parsed = textSchema.safeParse({
     description: form.description,
     proof_code_input: form.proof_code_input,
     partner_code_input: form.partner_code_input,
   });
-  if (!parsed.success) throw new SubmitError(parsed.error.issues[0]?.message ?? "Input tidak valid.");
+  if (!parsed.success) throw new SubmitError(parsed.error.issues[0]?.message ?? "Invalid input.");
   const { description, proof_code_input, partner_code_input } = parsed.data;
 
   if (mission.requires_description && !description)
-    throw new SubmitError("Deskripsi kegiatan wajib diisi.");
+    throw new SubmitError("Activity description is required.");
   let proofInvalid = false;
   if (mission.requires_proof_code) {
-    if (!proof_code_input) throw new SubmitError("Kode bukti wajib diisi.");
-    if (proof_code_input !== part.proof_code) throw new SubmitError("Kode bukti salah.");
+    if (!proof_code_input) throw new SubmitError("Proof code is required.");
+    if (proof_code_input !== part.proof_code) throw new SubmitError("Incorrect proof code.");
   } else if (proof_code_input && proof_code_input !== part.proof_code) {
     proofInvalid = true;
   }
   if (mission.requires_partner_code && !partner_code_input)
-    throw new SubmitError("Kode partner/acara wajib diisi.");
+    throw new SubmitError("Partner or event code is required.");
   if (mission.requires_before_photo && !files.before)
-    throw new SubmitError("Foto sebelum wajib diunggah.");
+    throw new SubmitError("Before photo is required.");
   if (mission.requires_after_photo && !files.after)
-    throw new SubmitError("Foto sesudah wajib diunggah.");
+    throw new SubmitError("After photo is required.");
   if (!mission.requires_before_photo && !mission.requires_after_photo && !files.supporting)
-    throw new SubmitError("Foto bukti aksi wajib diunggah.");
+    throw new SubmitError("Action photo is required.");
 
   const metrics = await sql<{ id: string; metric_key: string }>(
     "SELECT id, metric_key FROM mission_metrics WHERE mission_id = ?",
@@ -80,12 +80,12 @@ export async function submitEvidence(
   for (const m of metrics) {
     const v = form.metrics[m.id] ?? (m.id === "e0000000-0000-0000-0000-000000000001" || m.metric_key === "waste_collected" ? form.metrics["mm-waste"] : undefined) ?? (m.id === "e0000000-0000-0000-0000-000000000002" || m.metric_key === "plants_added" ? form.metrics["mm-plant"] : undefined);
     if (typeof v !== "number" || !Number.isFinite(v) || v < 0 || v > 1000000000)
-      throw new SubmitError(`Nilai ${m.metric_key} wajib angka ≥ 0.`);
+      throw new SubmitError(`${m.metric_key} must be a number ≥ 0.`);
     reported.set(m.id, v);
   }
 
   const existing = await sql("SELECT 1 FROM submissions WHERE participation_id = ?", participationId).get();
-  if (existing) throw new SubmitError("Partisipasi ini sudah disubmit.");
+  if (existing) throw new SubmitError("This participation has already been submitted.");
 
   const submissionId = crypto.randomUUID();
   const now = new Date().toISOString();
@@ -158,9 +158,9 @@ export async function resubmitEvidence(
      WHERE s.id = ?`,
     submissionId
   ).get();
-  if (!sub || sub.user_id !== userId) throw new SubmitError("Submission tidak ditemukan.");
-  if (sub.status !== "REVISION_REQUESTED") throw new SubmitError("Submission ini tidak dalam masa revisi.");
-  if (sub.revision_count !== 1) throw new SubmitError("Revisi hanya boleh sekali.");
+  if (!sub || sub.user_id !== userId) throw new SubmitError("Submission not found.");
+  if (sub.status !== "REVISION_REQUESTED") throw new SubmitError("This submission is not in revision.");
+  if (sub.revision_count !== 1) throw new SubmitError("Only one revision is allowed.");
 
   const mission = await sql<{
     id: string; requires_before_photo: boolean; requires_after_photo: boolean;
@@ -170,33 +170,33 @@ export async function resubmitEvidence(
             requires_proof_code, requires_partner_code FROM missions WHERE id = ?`,
     sub.mission_id
   ).get();
-  if (!mission) throw new SubmitError("Misi tidak ditemukan.");
+  if (!mission) throw new SubmitError("Mission not found.");
 
   const parsed = textSchema.safeParse({
     description: form.description,
     proof_code_input: form.proof_code_input,
     partner_code_input: form.partner_code_input,
   });
-  if (!parsed.success) throw new SubmitError(parsed.error.issues[0]?.message ?? "Input tidak valid.");
+  if (!parsed.success) throw new SubmitError(parsed.error.issues[0]?.message ?? "Invalid input.");
   const { description, proof_code_input, partner_code_input } = parsed.data;
 
   if (mission.requires_description && !description)
-    throw new SubmitError("Deskripsi kegiatan wajib diisi.");
+    throw new SubmitError("Activity description is required.");
   let proofInvalid = false;
   if (mission.requires_proof_code) {
-    if (!proof_code_input) throw new SubmitError("Kode bukti wajib diisi.");
-    if (proof_code_input !== sub.proof_code) throw new SubmitError("Kode bukti salah.");
+    if (!proof_code_input) throw new SubmitError("Proof code is required.");
+    if (proof_code_input !== sub.proof_code) throw new SubmitError("Incorrect proof code.");
   } else if (proof_code_input && proof_code_input !== sub.proof_code) {
     proofInvalid = true;
   }
   if (mission.requires_partner_code && !partner_code_input)
-    throw new SubmitError("Kode partner/acara wajib diisi.");
+    throw new SubmitError("Partner or event code is required.");
   if (mission.requires_before_photo && !files.before)
-    throw new SubmitError("Foto sebelum wajib diunggah ulang.");
+    throw new SubmitError("Before photo must be re-uploaded.");
   if (mission.requires_after_photo && !files.after)
-    throw new SubmitError("Foto sesudah wajib diunggah ulang.");
+    throw new SubmitError("After photo must be re-uploaded.");
   if (!mission.requires_before_photo && !mission.requires_after_photo && !files.supporting)
-    throw new SubmitError("Foto bukti aksi wajib diunggah ulang.");
+    throw new SubmitError("Action photo must be re-uploaded.");
 
   const metrics = await sql<{ id: string; metric_key: string }>(
     "SELECT id, metric_key FROM mission_metrics WHERE mission_id = ?",
@@ -206,7 +206,7 @@ export async function resubmitEvidence(
   for (const m of metrics) {
     const v = form.metrics[m.id] ?? (m.id === "e0000000-0000-0000-0000-000000000001" || m.metric_key === "waste_collected" ? form.metrics["mm-waste"] : undefined) ?? (m.id === "e0000000-0000-0000-0000-000000000002" || m.metric_key === "plants_added" ? form.metrics["mm-plant"] : undefined);
     if (typeof v !== "number" || !Number.isFinite(v) || v < 0 || v > 1000000000)
-      throw new SubmitError(`Nilai ${m.metric_key} wajib angka ≥ 0.`);
+      throw new SubmitError(`${m.metric_key} must be a number ≥ 0.`);
     reported.set(m.id, v);
   }
 
@@ -261,7 +261,7 @@ export async function resubmitEvidence(
   await sql(
     `INSERT INTO verification_logs (id, submission_id, verifier_id, action, previous_status, new_status, note)
      VALUES (?, ?, ?, 'START_REVIEW', 'REVISION_REQUESTED', 'UNDER_REVIEW', ?)`,
-    crypto.randomUUID(), submissionId, userId, "Resubmit oleh user."
+    crypto.randomUUID(), submissionId, userId, "Resubmitted by user."
   ).run();
   for (const p of oldPaths) {
     try {

@@ -191,9 +191,9 @@ function collectMetrics(data: MissionForm): { name: string; key: string; unit: s
   ];
   groups.forEach(([name, key, unit], i) => {
     if (name || key || unit) {
-      if (!name || !key) throw new MissionAdminError(`Metrik ${i + 1} butuh nama dan key.`);
+      if (!name || !key) throw new MissionAdminError(`Metric ${i + 1} needs a name and key.`);
       if (!/^[a-z0-9_]+$/.test(key))
-        throw new MissionAdminError(`Key metrik ${i + 1} hanya huruf kecil, angka, underscore.`);
+        throw new MissionAdminError(`Metric key ${i + 1} may only contain lowercase letters, numbers, and underscores.`);
       out.push({ name, key, unit: unit ?? "" });
     }
   });
@@ -230,7 +230,7 @@ export async function createMission(data: MissionForm): Promise<string> {
 
 export async function updateMission(id: string, data: MissionForm): Promise<void> {
   const exists = await sql("SELECT 1 FROM missions WHERE id = ?", id).get();
-  if (!exists) throw new MissionAdminError("Misi tidak ditemukan.");
+  if (!exists) throw new MissionAdminError("Mission not found.");
   const metrics = collectMetrics(data);
   const now = new Date().toISOString();
   await sql(
@@ -262,9 +262,9 @@ const STATUS_FLOW: Record<string, string[]> = {
 
 export async function setMissionStatus(id: string, next: string): Promise<void> {
   const row = await sql<{ status: string }>("SELECT status FROM missions WHERE id = ?", id).get();
-  if (!row) throw new MissionAdminError("Misi tidak ditemukan.");
+  if (!row) throw new MissionAdminError("Mission not found.");
   if (!(STATUS_FLOW[row.status] ?? []).includes(next))
-    throw new MissionAdminError(`Transisi ${row.status} ke ${next} tidak boleh.`);
+    throw new MissionAdminError(`Transition ${row.status} to ${next} is not allowed.`);
   await sql("UPDATE missions SET status = ?, updated_at = ? WHERE id = ?", next, new Date().toISOString(), id).run();
 }
 

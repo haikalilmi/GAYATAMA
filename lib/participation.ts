@@ -31,17 +31,17 @@ interface MissionRow {
 }
 
 export async function joinMission(userId: string, userRole: string, missionId: string): Promise<Participation> {
-  if (userRole !== "USER") throw new JoinError("Hanya akun USER yang bisa ikut misi.");
+  if (userRole !== "USER") throw new JoinError("Only USER accounts can join missions.");
   const mission = await sql<MissionRow>(
     "SELECT id, status, start_at, end_at, repeat_type, participation_expiry_hours FROM missions WHERE id = ?",
     missionId
   ).get();
-  if (!mission) throw new JoinError("Misi tidak ditemukan.");
-  if (mission.status !== "ACTIVE") throw new JoinError("Misi tidak aktif dan tidak bisa diikuti.");
+  if (!mission) throw new JoinError("Mission not found.");
+  if (mission.status !== "ACTIVE") throw new JoinError("The mission is not active and cannot be joined.");
 
   const now = new Date();
-  if (mission.start_at && now < new Date(mission.start_at)) throw new JoinError("Misi belum dimulai.");
-  if (mission.end_at && now > new Date(mission.end_at)) throw new JoinError("Masa misi sudah berakhir.");
+  if (mission.start_at && now < new Date(mission.start_at)) throw new JoinError("The mission has not started yet.");
+  if (mission.end_at && now > new Date(mission.end_at)) throw new JoinError("The mission period has ended.");
 
   // Build IN clause with $N
   const ph = ACTIVE_STATUSES.map((_, i) => `$${i + 3}`).join(",");
@@ -50,14 +50,14 @@ export async function joinMission(userId: string, userRole: string, missionId: s
      AND status IN (${ph})`,
     userId, missionId, ...ACTIVE_STATUSES
   ).get();
-  if (dup) throw new JoinError("Kamu sudah ikut misi ini. Selesaikan atau batalkan dulu.");
+  if (dup) throw new JoinError("You already joined this mission. Complete or cancel it first.");
 
   if (mission.repeat_type === "ONCE") {
     const done = await sql(
       "SELECT 1 FROM participations WHERE user_id = ? AND mission_id = ? AND status = 'APPROVED'",
       userId, missionId
     ).get();
-    if (done) throw new JoinError("Misi ini hanya bisa diselesaikan sekali.");
+    if (done) throw new JoinError("This mission can only be completed once.");
   }
   if (mission.repeat_type === "WEEKLY") {
     const last = await sql<{ completed_at: string }>(
@@ -69,7 +69,7 @@ export async function joinMission(userId: string, userRole: string, missionId: s
       const next = new Date(last.completed_at).getTime() + 7 * 86400000;
       if (Date.now() < next) {
         const days = Math.ceil((next - Date.now()) / 86400000);
-        throw new JoinError(`Misi mingguan ini bisa diikuti lagi dalam ${days} hari.`);
+        throw new JoinError(`This weekly mission can be joined again in ${days} days.`);
       }
     }
   }
@@ -89,7 +89,7 @@ export async function joinMission(userId: string, userRole: string, missionId: s
       // kemungkinan tabrakan kode, coba lagi
     }
   }
-  throw new JoinError("Gagal membuat partisipasi. Coba lagi.");
+  throw new JoinError("Failed to create participation. Please try again.");
 }
 
 export async function getUserParticipation(userId: string, missionId: string): Promise<Participation | null> {
@@ -132,8 +132,8 @@ export async function cancelParticipation(userId: string, participationId: strin
     "SELECT user_id, status FROM participations WHERE id = ?",
     participationId
   ).get();
-  if (!row || row.user_id !== userId) throw new JoinError("Partisipasi tidak ditemukan.");
-  if (row.status !== "JOINED") throw new JoinError("Hanya partisipasi JOINED yang bisa dibatalkan.");
+  if (!row || row.user_id !== userId) throw new JoinError("Participation not found.");
+  if (row.status !== "JOINED") throw new JoinError("Only JOINED participations can be cancelled.");
   await sql(
     `UPDATE participations SET status = 'CANCELLED', cancelled_at = NOW(),
      updated_at = NOW() WHERE id = ?`,

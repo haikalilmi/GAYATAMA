@@ -16,29 +16,29 @@ const tabs = [
   { key: "active", label: "Aktif", match: ["JOINED"] },
   {
     key: "review",
-    label: "Ditinjau",
+    label: "In Review",
     match: ["SUBMITTED", "UNDER_REVIEW", "RESUBMITTED"],
   },
-  { key: "attention", label: "Perlu Tindakan", match: ["REVISION_REQUESTED"] },
+  { key: "attention", label: "Needs Action", match: ["REVISION_REQUESTED"] },
   {
     key: "done",
-    label: "Selesai",
+    label: "Completed",
     match: ["APPROVED", "REJECTED", "CANCELLED", "EXPIRED"],
   },
 ] as const;
 
 function remaining(expiresAt: string): { label: string; urgent: boolean } {
   const ms = new Date(expiresAt).getTime() - Date.now();
-  if (ms <= 0) return { label: "Kedaluwarsa", urgent: true };
+  if (ms <= 0) return { label: "Expired", urgent: true };
   const h = Math.floor(ms / 3600000);
   if (h < 1)
     return {
-      label: `Sisa ${Math.max(1, Math.floor(ms / 60000))} mnt`,
+      label: `Left ${Math.max(1, Math.floor(ms / 60000))} min`,
       urgent: true,
     };
-  if (h < 12) return { label: `Sisa ${h} jam`, urgent: true };
-  if (h < 48) return { label: `Sisa ${h} jam`, urgent: false };
-  return { label: `Sisa ${Math.floor(h / 24)} hari`, urgent: false };
+  if (h < 12) return { label: `Left ${h} h`, urgent: true };
+  if (h < 48) return { label: `Left ${h} h`, urgent: false };
+  return { label: `Left ${Math.floor(h / 24)} d`, urgent: false };
 }
 
 export default async function MyMissionsPage({
@@ -62,17 +62,17 @@ export default async function MyMissionsPage({
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-700 border border-sky-200/60">
               <CheckCircle2 className="h-3 w-3" />
-              Riwayat Misi
+              Mission History
             </span>
             <span className="text-xs font-mono text-slate-400">
-              {allParts.length} TOTAL PARTISIPASI
+              {allParts.length} TOTAL PARTICIPATIONS
             </span>
           </div>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
-            Misi Saya
+            My Missions
           </h1>
           <p className="text-sm text-slate-500">
-            Pantau status verifikasi, kode bukti unik, dan tenggat waktu submit bukti.
+            Track verification status, unique proof codes, and evidence deadlines.
           </p>
         </div>
 
@@ -81,7 +81,7 @@ export default async function MyMissionsPage({
           className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs"
         >
           <Target className="h-4 w-4" />
-          <span>Jelajahi Misi Lain</span>
+          <span>Explore Other Missions</span>
         </Link>
       </div>
 
@@ -126,18 +126,18 @@ export default async function MyMissionsPage({
             <Compass className="h-6 w-6" />
           </div>
           <p className="mt-3 text-base font-semibold text-slate-800">
-            Tidak ada misi pada kategori {active.label.toLowerCase()}
+            No missions in the {active.label.toLowerCase()}
           </p>
           <p className="mt-1 text-xs text-slate-500">
             {active.key === "active"
-              ? "Kamu belum bergabung dalam misi apa pun saat ini."
-              : "Belum ada riwayat aktivitas untuk tab ini."}
+              ? "You have not joined any mission yet."
+              : "No activity history for this tab yet."}
           </p>
           <Link
             href="/missions"
             className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors"
           >
-            <span>Buka Katalog Misi</span>
+            <span>Open Mission Catalog</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
@@ -157,7 +157,7 @@ export default async function MyMissionsPage({
                     <div className="flex items-center gap-2">
                       <StatusBadge status={r.status} />
                       <span className="font-mono text-xs text-slate-400">
-                        {new Date(r.joined_at).toLocaleDateString("id-ID")}
+                        {new Date(r.joined_at).toLocaleDateString("en-US")}
                       </span>
                     </div>
                     <Link
@@ -193,7 +193,7 @@ export default async function MyMissionsPage({
 
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3 pt-1">
                   <p className="text-xs text-slate-500 font-mono">
-                    Tenggat: {new Date(r.expires_at).toLocaleString("id-ID")}
+                    Deadline: {new Date(r.expires_at).toLocaleString("en-US")}
                   </p>
 
                   <div className="flex items-center gap-2">
@@ -203,7 +203,7 @@ export default async function MyMissionsPage({
                         className="inline-flex items-center gap-1 rounded-xl border border-slate-200/90 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs"
                       >
                         <FileCheck className="h-3.5 w-3.5 text-sky-600" />
-                        <span>Detail Submission</span>
+                        <span>Submission Detail</span>
                       </Link>
                     ) : null}
 
@@ -214,7 +214,7 @@ export default async function MyMissionsPage({
                           href={`/my-missions/${r.id}/submit`}
                           className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs"
                         >
-                          <span>Submit Bukti</span>
+                          <span>Submit Evidence</span>
                           <ArrowRight className="h-3.5 w-3.5" />
                         </Link>
                       </>

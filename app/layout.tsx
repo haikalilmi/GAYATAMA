@@ -20,7 +20,7 @@ export default async function RootLayout({
   const user = await getCurrentUser();
 
   return (
-    <html lang="id" className="dark" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

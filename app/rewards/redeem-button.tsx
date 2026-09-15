@@ -30,7 +30,7 @@ export function RedeemButton({
         type="submit"
         disabled={disabled || pending}
         onClick={(e) => {
-          if (!confirm("Tukarkan poin dampakmu dengan reward sponsor ini?"))
+          if (!confirm("Redeem your impact points for this sponsor reward?"))
             e.preventDefault();
         }}
         className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition-all duration-150 active:scale-[0.98] disabled:opacity-50 cursor-pointer"
@@ -43,7 +43,7 @@ export function RedeemButton({
         ) : (
           <>
             <Gift className="h-3.5 w-3.5 text-sky-400" />
-            <span>{reason ?? "Tukar Reward Sekarang"}</span>
+            <span>{reason ?? "Redeem Reward Now"}</span>
           </>
         )}
       </button>

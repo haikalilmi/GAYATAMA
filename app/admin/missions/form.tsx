@@ -99,7 +99,7 @@ export function MissionForm({
           htmlFor="title"
           className="block text-xs font-bold uppercase tracking-wider text-slate-700"
         >
-          Judul Misi *
+          Mission Title *
         </label>
         <input
           id="title"
@@ -108,7 +108,7 @@ export function MissionForm({
           minLength={3}
           maxLength={120}
           defaultValue={v("title")}
-          placeholder="Contoh: Pembersihan Pesisir Pantai Marina"
+          placeholder="e.g. Marina Beach Coastal Cleanup"
           className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all font-semibold"
         />
       </div>
@@ -118,7 +118,7 @@ export function MissionForm({
           htmlFor="short_description"
           className="block text-xs font-bold uppercase tracking-wider text-slate-700"
         >
-          Ringkasan Singkat *
+          Short Summary *
         </label>
         <input
           id="short_description"
@@ -127,7 +127,7 @@ export function MissionForm({
           minLength={3}
           maxLength={300}
           defaultValue={v("short_description")}
-          placeholder="Deskripsi satu kalimat yang tampil di katalog..."
+          placeholder="One-sentence description shown in the catalog..."
           className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all"
         />
       </div>
@@ -137,7 +137,7 @@ export function MissionForm({
           htmlFor="description"
           className="block text-xs font-bold uppercase tracking-wider text-slate-700"
         >
-          Deskripsi Lengkap & Instruksi Aksi *
+          Full Description and Action Instructions *
         </label>
         <textarea
           id="description"
@@ -147,7 +147,7 @@ export function MissionForm({
           minLength={3}
           maxLength={5000}
           defaultValue={v("description")}
-          placeholder="Rincian prosedur lapangan, peralatan yang dibutuhkan, dan kriteria keberhasilan..."
+          placeholder="Field procedure details, required equipment, and success criteria..."
           className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all leading-relaxed"
         />
       </div>
@@ -158,7 +158,7 @@ export function MissionForm({
             htmlFor="category"
             className="block text-xs font-bold uppercase tracking-wider text-slate-700"
           >
-            Kategori
+            Category
           </label>
           <select
             id="category"
@@ -200,7 +200,7 @@ export function MissionForm({
             htmlFor="mission_type"
             className="block text-xs font-bold uppercase tracking-wider text-slate-700"
           >
-            Tipe
+            Type
           </label>
           <select
             id="mission_type"
@@ -221,7 +221,7 @@ export function MissionForm({
             htmlFor="repeat_type"
             className="block text-xs font-bold uppercase tracking-wider text-slate-700"
           >
-            Pengulangan
+            Repeat
           </label>
           <select
             id="repeat_type"
@@ -244,7 +244,7 @@ export function MissionForm({
             htmlFor="xp_reward"
             className="block text-xs font-bold uppercase tracking-wider text-slate-700"
           >
-            Reward XP
+            XP Reward
           </label>
           <input
             id="xp_reward"
@@ -262,7 +262,7 @@ export function MissionForm({
             htmlFor="point_reward"
             className="block text-xs font-bold uppercase tracking-wider text-slate-700"
           >
-            Reward Poin
+            Point Reward
           </label>
           <input
             id="point_reward"
@@ -280,7 +280,7 @@ export function MissionForm({
             htmlFor="participation_expiry_hours"
             className="block text-xs font-bold uppercase tracking-wider text-slate-700"
           >
-            Batas Submit (Jam)
+            Submit Window (hours)
           </label>
           <input
             id="participation_expiry_hours"
@@ -300,37 +300,37 @@ export function MissionForm({
 
       <div className="space-y-2 rounded-xl border border-slate-200/80 bg-slate-50/50 p-4">
         <p className="text-xs font-bold uppercase tracking-wider text-slate-700">
-          Syarat Protokol Bukti
+          Evidence Requirements
         </p>
         <p className="text-[11px] text-slate-500">
-          Semua misi wajib menyertakan satu foto bukti aksi. Aktifkan Foto Sebelum dan Foto Sesudah bila misi butuh perbandingan kondisi.
+          Every mission requires at least one action photo. Enable Before and After photos when the mission needs a condition comparison.
         </p>
         <div className="grid gap-2 sm:grid-cols-2 pt-1">
           <Check
             name="requires_before_photo"
-            label="Foto Sebelum (Before)"
+            label="Before Photo"
             checked={initial?.requires_before_photo === 1}
           />
           <Check
             name="requires_after_photo"
-            label="Foto Sesudah (After)"
+            label="After Photo"
             checked={initial?.requires_after_photo === 1}
           />
           <Check
             name="requires_description"
-            label="Deskripsi Catatan Lapangan"
+            label="Field Notes Description"
             checked={
               initial ? initial.requires_description === 1 : true
             }
           />
           <Check
             name="requires_proof_code"
-            label="Wajib Kode Bukti Fisik"
+            label="Require Physical Proof Code"
             checked={initial?.requires_proof_code === 1}
           />
           <Check
             name="requires_partner_code"
-            label="Wajib Kode Mitra/Acara"
+            label="Require Partner/Event Code"
             checked={initial?.requires_partner_code === 1}
           />
         </div>
@@ -338,13 +338,13 @@ export function MissionForm({
 
       <div className="space-y-2 rounded-xl border border-slate-200/80 bg-slate-50/50 p-4">
         <p className="text-xs font-bold uppercase tracking-wider text-slate-700">
-          Metrik Dampak Terukur (Maksimal 2)
+          Measurable Impact Metrics (max 2)
         </p>
         {[1, 2].map((n) => (
           <div key={n} className="grid grid-cols-3 gap-2">
             <input
               name={`metric${n}_name`}
-              placeholder={`Nama Metrik ${n} (cth: Sampah)`}
+              placeholder={`Metric name ${n} (e.g. Waste)`}
               maxLength={80}
               defaultValue={
                 (initial?.[
@@ -355,7 +355,7 @@ export function MissionForm({
             />
             <input
               name={`metric${n}_key`}
-              placeholder={`Key ${n} (cth: waste_kg)`}
+              placeholder={`Key ${n} (e.g. waste_kg)`}
               maxLength={40}
               defaultValue={
                 (initial?.[
@@ -366,7 +366,7 @@ export function MissionForm({
             />
             <input
               name={`metric${n}_unit`}
-              placeholder="Unit (cth: kg, pohon)"
+              placeholder="Unit (e.g. kg, trees)"
               maxLength={20}
               defaultValue={
                 (initial?.[
@@ -394,7 +394,7 @@ export function MissionForm({
           className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs font-medium text-emerald-800 shadow-2xs flex items-center gap-1.5"
         >
           <CheckIcon className="h-4 w-4 text-emerald-600" />
-          <span>Data misi berhasil disimpan ke database.</span>
+          <span>Mission data saved successfully.</span>
         </div>
       ) : null}
 
@@ -406,12 +406,12 @@ export function MissionForm({
         {pending ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin text-sky-400" />
-            <span>Menyimpan Misi...</span>
+            <span>Saving mission...</span>
           </>
         ) : (
           <>
             <span>
-              {mode === "create" ? "Buat Misi Baru (Status DRAFT)" : "Simpan Perubahan Misi"}
+              {mode === "create" ? "Create Mission (DRAFT)" : "Save Mission Changes"}
             </span>
             <ArrowRight className="h-4 w-4" />
           </>

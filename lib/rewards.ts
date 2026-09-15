@@ -49,15 +49,15 @@ export async function redeemReward(userId: string, rewardId: string): Promise<{ 
     "SELECT id, title, point_cost, stock, status FROM rewards WHERE id = ?",
     rewardId
   ).get();
-  if (!reward || reward.status !== "ACTIVE") throw new RedeemError("Reward tidak tersedia.");
-  if (reward.stock <= 0) throw new RedeemError("Stok reward habis.");
+  if (!reward || reward.status !== "ACTIVE") throw new RedeemError("Reward is not available.");
+  if (reward.stock <= 0) throw new RedeemError("Reward is out of stock.");
   const user = await sql<{ points_balance: number }>(
     "SELECT points_balance FROM users WHERE id = ?",
     userId
   ).get();
-  if (!user) throw new RedeemError("User tidak ditemukan.");
+  if (!user) throw new RedeemError("User not found.");
   if (Number(user.points_balance) < reward.point_cost)
-    throw new RedeemError(`Poin kurang. Butuh ${reward.point_cost}, saldo ${user.points_balance}.`);
+    throw new RedeemError(`Not enough points. Need ${reward.point_cost}, balance ${user.points_balance}.`);
 
   const now = new Date().toISOString();
   const newBalance = Number(user.points_balance) - reward.point_cost;
@@ -68,12 +68,12 @@ export async function redeemReward(userId: string, rewardId: string): Promise<{ 
     if (!clash) break;
     demoCode = "";
   }
-  if (!demoCode) throw new RedeemError("Gagal buat kode. Coba lagi.");
+  if (!demoCode) throw new RedeemError("Failed to generate a code. Please try again.");
 
   await sql("UPDATE users SET points_balance = ?, updated_at = ? WHERE id = ?", newBalance, now, userId).run();
   await sql(
     "INSERT INTO point_transactions (id, user_id, amount, transaction_type, source_type, source_id, balance_after, description) VALUES (?, ?, ?, 'REWARD_REDEMPTION', 'reward', ?, ?, ?)",
-    crypto.randomUUID(), userId, -reward.point_cost, rewardId, newBalance, `Tukar ${reward.title}`
+    crypto.randomUUID(), userId, -reward.point_cost, rewardId, newBalance, `Redeem ${reward.title}`
   ).run();
   await sql("UPDATE rewards SET stock = stock - 1, updated_at = ? WHERE id = ?", now, rewardId).run();
   const redemptionId = crypto.randomUUID();
@@ -81,6 +81,6 @@ export async function redeemReward(userId: string, rewardId: string): Promise<{ 
     "INSERT INTO reward_redemptions (id, user_id, reward_id, point_cost, demo_code, status) VALUES (?, ?, ?, ?, ?, 'REDEEMED')",
     redemptionId, userId, rewardId, reward.point_cost, demoCode
   ).run();
-  await notify(userId, "REWARD_REDEEMED", `${reward.title} ditukar!`, `Kode demo: ${demoCode}.`, "redemption", redemptionId);
+  await notify(userId, "REWARD_REDEEMED", `${reward.title} ditukar!`, `Demo code: ${demoCode}.`, "redemption", redemptionId);
   return { demoCode, newBalance };
 }

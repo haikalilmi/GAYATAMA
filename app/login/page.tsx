@@ -23,10 +23,10 @@ export default async function LoginPage({
           <Plane className="h-6 w-6 -rotate-45 text-sky-400" />
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          Masuk ke ImpactQuest
+          Sign In to ImpactQuest
         </h1>
         <p className="text-xs text-slate-500">
-          Akses Flight Hub untuk ikut misi sosial dan catat dampak nyata.
+          Access the Flight Hub to join social missions and record real impact.
         </p>
       </div>
 
@@ -38,10 +38,10 @@ export default async function LoginPage({
           <AlertTriangle className="h-4 w-4 text-rose-600 shrink-0" />
           <span>
             {error === "auth_failed"
-              ? "Login Google gagal. Coba lagi."
+              ? "Google sign-in failed. Please try again."
               : error === "no_email"
-                ? "Akun Google tidak memiliki email."
-                : "Terjadi kesalahan autentikasi. Coba lagi."}
+                ? "The Google account has no email."
+                : "Authentication error. Please try again."}
           </span>
         </div>
       ) : null}
@@ -53,20 +53,20 @@ export default async function LoginPage({
         <div className="flex items-center gap-3">
           <div className="h-px flex-1 bg-slate-200/80" />
           <span className="text-[11px] font-mono uppercase text-slate-400">
-            atau email
+            or email
           </span>
           <div className="h-px flex-1 bg-slate-200/80" />
         </div>
 
-        <AuthForm action={loginAction} submitLabel="Masuk ke Akun" next={next} />
+        <AuthForm action={loginAction} submitLabel="Sign In" next={next} />
 
         <p className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
-          Belum memiliki akun relawan?{" "}
+          No volunteer account yet?{" "}
           <Link
             href="/register"
             className="font-semibold text-slate-900 hover:text-sky-600 underline transition-colors"
           >
-            Daftar Sekarang
+            Sign Up Now
           </Link>
         </p>
       </div>
@@ -74,14 +74,14 @@ export default async function LoginPage({
       {/* Demo Credentials Helper Box */}
       <div className="rounded-2xl border border-slate-200/70 bg-slate-50/70 p-4 text-xs space-y-1.5 font-mono">
         <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
-          AKUN DEMO LOMBA (OFFLINE READY):
+          DEMO ACCOUNTS (OFFLINE READY):
         </span>
         <div className="text-slate-600 flex justify-between">
-          <span>Relawan:</span>
+          <span>Volunteer:</span>
           <span className="font-bold text-slate-800">demo@impactquest.local / demo1234</span>
         </div>
         <div className="text-slate-600 flex justify-between">
-          <span>Verifikator:</span>
+          <span>Verifier:</span>
           <span className="font-bold text-slate-800">admin@impactquest.local / admin1234</span>
         </div>
       </div>

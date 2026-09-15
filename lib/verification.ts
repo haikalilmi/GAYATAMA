@@ -113,7 +113,7 @@ export async function startReview(verifierId: string, submissionId: string): Pro
     "SELECT status, participation_id FROM submissions WHERE id = ?",
     submissionId
   ).get();
-  if (!s) throw new VerificationError("Submission tidak ditemukan.");
+  if (!s) throw new VerificationError("Submission not found.");
   if (s.status !== "PENDING") throw new VerificationError("Hanya PENDING yang bisa mulai review.");
   const now = new Date().toISOString();
   await sql("UPDATE submissions SET status = 'UNDER_REVIEW', updated_at = ? WHERE id = ?", now, submissionId).run();
@@ -140,19 +140,19 @@ export async function approveSubmission(
     "SELECT id, user_id, mission_id, participation_id, status FROM submissions WHERE id = ?",
     submissionId
   ).get();
-  if (!s) throw new VerificationError("Submission tidak ditemukan.");
+  if (!s) throw new VerificationError("Submission not found.");
   if (s.status === "APPROVED") {
     const u = await sql<{ total_xp: number }>("SELECT total_xp FROM users WHERE id = ?", s.user_id).get();
     return { already: true, xp: 0, points: 0, leveledUp: false, newLevel: calculateLevel(u!.total_xp).title, badges: [] };
   }
   if (!REVIEWABLE.includes(s.status))
-    throw new VerificationError("Hanya submission dalam review yang bisa disetujui.");
+    throw new VerificationError("Only submissions under review can be approved.");
 
   const mission = await sql<{ xp_reward: number; point_reward: number }>(
     "SELECT xp_reward, point_reward FROM missions WHERE id = ?",
     s.mission_id
   ).get();
-  if (!mission) throw new VerificationError("Misi tidak ditemukan.");
+  if (!mission) throw new VerificationError("Mission not found.");
 
   const metrics = await sql<{ id: string }>(
     "SELECT id FROM mission_metrics WHERE mission_id = ?",
@@ -161,7 +161,7 @@ export async function approveSubmission(
   for (const m of metrics) {
     const v = verifiedValues[m.id] ?? (m.id === "e0000000-0000-0000-0000-000000000001" ? verifiedValues["mm-waste"] : undefined) ?? (m.id === "e0000000-0000-0000-0000-000000000002" ? verifiedValues["mm-plant"] : undefined);
     if (typeof v !== "number" || !Number.isFinite(v) || v < 0 || v > 1000000000)
-      throw new VerificationError("Nilai verified impact wajib angka ≥ 0.");
+      throw new VerificationError("Verified impact value must be a number ≥ 0.");
     await sql(
       "UPDATE submission_impacts SET verified_value = ?, updated_at = ? WHERE submission_id = ? AND mission_metric_id = ?",
       v, now, submissionId, m.id
@@ -192,21 +192,21 @@ export async function approveSubmission(
     const newBal = Number(before.points_balance) + points;
     await sql(
       "INSERT INTO xp_transactions (id, user_id, amount, transaction_type, source_type, source_id, description) VALUES (?, ?, ?, 'MISSION_REWARD', 'submission', ?, ?)",
-      crypto.randomUUID(), s.user_id, xp, submissionId, `Reward misi ${submissionId}`
+      crypto.randomUUID(), s.user_id, xp, submissionId, `Mission reward ${submissionId}`
     ).run();
     await sql("UPDATE users SET total_xp = ?, updated_at = ? WHERE id = ?", newXp, now, s.user_id).run();
     await sql(
       "INSERT INTO point_transactions (id, user_id, amount, transaction_type, source_type, source_id, balance_after, description) VALUES (?, ?, ?, 'MISSION_REWARD', 'submission', ?, ?, ?)",
-      crypto.randomUUID(), s.user_id, points, submissionId, newBal, `Reward misi ${submissionId}`
+      crypto.randomUUID(), s.user_id, points, submissionId, newBal, `Mission reward ${submissionId}`
     ).run();
     await sql("UPDATE users SET points_balance = ?, updated_at = ? WHERE id = ?", newBal, now, s.user_id).run();
 
-    await notify(s.user_id, "MISSION_VERIFIED", "Misi terverifikasi!",
-      `Kamu dapat +${xp} XP dan +${points} Impact Points.`, "submission", submissionId);
+    await notify(s.user_id, "MISSION_VERIFIED", "Mission verified!",
+      `You earned +${xp} XP and +${points} Impact Points.`, "submission", submissionId);
     const leveled = calculateLevel(newXp).title !== calculateLevel(Number(before.total_xp)).title;
     if (leveled) {
-      await notify(s.user_id, "LEVEL_UP", `Naik level: ${calculateLevel(newXp).title}!`,
-        `Total XP kamu ${newXp}.`, "submission", submissionId);
+      await notify(s.user_id, "LEVEL_UP", `Level up: ${calculateLevel(newXp).title}!`,
+        `Your total XP is ${newXp}.`, "submission", submissionId);
     }
   }
 
@@ -224,14 +224,14 @@ export async function approveSubmission(
 
 export async function rejectSubmission(verifierId: string, submissionId: string, reason: string, note?: string): Promise<void> {
   if (!(REJECTION_REASONS as readonly string[]).includes(reason))
-    throw new VerificationError("Alasan penolakan tidak valid.");
+    throw new VerificationError("Invalid rejection reason.");
   const now = new Date().toISOString();
   const s = await sql<{ user_id: string; participation_id: string; status: string }>(
     "SELECT user_id, participation_id, status FROM submissions WHERE id = ?",
     submissionId
   ).get();
-  if (!s) throw new VerificationError("Submission tidak ditemukan.");
-  if (!REVIEWABLE.includes(s.status)) throw new VerificationError("Hanya submission dalam review yang bisa ditolak.");
+  if (!s) throw new VerificationError("Submission not found.");
+  if (!REVIEWABLE.includes(s.status)) throw new VerificationError("Only submissions under review can be rejected.");
   await sql("UPDATE submissions SET status = 'REJECTED', reviewed_at = ?, updated_at = ? WHERE id = ?", now, now, submissionId).run();
   await sql("UPDATE participations SET status = 'REJECTED', updated_at = ? WHERE id = ?", now, s.participation_id).run();
   await writeLog(submissionId, verifierId, "REJECT", s.status, "REJECTED", reason, note);
@@ -239,20 +239,20 @@ export async function rejectSubmission(verifierId: string, submissionId: string,
 }
 
 export async function requestRevision(verifierId: string, submissionId: string, note: string): Promise<void> {
-  if (!note.trim()) throw new VerificationError("Catatan revisi wajib diisi.");
+  if (!note.trim()) throw new VerificationError("Revision note is required.");
   const now = new Date().toISOString();
   const s = await sql<{ user_id: string; participation_id: string; status: string; revision_count: number }>(
     "SELECT user_id, participation_id, status, revision_count FROM submissions WHERE id = ?",
     submissionId
   ).get();
-  if (!s) throw new VerificationError("Submission tidak ditemukan.");
-  if (!REVIEWABLE.includes(s.status)) throw new VerificationError("Hanya submission dalam review yang bisa direvisi.");
-  if (s.revision_count >= 1) throw new VerificationError("Revisi hanya boleh sekali.");
+  if (!s) throw new VerificationError("Submission not found.");
+  if (!REVIEWABLE.includes(s.status)) throw new VerificationError("Only submissions under review can be revised.");
+  if (s.revision_count >= 1) throw new VerificationError("Only one revision is allowed.");
   await sql(
     "UPDATE submissions SET status = 'REVISION_REQUESTED', revision_count = 1, reviewed_at = ?, updated_at = ? WHERE id = ?",
     now, now, submissionId
   ).run();
   await sql("UPDATE participations SET status = 'REVISION_REQUESTED', updated_at = ? WHERE id = ?", now, s.participation_id).run();
   await writeLog(submissionId, verifierId, "REQUEST_REVISION", s.status, "REVISION_REQUESTED", undefined, note);
-  await notify(s.user_id, "REVISION_REQUESTED", "Perlu revisi.", note, "submission", submissionId);
+  await notify(s.user_id, "REVISION_REQUESTED", "Revision needed.", note, "submission", submissionId);
 }

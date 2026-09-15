@@ -14,7 +14,7 @@ export async function joinMissionAction(_prev: JoinState | null, form: FormData)
   if (!user) redirect("/login");
   const missionId = form.get("mission_id");
   const slug = form.get("slug");
-  if (typeof missionId !== "string" || typeof slug !== "string") return { error: "Data misi tidak lengkap." };
+  if (typeof missionId !== "string" || typeof slug !== "string") return { error: "Incomplete mission data." };
   try {
     await joinMission(user.id, user.role, missionId);
   } catch (e) {

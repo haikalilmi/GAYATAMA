@@ -43,8 +43,8 @@ export async function awardBadges(userId: string): Promise<string[]> {
       userId,
       badge.id
     ).run();
-    await notify(userId, "BADGE_UNLOCKED", `Badge ${rule.name} terbuka!`,
-      `Kamu mendapatkan badge ${rule.name}.`, "badge", badge.id);
+    await notify(userId, "BADGE_UNLOCKED", `Badge ${rule.name} unlocked!`,
+      `You earned the badge ${rule.name}.`, "badge", badge.id);
     unlocked.push(rule.name);
   }
   return unlocked;

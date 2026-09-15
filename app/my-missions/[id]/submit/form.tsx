@@ -31,7 +31,7 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
         {requires.before ? (
           <div className="space-y-2">
             <label htmlFor="before_photo" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-              Foto Sebelum (Before) *
+              Before Photo *
             </label>
             <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/60 p-4 transition-colors hover:border-sky-400 hover:bg-sky-50/20">
               <div className="flex flex-col items-center justify-center text-center space-y-2">
@@ -46,7 +46,7 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
                   required
                   className="w-full text-xs text-slate-500 file:mr-2 file:rounded-lg file:border-0 file:bg-slate-900 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-slate-800 cursor-pointer"
                 />
-                <span className="text-[10px] text-slate-400 font-mono">JPG, PNG, WEBP (Maks 5 MB)</span>
+                <span className="text-[10px] text-slate-400 font-mono">JPG, PNG, WEBP (max 5 MB)</span>
               </div>
             </div>
           </div>
@@ -55,7 +55,7 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
         {requires.after ? (
           <div className="space-y-2">
             <label htmlFor="after_photo" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-              Foto Sesudah (After) *
+              After Photo *
             </label>
             <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/60 p-4 transition-colors hover:border-emerald-400 hover:bg-emerald-50/20">
               <div className="flex flex-col items-center justify-center text-center space-y-2">
@@ -70,7 +70,7 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
                   required
                   className="w-full text-xs text-slate-500 file:mr-2 file:rounded-lg file:border-0 file:bg-slate-900 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-slate-800 cursor-pointer"
                 />
-                <span className="text-[10px] text-slate-400 font-mono">JPG, PNG, WEBP (Maks 5 MB)</span>
+                <span className="text-[10px] text-slate-400 font-mono">JPG, PNG, WEBP (max 5 MB)</span>
               </div>
             </div>
           </div>
@@ -79,7 +79,7 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
         {needsSupporting ? (
           <div className="space-y-2 sm:col-span-2">
             <label htmlFor="supporting_photo" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-              Foto Bukti Aksi *
+              Action Photo *
             </label>
             <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/60 p-4 transition-colors hover:border-sky-400 hover:bg-sky-50/20">
               <div className="flex flex-col items-center justify-center text-center space-y-2">
@@ -94,7 +94,7 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
                   required
                   className="w-full text-xs text-slate-500 file:mr-2 file:rounded-lg file:border-0 file:bg-slate-900 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-slate-800 cursor-pointer"
                 />
-                <span className="text-[10px] text-slate-400 font-mono">JPG, PNG, WEBP (Maks 5 MB)</span>
+                <span className="text-[10px] text-slate-400 font-mono">JPG, PNG, WEBP (max 5 MB)</span>
               </div>
             </div>
           </div>
@@ -104,7 +104,7 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
       {/* Description Field */}
       <div className="space-y-2">
         <label htmlFor="description" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-          Deskripsi & Catatan Lapangan {requires.description ? "*" : ""}
+          Description and Field Notes {requires.description ? "*" : ""}
         </label>
         <textarea
           id="description"
@@ -113,7 +113,7 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
           maxLength={2000}
           required={requires.description}
           defaultValue={defaults?.description ?? ""}
-          placeholder="Ceritakan proses aksi, lokasi spesifik, tantangan di lapangan, dan hasil yang dicapai..."
+          placeholder="Describe the action, the specific location, challenges in the field, and the results achieved..."
           className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all leading-relaxed"
         />
       </div>
@@ -123,7 +123,7 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
         {requires.proofCode ? (
           <div className="space-y-2">
             <label htmlFor="proof_code_input" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-              Konfirmasi Kode Bukti Fisik *
+              Confirm Physical Proof Code *
             </label>
             <div className="relative">
               <KeyRound className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -133,19 +133,19 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
                 type="text"
                 required
                 maxLength={32}
-                placeholder="Contoh: IQ-ABC123"
+                placeholder="e.g. IQ-ABC123"
                 defaultValue={defaults?.proof_code_input ?? ""}
                 className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-9 pr-3.5 py-2.5 font-mono text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all uppercase"
               />
             </div>
-            <p className="text-[11px] text-slate-500">Wajib persis sama dengan kode di kartu misimu.</p>
+            <p className="text-[11px] text-slate-500">Must match the code on your mission card exactly.</p>
           </div>
         ) : null}
 
         {requires.partnerCode ? (
           <div className="space-y-2">
             <label htmlFor="partner_code_input" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-              Kode Partner / Event *
+              Partner / Event Code *
             </label>
             <input
               id="partner_code_input"
@@ -154,7 +154,7 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
               required
               maxLength={64}
               defaultValue={defaults?.partner_code_input ?? ""}
-              placeholder="Masukkan kode acara..."
+              placeholder="Enter the event code..."
               className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all"
             />
           </div>
@@ -165,7 +165,7 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
       {metrics.length > 0 && (
         <div className="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 sm:p-5 space-y-4">
           <span className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-            Kalkulasi Angka Dampak Nyata
+            Measured Impact Values
           </span>
           <div className="grid gap-4 sm:grid-cols-2">
             {metrics.map((m) => {
@@ -211,7 +211,7 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
             className="mt-0.5 h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500/20"
           />
           <span className="text-xs text-slate-600 leading-relaxed">
-            Saya menyatakan bahwa aksi ini benar-benar telah dilaksanakan di lapangan secara jujur, bukti dokumentasi milik saya sendiri, dan data yang dilaporkan dapat diverifikasi secara transparan.
+            I confirm that this action was genuinely carried out in the field, that the documentation is my own, and that the reported data can be verified transparently.
           </span>
         </label>
       </div>

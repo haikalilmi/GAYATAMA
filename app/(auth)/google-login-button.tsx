@@ -53,7 +53,7 @@ export function GoogleLoginButton({ next, label }: Props) {
           fill="#EA4335"
         />
       </svg>
-      <span>{label ?? "Lanjutkan dengan Google"}</span>
+      <span>{label ?? "Continue with Google"}</span>
     </button>
   );
 }

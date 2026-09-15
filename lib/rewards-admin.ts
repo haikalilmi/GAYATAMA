@@ -58,7 +58,7 @@ export async function createReward(data: RewardForm): Promise<string> {
 
 export async function updateReward(id: string, data: RewardForm): Promise<void> {
   const exists = await sql("SELECT 1 FROM rewards WHERE id = ?", id).get();
-  if (!exists) throw new RewardAdminError("Reward tidak ditemukan.");
+  if (!exists) throw new RewardAdminError("Reward not found.");
   await sql(
     "UPDATE rewards SET title = ?, description = ?, point_cost = ?, demo_value = ?, stock = ?, status = ?, updated_at = ? WHERE id = ?",
     data.title, data.description || null, data.point_cost, data.demo_value ?? null,

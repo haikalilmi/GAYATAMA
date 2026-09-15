@@ -22,7 +22,7 @@ export function AuthForm({ action, submitLabel, next, showName }: Props) {
             htmlFor="full_name"
             className="block text-xs font-bold uppercase tracking-wider text-slate-700"
           >
-            Nama Lengkap
+            Full Name
           </label>
           <input
             id="full_name"
@@ -32,7 +32,7 @@ export function AuthForm({ action, submitLabel, next, showName }: Props) {
             minLength={2}
             maxLength={100}
             autoComplete="name"
-            placeholder="Nama Lengkapmu"
+            placeholder="Your full name"
             className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all"
           />
         </div>
@@ -43,7 +43,7 @@ export function AuthForm({ action, submitLabel, next, showName }: Props) {
           htmlFor="email"
           className="block text-xs font-bold uppercase tracking-wider text-slate-700"
         >
-          Alamat Email
+          Email Address
         </label>
         <input
           id="email"
@@ -61,7 +61,7 @@ export function AuthForm({ action, submitLabel, next, showName }: Props) {
           htmlFor="password"
           className="block text-xs font-bold uppercase tracking-wider text-slate-700"
         >
-          Kata Sandi
+          Password
         </label>
         <input
           id="password"
@@ -94,7 +94,7 @@ export function AuthForm({ action, submitLabel, next, showName }: Props) {
         {pending ? (
           <>
             <Loader2 className="h-3.5 w-3.5 animate-spin text-sky-400" />
-            <span>Memvalidasi kredensial...</span>
+            <span>Validating credentials...</span>
           </>
         ) : (
           <>

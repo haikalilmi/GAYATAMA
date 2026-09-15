@@ -13,7 +13,7 @@ export async function cancelParticipationAction(_prev: CancelState | null, form:
   const user = await getCurrentUser();
   if (!user) redirect("/login?next=%2Fmy-missions");
   const id = form.get("participation_id");
-  if (typeof id !== "string") return { error: "Data tidak lengkap." };
+  if (typeof id !== "string") return { error: "Incomplete data." };
   try {
     await cancelParticipation(user.id, id);
   } catch (e) {

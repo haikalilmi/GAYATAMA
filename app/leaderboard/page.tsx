@@ -21,17 +21,17 @@ export default async function LeaderboardPage({
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200/60">
               <Trophy className="h-3 w-3" />
-              Peringkat Kontributor
+              Contributor Ranking
             </span>
             <span className="text-xs font-mono text-slate-400">
-              TOP KONTRIBUTOR
+              TOP CONTRIBUTORS
             </span>
           </div>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
-            Papan Peringkat
+            Leaderboard
           </h1>
           <p className="text-sm text-slate-500">
-            Peringkat aksi terverifikasi berbasis akumulasi XP yang telah diaudit.
+            Verified action ranking based on audited XP.
           </p>
         </div>
 
@@ -45,7 +45,7 @@ export default async function LeaderboardPage({
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            Bulan Ini
+            This Month
           </Link>
           <Link
             href="/leaderboard"
@@ -55,7 +55,7 @@ export default async function LeaderboardPage({
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            Sepanjang Waktu
+            All Time
           </Link>
         </div>
       </div>
@@ -102,7 +102,7 @@ export default async function LeaderboardPage({
                       )}
                     </p>
                     <p className="text-[11px] text-slate-400 font-mono">
-                      {isTop3 ? "Relawan Elit Terverifikasi" : "Kontributor Aktif"}
+                      {isTop3 ? "Verified Elite Volunteer" : "Active Contributors"}
                     </p>
                   </div>
                 </div>
@@ -110,7 +110,7 @@ export default async function LeaderboardPage({
                 {/* Score */}
                 <div className="text-right shrink-0">
                   <span className="font-mono text-sm font-black text-slate-900">
-                    {r.xp.toLocaleString("id-ID")}
+                    {r.xp.toLocaleString("en-US")}
                   </span>
                   <span className="font-mono text-xs text-slate-400 ml-1">XP</span>
                 </div>
@@ -121,7 +121,7 @@ export default async function LeaderboardPage({
       </div>
 
       <p className="text-center text-xs text-slate-400 font-mono">
-        Peringkat diperbarui secara otomatis setiap kali verifikasi aksi disetujui.
+        Rankings update automatically whenever a verified action is approved.
       </p>
     </div>
   );
