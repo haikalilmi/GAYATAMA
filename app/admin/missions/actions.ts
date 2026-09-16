@@ -18,7 +18,7 @@ export interface MissionState {
 
 async function mustAdmin() {
   const user = await getCurrentUser();
-  if (!user || user.role !== "ADMIN") throw new MissionAdminError("Hanya ADMIN.");
+  if (!user || user.role !== "ADMIN") throw new MissionAdminError("Admins only.");
   return user;
 }
 

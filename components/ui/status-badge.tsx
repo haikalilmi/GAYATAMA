@@ -67,7 +67,7 @@ const statusStyles: Record<string, { label: string; className: string }> = {
     className: "bg-amber-50 text-amber-700 border-amber-200/80",
   },
   ACTIVE: {
-    label: "Aktif",
+    label: "Active",
     className: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
   },
   DRAFT: {
@@ -75,7 +75,19 @@ const statusStyles: Record<string, { label: string; className: string }> = {
     className: "bg-slate-100 text-slate-600 border-slate-200",
   },
   ARCHIVED: {
-    label: "Arsip",
+    label: "Archived",
+    className: "bg-slate-100 text-slate-500 border-slate-200",
+  },
+  PAUSED: {
+    label: "Paused",
+    className: "bg-amber-50 text-amber-700 border-amber-200/80",
+  },
+  ENDED: {
+    label: "Ended",
+    className: "bg-slate-100 text-slate-500 border-slate-200",
+  },
+  INACTIVE: {
+    label: "Inactive",
     className: "bg-slate-100 text-slate-500 border-slate-200",
   },
 
@@ -84,7 +96,7 @@ const statusStyles: Record<string, { label: string; className: string }> = {
     label: "Low Risk",
     className: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
   },
-  HIGH: {
+  HIGH_RISK: {
     label: "High Risk",
     className: "bg-rose-50 text-rose-700 border-rose-200/80 font-semibold",
   },
@@ -97,6 +109,10 @@ const statusStyles: Record<string, { label: string; className: string }> = {
   MEDIUM: {
     label: "Medium",
     className: "bg-sky-50 text-sky-700 border-sky-200/60",
+  },
+  HIGH: {
+    label: "Hard",
+    className: "bg-rose-50 text-rose-700 border-rose-200/60",
   },
 
   // Mission types
@@ -149,9 +165,6 @@ export function StatusBadge({
         />
       )}
       <span>{label}</span>
-      {status !== label && (
-        <span className="font-mono text-[10px] opacity-70">[{status}]</span>
-      )}
     </span>
   );
 }

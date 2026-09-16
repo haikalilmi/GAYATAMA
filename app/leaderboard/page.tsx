@@ -97,7 +97,7 @@ export default async function LeaderboardPage({
                       {r.full_name}{" "}
                       {r.isYou && (
                         <span className="ml-1 rounded-md bg-sky-600 px-1.5 py-0.2 text-[10px] font-semibold text-white">
-                          Kamu
+                          You
                         </span>
                       )}
                     </p>

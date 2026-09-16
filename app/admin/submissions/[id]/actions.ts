@@ -19,13 +19,13 @@ export interface ReviewState {
 
 export async function startReviewAction(_prev: ReviewState | null, form: FormData): Promise<ReviewState> {
   const admin = await getCurrentUser();
-  if (!admin || admin.role !== "ADMIN") return { error: "Hanya ADMIN.", ok: "" };
+  if (!admin || admin.role !== "ADMIN") return { error: "Admins only.", ok: "" };
   const id = form.get("submission_id");
   if (typeof id !== "string") return { error: "Incomplete data.", ok: "" };
   try {
     await startReview(admin.id, id);
     revalidatePath(`/admin/submissions/${id}`);
-    return { error: "", ok: "Review dimulai." };
+    return { error: "", ok: "Review started." };
   } catch (e) {
     if (e instanceof VerificationError) return { error: e.message, ok: "" };
     throw e;
@@ -34,7 +34,7 @@ export async function startReviewAction(_prev: ReviewState | null, form: FormDat
 
 export async function approveAction(_prev: ReviewState | null, form: FormData): Promise<ReviewState> {
   const admin = await getCurrentUser();
-  if (!admin || admin.role !== "ADMIN") return { error: "Hanya ADMIN.", ok: "" };
+  if (!admin || admin.role !== "ADMIN") return { error: "Admins only.", ok: "" };
   const id = form.get("submission_id");
   if (typeof id !== "string") return { error: "Incomplete data.", ok: "" };
   const values: Record<string, number> = {};
@@ -66,7 +66,7 @@ export async function approveAction(_prev: ReviewState | null, form: FormData): 
 
 export async function rejectAction(_prev: ReviewState | null, form: FormData): Promise<ReviewState> {
   const admin = await getCurrentUser();
-  if (!admin || admin.role !== "ADMIN") return { error: "Hanya ADMIN.", ok: "" };
+  if (!admin || admin.role !== "ADMIN") return { error: "Admins only.", ok: "" };
   const id = form.get("submission_id");
   const reason = form.get("reason");
   const note = form.get("note");
@@ -86,7 +86,7 @@ export async function rejectAction(_prev: ReviewState | null, form: FormData): P
 
 export async function revisionAction(_prev: ReviewState | null, form: FormData): Promise<ReviewState> {
   const admin = await getCurrentUser();
-  if (!admin || admin.role !== "ADMIN") return { error: "Hanya ADMIN.", ok: "" };
+  if (!admin || admin.role !== "ADMIN") return { error: "Admins only.", ok: "" };
   const id = form.get("submission_id");
   const note = form.get("note");
   if (typeof id !== "string" || typeof note !== "string" || !note.trim())

@@ -81,6 +81,6 @@ export async function redeemReward(userId: string, rewardId: string): Promise<{ 
     "INSERT INTO reward_redemptions (id, user_id, reward_id, point_cost, demo_code, status) VALUES (?, ?, ?, ?, ?, 'REDEEMED')",
     redemptionId, userId, rewardId, reward.point_cost, demoCode
   ).run();
-  await notify(userId, "REWARD_REDEEMED", `${reward.title} ditukar!`, `Demo code: ${demoCode}.`, "redemption", redemptionId);
+  await notify(userId, "REWARD_REDEEMED", `${reward.title} redeemed!`, `Demo code: ${demoCode}.`, "redemption", redemptionId);
   return { demoCode, newBalance };
 }

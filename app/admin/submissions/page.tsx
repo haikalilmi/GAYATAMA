@@ -18,7 +18,7 @@ const tabs = [
   { key: "revision", label: "Revision" },
   { key: "approved", label: "Approved" },
   { key: "rejected", label: "Rejected" },
-  { key: "all", label: "Semua" },
+  { key: "all", label: "All" },
 ] as const;
 
 export default async function SubmissionQueuePage({

@@ -53,7 +53,7 @@ export default async function OrgDashboardPage() {
             Organization and Initiator Dashboard
           </h1>
           <p className="text-sm text-slate-500">
-            Halo, {user.full_name}. Track public engagement and your social campaign progress.
+            Hello, {user.full_name}. Track public engagement and your social campaign progress.
           </p>
         </div>
       </div>

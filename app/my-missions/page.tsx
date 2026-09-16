@@ -3,6 +3,7 @@ import { requireUser } from "@/lib/auth";
 import { listUserParticipations } from "@/lib/participation";
 import { CancelButton } from "./cancel-button";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { NextSteps } from "@/components/ui/next-steps";
 import {
   CheckCircle2,
   Clock,
@@ -13,7 +14,7 @@ import {
 } from "lucide-react";
 
 const tabs = [
-  { key: "active", label: "Aktif", match: ["JOINED"] },
+  { key: "active", label: "To Do", match: ["JOINED"] },
   {
     key: "review",
     label: "In Review",
@@ -120,18 +121,21 @@ export default async function MyMissionsPage({
       </div>
 
       {/* Participations List */}
+      {active.key === "review" && rows.length > 0 ? <NextSteps /> : null}
       {rows.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white/60 p-12 text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-slate-400">
             <Compass className="h-6 w-6" />
           </div>
           <p className="mt-3 text-base font-semibold text-slate-800">
-            No missions in the {active.label.toLowerCase()}
-          </p>
-          <p className="mt-1 text-xs text-slate-500">
             {active.key === "active"
-              ? "You have not joined any mission yet."
-              : "No activity history for this tab yet."}
+              ? "You have no missions running right now"
+              : `Nothing in “${active.label}” yet`}
+          </p>
+          <p className="mt-1 text-sm text-slate-500">
+            {active.key === "active"
+              ? "Pick a mission below, save the proof code we give you, then do the action and upload your photos."
+              : "Come back later — this list updates by itself when something changes."}
           </p>
           <Link
             href="/missions"
@@ -171,7 +175,7 @@ export default async function MyMissionsPage({
                   {/* Telemetry Block */}
                   <div className="flex sm:flex-col items-end gap-1.5">
                     <div className="flex items-center gap-1 text-xs font-mono">
-                      <span className="text-slate-400">KODE:</span>
+                      <span className="text-slate-400">CODE:</span>
                       <span className="rounded bg-sky-50 px-2 py-0.5 font-bold text-sky-800 border border-sky-200/60">
                         {r.proof_code}
                       </span>

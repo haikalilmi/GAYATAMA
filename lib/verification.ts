@@ -114,7 +114,7 @@ export async function startReview(verifierId: string, submissionId: string): Pro
     submissionId
   ).get();
   if (!s) throw new VerificationError("Submission not found.");
-  if (s.status !== "PENDING") throw new VerificationError("Hanya PENDING yang bisa mulai review.");
+  if (s.status !== "PENDING") throw new VerificationError("Only PENDING submissions can start review.");
   const now = new Date().toISOString();
   await sql("UPDATE submissions SET status = 'UNDER_REVIEW', updated_at = ? WHERE id = ?", now, submissionId).run();
   await sql("UPDATE participations SET status = 'UNDER_REVIEW', updated_at = ? WHERE id = ?", now, s.participation_id).run();
@@ -235,7 +235,7 @@ export async function rejectSubmission(verifierId: string, submissionId: string,
   await sql("UPDATE submissions SET status = 'REJECTED', reviewed_at = ?, updated_at = ? WHERE id = ?", now, now, submissionId).run();
   await sql("UPDATE participations SET status = 'REJECTED', updated_at = ? WHERE id = ?", now, s.participation_id).run();
   await writeLog(submissionId, verifierId, "REJECT", s.status, "REJECTED", reason, note);
-  await notify(s.user_id, "MISSION_REJECTED", "Submission ditolak.", note ?? reason, "submission", submissionId);
+  await notify(s.user_id, "MISSION_REJECTED", "Submission rejected.", note ?? reason, "submission", submissionId);
 }
 
 export async function requestRevision(verifierId: string, submissionId: string, note: string): Promise<void> {

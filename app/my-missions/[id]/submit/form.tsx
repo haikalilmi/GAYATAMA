@@ -26,6 +26,24 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
     <form action={formAction} className="space-y-6">
       <input type="hidden" name={idName} value={idValue} />
 
+      {/* Step indicator */}
+      <ol className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500" aria-label="Steps">
+        <li className="flex items-center gap-1.5 rounded-full bg-sky-50 border border-sky-200/60 px-2.5 py-1 text-sky-800">
+          <span className="font-mono font-bold">1</span>
+          <span>Upload photos</span>
+        </li>
+        <li aria-hidden="true" className="h-px w-3 bg-slate-200" />
+        <li className="flex items-center gap-1.5 rounded-full bg-slate-100 border border-slate-200/70 px-2.5 py-1 text-slate-700">
+          <span className="font-mono font-bold">2</span>
+          <span>Describe</span>
+        </li>
+        <li aria-hidden="true" className="h-px w-3 bg-slate-200" />
+        <li className="flex items-center gap-1.5 rounded-full bg-slate-100 border border-slate-200/70 px-2.5 py-1 text-slate-700">
+          <span className="font-mono font-bold">3</span>
+          <span>Enter code</span>
+        </li>
+      </ol>
+
       {/* Photo Uploads Section */}
       <div className="grid gap-4 sm:grid-cols-2">
         {requires.before ? (
@@ -164,9 +182,14 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
       {/* Numeric Metrics */}
       {metrics.length > 0 && (
         <div className="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 sm:p-5 space-y-4">
-          <span className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-            Measured Impact Values
-          </span>
+          <div>
+            <span className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+              How much did you achieve?
+            </span>
+            <p className="mt-1 text-xs text-slate-500">
+              Type the numbers from your action. Write 0 if a field does not apply to you.
+            </p>
+          </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {metrics.map((m) => {
               const inputId = m.id === "e0000000-0000-0000-0000-000000000001" || m.name.toLowerCase().includes("waste") || m.name.toLowerCase().includes("sampah")
@@ -188,7 +211,7 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
                       step="any"
                       required
                       defaultValue={defaults?.metrics?.[m.id] ?? defaults?.metrics?.[inputId.slice(7)] ?? ""}
-                      placeholder="0.0"
+                      placeholder="e.g. 3"
                       className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 font-mono text-sm font-bold text-slate-900 placeholder:text-slate-300 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all"
                     />
                     <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-400">
@@ -201,6 +224,27 @@ export function SubmitForm({ idName, idValue, action, submitLabel, pendingLabel,
           </div>
         </div>
       )}
+
+      {/* Need help — collapsible, works on touch screens */}
+      <details className="rounded-xl border border-slate-200/70 bg-white">
+        <summary className="cursor-pointer select-none px-4 py-3 text-xs font-bold text-sky-700">
+          Need help? Read this first
+        </summary>
+        <ul className="space-y-2 border-t border-slate-100 px-4 py-3 text-xs text-slate-600 leading-relaxed list-disc pl-8">
+          <li>
+            Take a clear photo of what you did. One photo is the minimum for every mission.
+          </li>
+          <li>
+            If this mission also asks for a before and an after photo, send both.
+          </li>
+          <li>
+            Write the proof code on paper and make sure it can be read in the photo.
+          </li>
+          <li>
+            Photos must be JPG, PNG, or WEBP and no bigger than 5 MB each.
+          </li>
+        </ul>
+      </details>
 
       {/* Integrity Agreement Checkbox */}
       <div className="rounded-xl border border-slate-200/70 bg-white p-4">

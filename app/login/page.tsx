@@ -74,7 +74,7 @@ export default async function LoginPage({
       {/* Demo Credentials Helper Box */}
       <div className="rounded-2xl border border-slate-200/70 bg-slate-50/70 p-4 text-xs space-y-1.5 font-mono">
         <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
-          DEMO ACCOUNTS (OFFLINE READY):
+          Just looking around? Try a demo account:
         </span>
         <div className="text-slate-600 flex justify-between">
           <span>Volunteer:</span>

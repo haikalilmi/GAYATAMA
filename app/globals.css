@@ -132,6 +132,17 @@
 .dark .hover\:bg-white:hover {
   background-color: #1b2942;
 }
+.dark .focus\:bg-white:focus {
+  background-color: #141f36;
+}
+/* Autofill browser: paksa tetap gelap supaya teks tidak hilang. */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #141f36 inset;
+  -webkit-text-fill-color: #f5f8fc;
+  caret-color: #f5f8fc;
+}
 .dark .to-white {
   --tw-gradient-to: #141f36;
 }

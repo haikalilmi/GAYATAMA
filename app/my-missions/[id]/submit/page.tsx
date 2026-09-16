@@ -107,7 +107,7 @@ export default async function SubmitPage({
             </h1>
           </div>
           <div className="flex items-center gap-1.5 text-xs font-mono">
-            <span className="text-slate-400">KODE:</span>
+            <span className="text-slate-400">CODE:</span>
             <span className="rounded-md bg-sky-50 px-2.5 py-1 font-bold text-sky-800 border border-sky-200/70">
               {part.proof_code}
             </span>

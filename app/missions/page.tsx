@@ -59,7 +59,8 @@ export default async function MissionsPage({
             Explore Field Missions
           </h1>
           <p className="text-sm text-slate-500">
-            Pick a verified social mission, complete it in the field, and earn reward points.
+            Pick a verified social mission, complete it in the field, and earn a reward.
+            <span className="text-slate-400"> XP raises your level. Points can be swapped for rewards.</span>
           </p>
         </div>
       </div>

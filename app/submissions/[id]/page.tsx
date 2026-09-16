@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getSubmissionForUser } from "@/lib/submissions";
 import { EVIDENCE_LABELS } from "@/lib/evidence";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { NextSteps } from "@/components/ui/next-steps";
 import {
   ArrowLeft,
   AlertTriangle,
@@ -12,6 +13,26 @@ import {
   Layers,
   History,
 } from "lucide-react";
+
+// Plain-language meaning of each status, shown to the contributor.
+const STATUS_MEANING: Record<string, string> = {
+  PENDING: "We received your proof. It is waiting in line for a reviewer to open it.",
+  UNDER_REVIEW: "A reviewer is looking at your photos and numbers right now.",
+  RESUBMITTED: "We received your updated proof. A reviewer will look at it again.",
+  REVISION_REQUESTED: "A reviewer needs one fix from you before this can be approved.",
+  APPROVED: "Well done. Your proof was accepted and the reward has been added to your account.",
+  REJECTED: "This proof was not accepted. Open the review history below to see why.",
+};
+
+const AWAITING_REVIEW = ["PENDING", "UNDER_REVIEW", "RESUBMITTED"];
+
+// Reviewer actions in plain words.
+const ACTION_LABEL: Record<string, string> = {
+  START_REVIEW: "A reviewer opened your proof",
+  APPROVE: "A reviewer approved your proof",
+  REJECT: "A reviewer rejected your proof",
+  REQUEST_REVISION: "A reviewer asked you to fix something",
+};
 
 export default async function SubmissionPage({
   params,
@@ -60,7 +81,7 @@ export default async function SubmissionPage({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-              DOCUMENTATION AUDIT STATUS · Status: {sub.status}
+              Your proof
             </span>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mt-0.5">
               {sub.mission_title}
@@ -69,21 +90,30 @@ export default async function SubmissionPage({
           <StatusBadge status={sub.status} />
         </div>
 
+        <p className="text-sm text-slate-600 leading-relaxed">
+          {STATUS_MEANING[sub.status] ?? "We received your proof and are processing it."}
+        </p>
+
         <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-slate-500">
           <span>
-            Submitted on: {new Date(sub.submitted_at).toLocaleString("en-US")}
+            Sent on: {new Date(sub.submitted_at).toLocaleString("en-US")}
           </span>
-          <span
-            className={`rounded px-2 py-0.5 font-bold ${
-              sub.risk_score > 30
-                ? "bg-rose-50 text-rose-700 border border-rose-200"
-                : "bg-slate-100 text-slate-600"
-            }`}
-          >
-            Risk Level: {sub.risk_level} ({sub.risk_score}/100)
-          </span>
+          {user.role === "ADMIN" ? (
+            <span
+              className={`rounded px-2 py-0.5 font-bold ${
+                sub.risk_score > 30
+                  ? "bg-rose-50 text-rose-700 border border-rose-200"
+                  : "bg-slate-100 text-slate-600"
+              }`}
+            >
+              Risk Level: {sub.risk_level} ({sub.risk_score}/100)
+            </span>
+          ) : null}
         </div>
       </div>
+
+      {/* What happens next — only while the review is still running */}
+      {AWAITING_REVIEW.includes(sub.status) && user.role !== "ADMIN" ? <NextSteps /> : null}
 
       {/* Revision Notice Banner */}
       {sub.status === "REVISION_REQUESTED" && user.role !== "ADMIN" && (
@@ -106,7 +136,7 @@ export default async function SubmissionPage({
       )}
 
       {/* Risk Flags if present */}
-      {sub.risk_flags.length > 0 ? (
+      {sub.risk_flags.length > 0 && user.role === "ADMIN" ? (
         <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-5 space-y-2">
           <span className="text-xs font-bold uppercase tracking-wider text-amber-900 block">
             Automatic Detection Flags:
@@ -129,9 +159,12 @@ export default async function SubmissionPage({
         <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
           <Layers className="h-4 w-4 text-emerald-600" />
           <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-            Field Impact Values
+            What you reported
           </h2>
         </div>
+        <p className="text-xs text-slate-500">
+          These are the numbers you entered. A reviewer confirms them before they count toward the public totals.
+        </p>
 
         <div className="grid gap-3 sm:grid-cols-2">
           {sub.impacts.map((m) => (
@@ -173,11 +206,16 @@ export default async function SubmissionPage({
 
       {/* Photo Gallery */}
       <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-rim space-y-4">
-        <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-          <Camera className="h-4 w-4 text-sky-600" />
-          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-            Uploaded Evidence
-          </h2>
+        <div className="border-b border-slate-100 pb-3">
+          <div className="flex items-center gap-2">
+            <Camera className="h-4 w-4 text-sky-600" />
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
+              Your photos
+            </h2>
+          </div>
+          <p className="mt-1 text-xs text-slate-500">
+            Only you and the reviewer can open these. Nobody else can see them.
+          </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -189,7 +227,7 @@ export default async function SubmissionPage({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`/api/evidence/${e.id}`}
-                alt={e.evidence_type}
+                alt={EVIDENCE_LABELS[e.evidence_type] ?? e.evidence_type}
                 className="w-full h-48 object-cover rounded-lg border border-slate-200"
               />
               <figcaption className="mt-2 px-1 text-[11px] font-mono font-semibold uppercase text-slate-600 flex items-center justify-between">
@@ -204,22 +242,29 @@ export default async function SubmissionPage({
       {/* Audit Timeline */}
       {sub.timeline.length > 0 ? (
         <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-rim space-y-3">
-          <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-            <History className="h-4 w-4 text-slate-500" />
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-              Verification History
-            </h2>
+          <div className="border-b border-slate-100 pb-2">
+            <div className="flex items-center gap-2">
+              <History className="h-4 w-4 text-slate-500" />
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
+                Review history
+              </h2>
+            </div>
+            <p className="mt-1 text-xs text-slate-500">
+              Who looked at your proof, and what they decided.
+            </p>
           </div>
 
           <ul className="divide-y divide-slate-100 text-xs font-mono">
             <li className="py-2 flex items-center justify-between text-slate-600">
-              <span>Initial Submission</span>
+              <span>You sent your proof</span>
               <span>{new Date(sub.submitted_at).toLocaleString("en-US")}</span>
             </li>
             {sub.timeline.map((t, i) => (
               <li key={i} className="py-2 flex items-center justify-between">
                 <div>
-                  <span className="font-bold text-slate-800">{t.action}</span>
+                  <span className="font-bold text-slate-800">
+                    {ACTION_LABEL[t.action] ?? t.action}
+                  </span>
                   {t.reason ? ` · ${t.reason}` : ""}
                   {t.note ? ` (${t.note})` : ""}
                 </div>

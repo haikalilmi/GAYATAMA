@@ -57,7 +57,7 @@ export default async function RewardsPage() {
               {user ? user.points_balance.toLocaleString("en-US") : "—"}
             </p>
             <p className="mt-1 text-xs text-slate-500">
-              {user ? "Impact Points ready to redeem" : "Sign in to check your balance"}
+              {user ? "Points you earn by doing missions. Swap them for rewards below." : "Sign in to check your balance"}
             </p>
           </div>
         </div>
@@ -94,7 +94,7 @@ export default async function RewardsPage() {
                         : "bg-emerald-50 text-emerald-700 border-emerald-200/60"
                     }`}
                   >
-                    {outOfStock ? "Out of Stock" : `Tersedia: ${r.stock} slot`}
+                    {outOfStock ? "Out of Stock" : `Available: ${r.stock} left`}
                   </span>
                   <span className="font-mono text-xs font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">
                     {r.point_cost.toLocaleString("en-US")} PTS

@@ -123,11 +123,14 @@ export default async function MissionDetailPage({
           </p>
         </div>
 
-        {/* Telemetry Reward Callout */}
+        {/* Reward Callout */}
         <div className="flex flex-wrap items-center gap-4 rounded-xl bg-slate-50 p-4 border border-slate-200/60">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Verified Reward:
+          <div className="space-y-0.5">
+            <span className="block text-xs font-semibold uppercase tracking-wider text-slate-500">
+              What you earn:
+            </span>
+            <span className="block text-[11px] text-slate-500">
+              XP raises your level. Impact Points can be swapped for rewards.
             </span>
           </div>
           <div className="flex items-center gap-3 font-mono text-sm font-bold">
@@ -143,15 +146,20 @@ export default async function MissionDetailPage({
         </div>
       </div>
 
-      {/* Grid: Bukti Wajib & Dampak Terukur */}
+      {/* Grid: Required Evidence & Impact */}
       <div className="grid gap-6 sm:grid-cols-2">
-        {/* Bukti Wajib */}
+        {/* Required Evidence */}
         <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-rim space-y-4">
-          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-            <ShieldCheck className="h-4 w-4 text-sky-600" />
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-              Required Evidence
-            </h2>
+          <div className="border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-sky-600" />
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
+                What you need to prepare
+              </h2>
+            </div>
+            <p className="mt-1 text-xs text-slate-500">
+              Bring these with you when you do the mission. You will upload them as proof.
+            </p>
           </div>
 
           <ul className="space-y-3">
@@ -184,11 +192,16 @@ export default async function MissionDetailPage({
 
         {/* Dampak Terukur */}
         <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-rim space-y-4">
-          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-            <Layers className="h-4 w-4 text-emerald-600" />
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-              Measurable Impact Metrics
-            </h2>
+          <div className="border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2">
+              <Layers className="h-4 w-4 text-emerald-600" />
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
+                What we count
+              </h2>
+            </div>
+            <p className="mt-1 text-xs text-slate-500">
+              The numbers you report after the mission. A reviewer confirms them before they count.
+            </p>
           </div>
 
           {mission.metrics.length === 0 ? (
@@ -206,7 +219,7 @@ export default async function MissionDetailPage({
                     {m.name}
                   </span>
                   <span className="font-mono text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/60">
-                    Satuan: {m.unit}
+                    Unit: {m.unit}
                   </span>
                 </li>
               ))}
@@ -242,7 +255,7 @@ export default async function MissionDetailPage({
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <div>
                         <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                          Proof code:
+                          Your proof code — save this:
                         </span>
                         <p className="font-mono text-2xl font-black text-sky-900 tracking-wider">
                           {part.proof_code}
@@ -251,7 +264,7 @@ export default async function MissionDetailPage({
                       <div className="text-left sm:text-right">
                         <span className="text-xs text-slate-500 flex items-center gap-1">
                           <Clock className="h-3.5 w-3.5 text-amber-600" />
-                          Submit Deadline:
+                          Send your proof before:
                         </span>
                         <p
                           className={`font-mono text-xs font-bold ${
@@ -263,9 +276,17 @@ export default async function MissionDetailPage({
                         </p>
                       </div>
                     </div>
-                    <p className="text-xs text-slate-600">
-                      Write the code above on paper and include it in your field photos.
-                    </p>
+                    <ol className="space-y-1.5 text-xs text-slate-600 leading-relaxed list-decimal pl-5 pt-1 border-t border-sky-200/60">
+                      <li>
+                        <strong className="text-slate-800">Save this code.</strong> It proves the action is really yours.
+                      </li>
+                      <li>
+                        <strong className="text-slate-800">Do the action.</strong> Write the code on paper and make sure it can be read in your photos.
+                      </li>
+                      <li>
+                        <strong className="text-slate-800">Upload your proof</strong> with the button below, before the deadline.
+                      </li>
+                    </ol>
                   </div>
 
                   <div className="flex items-center justify-between gap-3 pt-2">

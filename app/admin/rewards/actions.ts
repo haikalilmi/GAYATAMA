@@ -17,7 +17,7 @@ export interface RewardState {
 
 async function mustAdmin() {
   const user = await getCurrentUser();
-  if (!user || user.role !== "ADMIN") throw new RewardAdminError("Hanya ADMIN.");
+  if (!user || user.role !== "ADMIN") throw new RewardAdminError("Admins only.");
 }
 
 function readForm(form: FormData): RewardForm {

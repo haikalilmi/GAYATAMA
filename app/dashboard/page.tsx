@@ -67,7 +67,7 @@ export default async function DashboardPage() {
             </span>
           </div>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
-            Halo, {user.full_name}
+            Hello, {user.full_name}
           </h1>
           <p className="text-sm text-slate-500">
             Active Contributor · Social Action and Environmental Restoration
@@ -92,6 +92,60 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      {/* Getting started — only for brand-new contributors */}
+      {active.length === 0 && (portfolio?.verifiedActions ?? 0) === 0 ? (
+        <div className="rounded-2xl border border-sky-200/80 bg-linear-to-r from-sky-50/80 via-white to-sky-50/50 p-6 shadow-rim">
+          <h2 className="text-base font-bold tracking-tight text-slate-900">
+            New here? Start in 3 steps
+          </h2>
+          <p className="mt-1 text-sm text-slate-600 leading-relaxed">
+            XP is experience points. You earn them when a reviewer approves your proof.
+          </p>
+          <ol className="mt-4 grid gap-3 sm:grid-cols-3">
+            <li className="flex items-start gap-3 rounded-xl bg-white/80 border border-slate-200/70 p-3.5">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-600 text-white font-mono text-xs font-bold">
+                1
+              </span>
+              <div>
+                <p className="text-sm font-bold text-slate-900">Pick a mission</p>
+                <p className="mt-0.5 text-xs text-slate-600 leading-relaxed">
+                  Choose something you can do near you.
+                </p>
+              </div>
+            </li>
+            <li className="flex items-start gap-3 rounded-xl bg-white/80 border border-slate-200/70 p-3.5">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-600 text-white font-mono text-xs font-bold">
+                2
+              </span>
+              <div>
+                <p className="text-sm font-bold text-slate-900">Do it and take photos</p>
+                <p className="mt-0.5 text-xs text-slate-600 leading-relaxed">
+                  Save the proof code we give you and show it in your photos.
+                </p>
+              </div>
+            </li>
+            <li className="flex items-start gap-3 rounded-xl bg-white/80 border border-slate-200/70 p-3.5">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-600 text-white font-mono text-xs font-bold">
+                3
+              </span>
+              <div>
+                <p className="text-sm font-bold text-slate-900">Upload your proof</p>
+                <p className="mt-0.5 text-xs text-slate-600 leading-relaxed">
+                  A reviewer checks it and your reward arrives by itself.
+                </p>
+              </div>
+            </li>
+          </ol>
+          <Link
+            href="/missions"
+            className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-slate-800 transition-colors"
+          >
+            <span>Pick your first mission</span>
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      ) : null}
+
       {/* Flight Level Progress / XP Telemetry Bar */}
       <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-rim space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -109,7 +163,7 @@ export default async function DashboardPage() {
                 </span>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
-                Total verified contribution across all reviewed actions
+                XP is experience points. You earn it every time a reviewer approves your proof.
               </p>
             </div>
           </div>
@@ -195,7 +249,7 @@ export default async function DashboardPage() {
               {user.points_balance.toLocaleString("en-US")}
             </p>
             <p className="mt-1 text-xs text-slate-500">
-              Points ready to redeem for demo vouchers
+              Points you can swap for rewards. They do not expire.
             </p>
           </div>
         </div>
