@@ -1,5 +1,6 @@
-import { createClient } from "@supabase/supabase-js";
 import { readFileSync, existsSync } from "node:fs";
+import { DatabaseSync } from "node:sqlite";
+import { resolve } from "node:path";
 
 // Load .env.local if exists
 if (existsSync(".env.local")) {
@@ -16,17 +17,27 @@ if (existsSync(".env.local")) {
   }
 }
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const useSupabase =
+  process.env.NEXT_PUBLIC_DB_MODE !== "local" &&
+  Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+  );
 
-if (!url || !key) {
-  console.log("Supabase URL or Key not found, skipping reset.");
-  process.exit(0);
+function localDb() {
+  const db = new DatabaseSync(
+    resolve(process.cwd(), process.env.DATABASE_PATH ?? "data/impactquest.db")
+  );
+  db.exec("PRAGMA foreign_keys = OFF;");
+  return db;
 }
 
-const supabase = createClient(url, key);
+async function resetSupabase() {
+  const { createClient } = await import("@supabase/supabase-js");
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabase = createClient(url, key);
 
-export async function resetDemoUser() {
   const { data: user } = await supabase
     .from("users")
     .select("id, email")
@@ -49,6 +60,30 @@ export async function resetDemoUser() {
     .from("users")
     .update({ total_xp: 1900, points_balance: 470 })
     .eq("id", user.id);
+}
+
+function resetLocal() {
+  const db = localDb();
+  const user = db.prepare("SELECT id FROM users WHERE email = ?").get("demo@impactquest.local");
+  if (!user) {
+    db.close();
+    return;
+  }
+  const uid = user.id;
+  for (const t of ["submissions", "participations", "reward_redemptions", "notifications", "user_badges"]) {
+    db.prepare(`DELETE FROM ${t} WHERE user_id = ?`).run(uid);
+  }
+  db.prepare("DELETE FROM users WHERE email = ?").run("e2e2@impactquest.local");
+  db.prepare("DELETE FROM missions WHERE title LIKE ?").run("%E2E%");
+  db.prepare("DELETE FROM rewards WHERE title LIKE ?").run("%E2E%");
+  db.prepare("UPDATE users SET total_xp = 1900, points_balance = 470 WHERE id = ?").run(uid);
+  db.exec("PRAGMA foreign_keys = ON;");
+  db.close();
+}
+
+export async function resetDemoUser() {
+  if (useSupabase) await resetSupabase();
+  else resetLocal();
 }
 
 if (process.argv[1]?.endsWith("reset-demo.mjs")) {

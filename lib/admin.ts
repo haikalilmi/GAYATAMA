@@ -25,7 +25,9 @@ export interface QueueRow {
 const REVIEWABLE = ["PENDING", "UNDER_REVIEW"];
 
 export async function getAdminStats(): Promise<AdminStats> {
-  const one = async (q: string) => Number((await sql<{ c: number }>(q).get())!.c);
+  const one = async (q: string, ...params: unknown[]) => Number((await sql<{ c: number }>(q, ...params).get())!.c);
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
   const recentActivity = await sql<AdminStats["recentActivity"][0]>(
     `SELECT vl.id, vl.action, vl.created_at, m.title AS mission_title, u.full_name AS user_name
      FROM verification_logs vl
@@ -41,7 +43,8 @@ export async function getAdminStats(): Promise<AdminStats> {
     ),
     activeMissions: await one(`SELECT COUNT(*) AS c FROM missions WHERE status = 'ACTIVE'`),
     verifiedToday: await one(
-      `SELECT COUNT(*) AS c FROM submissions WHERE status = 'APPROVED' AND reviewed_at > date_trunc('day', NOW())`
+      `SELECT COUNT(*) AS c FROM submissions WHERE status = 'APPROVED' AND reviewed_at > ?`,
+      startOfDay.toISOString()
     ),
     recentActivity,
     queuePreview: (await listSubmissions({ tab: "pending" })).slice(0, 8),

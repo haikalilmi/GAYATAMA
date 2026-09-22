@@ -111,10 +111,11 @@ export interface ParticipationRow extends Participation {
 }
 
 export async function markExpiredParticipations(userId: string): Promise<void> {
+  const now = new Date().toISOString();
   await sql(
-    `UPDATE participations SET status = 'EXPIRED', updated_at = NOW()
-     WHERE user_id = ? AND status = 'JOINED' AND expires_at < NOW()`,
-    userId
+    `UPDATE participations SET status = 'EXPIRED', updated_at = ?
+     WHERE user_id = ? AND status = 'JOINED' AND expires_at < ?`,
+    now, userId, now
   ).run();
 }
 
@@ -137,9 +138,10 @@ export async function cancelParticipation(userId: string, participationId: strin
   ).get();
   if (!row || row.user_id !== userId) throw new JoinError("Participation not found.");
   if (row.status !== "JOINED") throw new JoinError("Only JOINED participations can be cancelled.");
+  const now = new Date().toISOString();
   await sql(
-    `UPDATE participations SET status = 'CANCELLED', cancelled_at = NOW(),
-     updated_at = NOW() WHERE id = ?`,
-    participationId
+    `UPDATE participations SET status = 'CANCELLED', cancelled_at = ?,
+     updated_at = ? WHERE id = ?`,
+    now, now, participationId
   ).run();
 }

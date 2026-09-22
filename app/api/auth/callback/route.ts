@@ -2,10 +2,15 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { sql } from "@/lib/db";
+import { isSupabaseMode } from "@/lib/mode";
 import { createSession } from "@/lib/auth";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
+  // Google OAuth hanya tersedia di mode Supabase; mode dummy pakai akun lokal.
+  if (!isSupabaseMode()) {
+    return NextResponse.redirect(`${origin}/login`);
+  }
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/dashboard";
 
@@ -65,20 +70,24 @@ export async function GET(request: Request) {
     userId = existing.id;
     // Update name if changed
     await sql(
-      "UPDATE users SET full_name = ?, updated_at = NOW() WHERE id = ?",
+      "UPDATE users SET full_name = ?, updated_at = ? WHERE id = ?",
       fullName,
+      new Date().toISOString(),
       userId
     ).run();
   } else {
     // Create new user
     userId = crypto.randomUUID();
+    const now = new Date().toISOString();
     await sql(
       `INSERT INTO users (id, email, full_name, password_hash, role, total_xp, points_balance, created_at, updated_at)
-       VALUES (?, ?, ?, ?, 'USER', 0, 0, NOW(), NOW())`,
+       VALUES (?, ?, ?, ?, 'USER', 0, 0, ?, ?)`,
       userId,
       email,
       fullName,
-      "oauth:google" // No password for OAuth users
+      "oauth:google", // No password for OAuth users
+      now,
+      now
     ).run();
   }
 

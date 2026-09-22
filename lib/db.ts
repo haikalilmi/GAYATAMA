@@ -1,14 +1,20 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { DatabaseSync, type SQLInputValue } from "node:sqlite";
+import { mkdirSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import { isSupabaseMode } from "./mode";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-let client: SupabaseClient | null = null;
+let supabaseClient: SupabaseClient | null = null;
 
 export function getSupabase(): SupabaseClient {
-  if (client) return client;
+  if (supabaseClient) return supabaseClient;
   if (!supabaseUrl || !supabaseKey) {
-    throw new Error("Missing Supabase URL or server key. Check the server .env configuration.");
+    throw new Error(
+      "Missing Supabase URL or server key. Either set the Supabase env or run in dummy mode (unset NEXT_PUBLIC_SUPABASE_URL, or NEXT_PUBLIC_DB_MODE=local) with `npm run db:setup`."
+    );
   }
   let role: unknown;
   try {
@@ -19,23 +25,81 @@ export function getSupabase(): SupabaseClient {
   if (!supabaseKey.startsWith("sb_secret_") && role !== "service_role") {
     throw new Error("SUPABASE_SERVICE_ROLE_KEY must be a server secret or service_role key, not an anon/public key.");
   }
-  client = createClient(supabaseUrl, supabaseKey, {
+  supabaseClient = createClient(supabaseUrl, supabaseKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
-  return client;
+  return supabaseClient;
 }
 
-/** Thin compatibility wrapper. Accepts SQL with `?` placeholders (auto-converted
- *  to `$1,$2,...`) and calls the Postgres `exec_sql` function via RPC. */
+// ---- Lokal SQLite (mode dummy, nol env) ----
+
+let sqliteDb: DatabaseSync | null = null;
+
+function getSqlite(): DatabaseSync {
+  if (sqliteDb) return sqliteDb;
+  const override = process.env.DATABASE_PATH;
+  const dbPath = override
+    ? resolve(/*turbopackIgnore: true*/ process.cwd(), override)
+    : join(process.cwd(), "data", "impactquest.db");
+  mkdirSync(dirname(dbPath), { recursive: true });
+  sqliteDb = new DatabaseSync(dbPath);
+  sqliteDb.exec("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;");
+  return sqliteDb;
+}
+
+/** Postgres `$N` -> SQLite `?`. Aman: query di repo ini tidak memakai `$` di literal. */
+function toSqlitePlaceholders(query: string): string {
+  return query.replace(/\$(\d+)/g, "?");
+}
+
+/** node:sqlite hanya menerima null/number/bigint/string/Buffer. */
+function normalizeParam(p: unknown): SQLInputValue {
+  if (typeof p === "boolean") return p ? 1 : 0;
+  if (p === undefined) return null;
+  return p as SQLInputValue;
+}
+
+const SELECT_RE = /^\s*(select|with|values|pragma|explain)\b/i;
+
+/** Wrapper ganda: Supabase RPC bila env Supabase ada, SQLite lokal bila tidak.
+ *  Menerima `?` maupun `$N` agar call site lama tidak perlu diubah. */
 export function sql<T = Record<string, unknown>>(
   query: string,
   ...params: unknown[]
 ) {
-  // Convert SQLite-style `?` placeholders to Postgres `$N`
+  if (!isSupabaseMode()) {
+    const sqliteQuery = toSqlitePlaceholders(query);
+    const args = params.map(normalizeParam);
+    const isSelect = SELECT_RE.test(sqliteQuery);
+
+    async function execLocal(): Promise<unknown[]> {
+      const stmt = getSqlite().prepare(sqliteQuery);
+      if (isSelect) return (stmt.all(...args) ?? []) as unknown[];
+      stmt.run(...args);
+      return [];
+    }
+
+    return {
+      async get<R = T>(): Promise<R | undefined> {
+        return (await execLocal())[0] as R | undefined;
+      },
+      async all<R = T>(): Promise<R[]> {
+        return (await execLocal()) as R[];
+      },
+      async run(): Promise<void> {
+        await execLocal();
+      },
+    };
+  }
+
+  // Mode Supabase: konversi `?` ke `$N`, lanjutkan penomoran setelah `$N` yang sudah ada.
   let idx = 0;
+  for (const m of query.match(/\$(\d+)/g) ?? []) {
+    idx = Math.max(idx, Number.parseInt(m.slice(1), 10));
+  }
   const pgQuery = query.replace(/\?/g, () => `$${++idx}`);
 
-  async function exec(): Promise<unknown[]> {
+  async function execRemote(): Promise<unknown[]> {
     const { data, error } = await getSupabase().rpc("exec_sql", {
       query_text: pgQuery,
       params: params as unknown as Record<string, unknown>,
@@ -53,25 +117,24 @@ export function sql<T = Record<string, unknown>>(
   return {
     /** Return the first row or undefined. */
     async get<R = T>(): Promise<R | undefined> {
-      const rows = await exec();
+      const rows = await execRemote();
       return rows[0] as R | undefined;
     },
     /** Return all rows. */
     async all<R = T>(): Promise<R[]> {
-      return (await exec()) as R[];
+      return (await execRemote()) as R[];
     },
     /** Execute without returning rows (INSERT / UPDATE / DELETE). */
     async run(): Promise<void> {
-      await exec();
+      await execRemote();
     },
   };
 }
 
-/** No-op for BEGIN/COMMIT/ROLLBACK. Individual RPC calls are auto-committed.
- *  Multi-statement atomicity is handled by dedicated Postgres functions when
- *  needed. For the competition prototype, sequential execution is acceptable. */
+/** No-op for BEGIN/COMMIT/ROLLBACK. Individual calls are auto-committed in both modes.
+ *  For the competition prototype, sequential execution is acceptable. */
 export async function execSql(_statement: string): Promise<void> {
-  // Transactions are no-ops in Supabase RPC mode
+  // Transactions are no-ops in both modes
 }
 
 /** Legacy compat – evidence.ts used this to build file paths. */

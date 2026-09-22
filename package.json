@@ -2,7 +2,7 @@
   "name": "impactquest",
   "version": "0.1.0",
   "private": true,
-  "description": "ImpactQuest: verified social impact missions built with Next.js and Supabase",
+  "description": "ImpactQuest: verified social impact missions built with Next.js (Supabase or local SQLite dummy mode)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

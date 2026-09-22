@@ -119,11 +119,15 @@ export async function getLeaderboard(userId: string | null, period: "month" | "a
     ).all();
     return rows.map((r) => ({ full_name: r.full_name, xp: Number(r.total_xp), isYou: r.id === userId }));
   }
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
   const rows = await sql<{ id: string; full_name: string; xp: number }>(
     `SELECT u.id, u.full_name, COALESCE(SUM(x.amount), 0) AS xp FROM users u
      LEFT JOIN xp_transactions x ON x.user_id = u.id
-       AND x.created_at > date_trunc('month', NOW())
-     WHERE u.role = 'USER' GROUP BY u.id, u.full_name ORDER BY xp DESC LIMIT 20`
+       AND x.created_at > ?
+     WHERE u.role = 'USER' GROUP BY u.id, u.full_name ORDER BY xp DESC LIMIT 20`,
+    startOfMonth.toISOString()
   ).all();
   return rows.map((r) => ({ full_name: r.full_name, xp: Number(r.xp), isYou: r.id === userId }));
 }

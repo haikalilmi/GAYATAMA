@@ -54,7 +54,7 @@ export async function listMissions(filter: MissionFilter): Promise<MissionCard[]
   }
   if (filter.q) {
     idx++;
-    where.push(`(title ILIKE $${idx} OR short_description ILIKE $${idx + 1})`);
+    where.push(`(LOWER(title) LIKE LOWER($${idx}) OR LOWER(short_description) LIKE LOWER($${idx + 1}))`);
     params.push(`%${filter.q}%`, `%${filter.q}%`);
     idx++;
   }

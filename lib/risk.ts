@@ -59,10 +59,11 @@ export async function calculateSubmissionRisk(input: RiskInput): Promise<RiskRes
     });
   }
 
+  const dayAgo = new Date(Date.now() - 24 * 3600000).toISOString();
   const day = await sql<{ c: number }>(
     `SELECT COUNT(*) AS c FROM submissions WHERE user_id = ?
-     AND submitted_at > (NOW() - INTERVAL '1 day')`,
-    input.userId
+     AND submitted_at > ?`,
+    input.userId, dayAgo
   ).get();
   if (day && day.c >= 5) {
     score += 20;

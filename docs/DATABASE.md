@@ -2,15 +2,19 @@
 
 ## Engine
 
-The running application uses **Supabase (PostgreSQL)**. All queries go through a single RPC:
+Dual-mode (switched in `lib/mode.ts`):
+
+- **Dummy / judges (default, no env):** local SQLite at `DATABASE_PATH`
+  (default `data/impactquest.db`), created and seeded with dummy accounts by
+  `npm run db:setup`. `db/schema.sql` is the schema for this mode.
+- **Supabase (PostgreSQL, owner only):** active when the Supabase env is set.
+  All queries go through a single RPC:
 
 ```
 exec_sql(query_text text, params jsonb) returns setof json
 ```
 
-Application code never talks to PostgREST table endpoints directly. It calls `sql(...)` from `lib/db.ts`, which rewrites `?` placeholders into `$1`, `$2`, and so on before calling the RPC.
-
-> **Note on `db/schema.sql`.** That file is a legacy SQLite reference kept for historical context. It is applied only by `npm run db:setup`, which no longer initializes the Supabase database. Treat the table descriptions below and the live Supabase project as the source of truth.
+Application code never talks to PostgREST table endpoints directly. It calls `sql(...)` from `lib/db.ts`, which accepts `?` and `$N` placeholders in both modes (rewritten per driver). Queries are written portably (no `NOW()`, `ILIKE`, or `date_trunc`; time cutoffs are computed in JS and passed as params).
 
 ## Entity Relationships
 

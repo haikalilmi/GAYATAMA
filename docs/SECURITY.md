@@ -8,7 +8,7 @@ Enforced in `lib/auth.ts`.
 - A successful login creates a row in `sessions` and sets an HTTP-only cookie named `iq_session`. The cookie stores only the session ID, is `SameSite=Lax`, and is marked `Secure` in production.
 - Sessions expire after 30 days. Expired rows are deleted when encountered.
 - `requireUser(next)` redirects anonymous visitors to the login page and preserves where they were headed.
-- Google sign-in is optional. The OAuth callback in `app/api/auth/callback/route.ts` exchanges the Supabase code, finds or creates a matching row in `users`, and then issues the same application session cookie used by password login.
+- Google sign-in is optional and Supabase-mode only (hidden in dummy mode). The OAuth callback in `app/api/auth/callback/route.ts` exchanges the Supabase code, finds or creates a matching row in `users`, and then issues the same application session cookie used by password login.
 
 ## Authorization
 

@@ -86,15 +86,35 @@ async function withDatabaseEnv(key, fn) {
 await test('server rejects an anonymous key mislabeled as service_role', () => withDatabaseEnv(
   `header.${Buffer.from(JSON.stringify({ role: 'anon' })).toString('base64url')}.signature`,
   async () => {
-    const db = load('lib/db.ts', { '@supabase/supabase-js': { createClient: () => ({}) } });
+    const db = load('lib/db.ts', {
+      '@supabase/supabase-js': { createClient: () => ({}) },
+      './mode': { isSupabaseMode: () => true },
+      'node:sqlite': {},
+    });
     assert.throws(() => db.getSupabase(), /server|service_role/i);
   },
 ));
 await test('SQL failures returned inside RPC data reject writes', () => withDatabaseEnv('sb_secret_test', async () => {
   const db = load('lib/db.ts', {
     '@supabase/supabase-js': { createClient: () => ({ rpc: async () => ({ data: [{ error: 'constraint failed', modified_sql: 'private query', params_received: ['private'] }], error: null }) }) },
+    './mode': { isSupabaseMode: () => true },
+    'node:sqlite': {},
   });
   await assert.rejects(db.sql('INSERT INTO example VALUES (?)', 'private').run(), /SQL execution failed/);
 }));
+await test('local mode converts $N placeholders to ?', async () => {
+  let seen = null;
+  class FakeDb {
+    prepare(q) { seen = q; return { all: async () => [], run: () => {} }; }
+    exec() {}
+  }
+  const db = load('lib/db.ts', {
+    '@supabase/supabase-js': { createClient: () => ({}) },
+    './mode': { isSupabaseMode: () => false },
+    'node:sqlite': { DatabaseSync: FakeDb },
+  });
+  await db.sql('SELECT 1 WHERE a = $1 AND b = ?', 'x', 'y').all();
+  assert.equal(seen, 'SELECT 1 WHERE a = ? AND b = ?');
+});
 console.log(`${passed} passed, ${failed} failed (isolated regression tests; database mocked)`);
 process.exitCode = failed ? 1 : 0;

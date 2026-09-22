@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
+import { isSupabaseMode } from "@/lib/mode";
 import { AuthForm } from "../(auth)/auth-form";
 import { loginAction } from "../(auth)/actions";
 import { GoogleLoginButton } from "../(auth)/google-login-button";
@@ -48,15 +49,19 @@ export default async function LoginPage({
 
       {/* Main Card */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-rim space-y-5">
-        <GoogleLoginButton next={next} />
+        {isSupabaseMode() ? (
+          <>
+            <GoogleLoginButton next={next} />
 
-        <div className="flex items-center gap-3">
-          <div className="h-px flex-1 bg-slate-200/80" />
-          <span className="text-[11px] font-mono uppercase text-slate-400">
-            or email
-          </span>
-          <div className="h-px flex-1 bg-slate-200/80" />
-        </div>
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-slate-200/80" />
+              <span className="text-[11px] font-mono uppercase text-slate-400">
+                or email
+              </span>
+              <div className="h-px flex-1 bg-slate-200/80" />
+            </div>
+          </>
+        ) : null}
 
         <AuthForm action={loginAction} submitLabel="Sign In" next={next} />
 

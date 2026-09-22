@@ -4,7 +4,7 @@
 
 ImpactQuest is a single Next.js application. It has no separate backend service and no background workers. Every read and write happens inside a server component, a server action, or a route handler.
 
-The database is Supabase (PostgreSQL). Application code does not use the Supabase client for table access. Instead it calls one RPC, `exec_sql(text, jsonb)`, through a thin wrapper in `lib/db.ts` that accepts `?` placeholders and rewrites them to `$1`, `$2`, and so on.
+The database is dual-mode (see `lib/mode.ts`): Supabase (PostgreSQL) when the Supabase env is present, otherwise local SQLite seeded by `npm run db:setup`. In Supabase mode, application code does not use the Supabase client for table access. Instead it calls one RPC, `exec_sql(text, jsonb)`, through a thin wrapper in `lib/db.ts` that accepts `?`/`$N` placeholders. In dummy mode the same `sql(...)` API runs against `node:sqlite` (`DATABASE_PATH`, default `data/impactquest.db`).
 
 ## Runtime Components
 

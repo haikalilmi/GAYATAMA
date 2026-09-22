@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
+import { isSupabaseMode } from "@/lib/mode";
 import { AuthForm } from "../(auth)/auth-form";
 import { registerAction } from "../(auth)/actions";
 import { GoogleLoginButton } from "../(auth)/google-login-button";
@@ -27,15 +28,19 @@ export default async function RegisterPage() {
 
       {/* Main Card */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-rim space-y-5">
-        <GoogleLoginButton label="Sign Up Quickly with Google" />
+        {isSupabaseMode() ? (
+          <>
+            <GoogleLoginButton label="Sign Up Quickly with Google" />
 
-        <div className="flex items-center gap-3">
-          <div className="h-px flex-1 bg-slate-200/80" />
-          <span className="text-[11px] font-mono uppercase text-slate-400">
-            or account details
-          </span>
-          <div className="h-px flex-1 bg-slate-200/80" />
-        </div>
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-slate-200/80" />
+              <span className="text-[11px] font-mono uppercase text-slate-400">
+                or account details
+              </span>
+              <div className="h-px flex-1 bg-slate-200/80" />
+            </div>
+          </>
+        ) : null}
 
         <AuthForm action={registerAction} submitLabel="Create Volunteer Account" showName />
 
